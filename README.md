@@ -380,16 +380,126 @@ GET /api/files/{filename}
 ### 🏗️ Архитектура
 
 ```
-src/
-├── app/                    # Redux store и конфигурация
-├── features/              # Основные функции
-│   ├── MarkdownPresentation/  # Компоненты презентации
-│   ├── AiChat/               # Чат с ИИ
-│   ├── BlockGeneration/      # Генерация блоков
-│   └── PromptSend/           # Отправка промптов
-├── pages/                 # Страницы приложения
-├── shared/                # Общие компоненты и утилиты
-└── index.tsx             # Точка входа
+    src                        // Исходный код приложения
+    ├── app
+    │   └── store              // Redux store
+    │       └── slices         // "Срезы" состояния (Redux slices) по сущностям
+    │           └── логика изменения состояния (actions/reducers)
+    ├── entities               // Доменные сущности приложения
+    │   └── например, User, Post, Project — модели данных
+    ├── features               // Основные функциональные блоки приложения (feature-first архитектура)
+    │   ├── AiChat
+    │   │   └── ui             // Компоненты интерфейса чата с ИИ
+    │   │       └── кнопки, формы, окно чата, отображение сообщений
+    │   ├── BlockGeneration     // Генератор блоков/слайдов для презентаций
+    │   │   ├── blocks
+    │   │   │   └── RenderBlock
+    │   │   │       ├── components // Компоненты для отображения блока
+    │   │   │       │   └── RenderBlock // Основной компонент рендера блока
+    │   │   │       └── hooks      // Хуки, связанные с этим блоком
+    │   │   │           └── useRenderBlock // Логика рендера блока
+    │   │   └── ui
+    │   │       ├── components     // Компоненты UI модуля BlockGeneration
+    │   │       │   ├── SlidesList       // Список слайдов
+    │   │       │   ├── SortableSlide    // Слайд, который можно перетаскивать
+    │   │       │   └── ThemeCardSelector // Выбор темы/стиля слайда
+    │   │       └── hooks          // Хуки для компонентов UI
+    │   │           ├── useSlidesList     // Логика списка слайдов
+    │   │           └── useSortableSlide  // Логика перетаскивания слайда
+    │   ├── Header
+    │   │   ├── hooks
+    │   │   │   └── useHeader       // Логика работы шапки сайта (меню, кнопки, состояние)
+    │   │   └── ui                  // Компоненты шапки (Header)
+    │   ├── MarkdownPresentation     // Редактор презентаций на Markdown
+    │   │   ├── blocks
+    │   │   │   ├── RenderBlock
+    │   │   │   │   ├── components   // UI-компоненты для каждого типа блока
+    │   │   │   │   │   ├── ChartBlock       // График
+    │   │   │   │   │   ├── ChartBlockWrapper // Обертка для графика
+    │   │   │   │   │   ├── ChartEditor      // Редактор графика
+    │   │   │   │   │   ├── CodeBlock        // Блок с кодом
+    │   │   │   │   │   ├── EditableWrapper  // Обертка для редактируемого блока
+    │   │   │   │   │   ├── HeadingBlock     // Заголовок
+    │   │   │   │   │   ├── ListBlock        // Список
+    │   │   │   │   │   ├── ParagraphBlock   // Абзац
+    │   │   │   │   │   ├── QuoteBlock       // Цитата
+    │   │   │   │   │   ├── TableBlockWrapper // Таблица (обертка)
+    │   │   │   │   │   ├── TableEditor      // Редактор таблиц
+    │   │   │   │   │   └── TextEditor       // Текстовый редактор
+    │   │   │   │   ├── hooks                // Хуки для работы с блоками
+    │   │   │   │   │   ├── useChartEditor
+    │   │   │   │   │   ├── useChartWrapper
+    │   │   │   │   │   ├── useEditableWrapper
+    │   │   │   │   │   ├── useTableEditor
+    │   │   │   │   │   ├── useTableWrapper
+    │   │   │   │   │   └── useTextBlocksEditor
+    │   │   │   │   └── lib                 // Утилиты для блока
+    │   │   │   │       └── utils
+    │   │   │   ├── SlideContent
+    │   │   │   │   ├── components         // Layout и визуальные блоки слайда
+    │   │   │   │   │   ├── Grid2x2Layout
+    │   │   │   │   │   ├── GridTextTopTwoBottomLayout
+    │   │   │   │   │   ├── ImageColumnLayout
+    │   │   │   │   │   ├── ImageRowLayout
+    │   │   │   │   │   └── ResizableImage
+    │   │   │   │   │       └── EditableImage // Редактируемое изображение
+    │   │   │   │   └── hooks              // Хуки для работы с изображениями
+    │   │   │   │       ├── useEditableImage
+    │   │   │   │       └── useResizeImage
+    │   │   │   └── SortableBlock           // Перетаскиваемый блок внутри слайда
+    │   │   ├── hooks
+    │   │   │   ├── useSlideScroll          // Скролл слайдов
+    │   │   │   └── useSortableBlock        // Логика перетаскивания блоков
+    │   │   ├── lib                          // Вспомогательные данные
+    │   │   │   ├── constants                // Константы модуля
+    │   │   │   ├── types                    // Типы и интерфейсы
+    │   │   │   └── utils                    // Вспомогательные функции
+    │   │   └── ui
+    │   │       ├── components               // UI-компоненты для работы с слайдами
+    │   │       │   ├── AddSlideDialog
+    │   │       │   ├── EditSlideDialog
+    │   │       │   ├── EmptyState
+    │   │       │   ├── MiniSlides
+    │   │       │   ├── SlideEditPrompt
+    │   │       │   ├── SlideItem
+    │   │       │   ├── SlideList
+    │   │       │   ├── SlideNavigationToolbar
+    │   │       │   ├── SlideToolbar
+    │   │       │   └── ThemeSelector
+    │   │       ├── hooks
+    │   │       │   ├── useBlockActions
+    │   │       │   ├── useMiniSlidesActions
+    │   │       │   ├── useSlideActions
+    │   │       │   └── useSlideApiAction
+    │   │       └── lib
+    │   │           └── utils
+    │   ├── navigation
+    │   │   └── ui               // Компоненты навигации (меню, хлебные крошки)
+    │   └── PromptSend            // Модуль отправки промптов пользователем
+    │       ├── blocks
+    │       │   ├── FeaturesBlock
+    │       │   ├── HowItWorksBlock
+    │       │   ├── QuickStartBlock
+    │       │   └── WhyUsBlock
+    │       ├── lib
+    │       │   └── constants     // Константы для PromptSend
+    │       └── ui                // Компоненты интерфейса PromptSend
+    ├── pages                     // Страницы приложения (роутинг)
+    │   ├── EditorPage
+    │   ├── GeneratePage
+    │   └── PromptPage
+    └── shared                     // Общие ресурсы, доступные всем модулям
+        ├── assets
+        │   ├── images            // Картинки проекта
+        │   └── svg               // SVG-иконки и графика
+        ├── components
+        │   └── LoadingOverlay    // Общий компонент индикатора загрузки
+        ├── constants             // Глобальные константы
+        ├── hooks
+        │   └── useGeneration      // Общий хук генерации контента
+        ├── types
+        │   └── global             // Глобальные типы и интерфейсы
+        └── utils                  // Вспомогательные функции (утилиты)
 ```
 
 ### 🎨 Технологии
