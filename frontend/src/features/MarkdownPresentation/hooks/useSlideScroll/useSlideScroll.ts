@@ -10,6 +10,7 @@ export const useSlideScroll = (
   currentSlide: PlateSlide
 ) => {
   useEffect(() => {
+    if (!currentSlide) return;
     const el = document.getElementById(currentSlide.id);
 
     if (el) {
@@ -18,7 +19,7 @@ export const useSlideScroll = (
         elementTop - (window.innerHeight / 2 - el.offsetHeight / 2);
       window.scrollTo({ top: scrollPosition, behavior: "smooth" });
     }
-  }, []);
+  }, [currentSlide]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -42,7 +43,7 @@ export const useSlideScroll = (
           const elementTop = el.getBoundingClientRect().top + window.scrollY;
           const scrollPosition =
             elementTop - (window.innerHeight / 2 - el.offsetHeight / 2);
-          window.scrollTo({ top: scrollPosition, behavior: "smooth" });
+          window.scrollTo({ top: scrollPosition - 40, behavior: "smooth" });
         }
       }
     };

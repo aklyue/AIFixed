@@ -16,109 +16,120 @@ const MiniSlides: React.FC<{ slides: PlateSlide[] }> = ({ slides }) => {
     <Box
       ref={containerRef}
       sx={{
-        width: 145,
-        height: "80vh",
+        maxWidth: 145,
+        height: "95vh",
         overflowY: "auto",
         display: "flex",
         flexDirection: "column",
         gap: 0.5,
-        justifyContent: "flex-start",
+        justifyContent: "center",
         userSelect: "none",
         position: "fixed",
       }}
     >
-      {slides.map((slide, i) => (
-        <Box
-          component={motion.div}
-          key={slide.id}
-          onClick={() => handleSlideClick(slide.id, i)}
-          layout
-          initial={false}
-          animate={{
-            borderColor: i === currentIndex ? theme?.colors.heading : "none",
-          }}
-          whileHover={{ borderColor: theme?.colors.paragraph }}
-          transition={{ type: "spring", stiffness: 300, damping: 25 }}
-          sx={{
-            width: "100%",
-            boxSizing: "border-box",
-            boxShadow: 1,
-            minHeight: 80,
-            borderRadius: 0.7,
-            overflow: "hidden",
-            borderStyle: "solid",
-            borderWidth: 1,
-            cursor: "pointer",
-            position: "relative",
-            transition: "all 0.2s",
-            background: theme?.colors.background || "#fff",
-          }}
-        >
+      <Box
+        sx={{
+          borderRight: "5px solid #ccc",
+          display: "flex",
+          flexDirection: "column",
+          gap: 1,
+          borderRadius: 2,
+        }}
+      >
+        {slides.map((slide, i) => (
           <Box
-            id={`mini-${slide.id}`}
+            component={motion.div}
+            key={slide.id}
+            onClick={() => handleSlideClick(slide.id, i)}
+            layout
+            initial={false}
+            animate={{
+              borderColor:
+                i === currentIndex ? theme?.colors.heading : "rgba(0,0,0,0)",
+            }}
+            whileHover={{ borderColor: theme?.colors.paragraph }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
             sx={{
-              zoom: 0.13,
-              transformOrigin: "top left",
-              width: slideWidth,
-              height: slideHeight,
-              pointerEvents: "none",
+              width: "100%",
+              boxSizing: "border-box",
+              boxShadow: 1,
+              minHeight: 80,
+              borderRadius: 0.7,
               overflow: "hidden",
+              borderStyle: "solid",
+              borderWidth: 1,
+              cursor: "pointer",
+              position: "relative",
+              transition: "all 0.2s",
+              background: theme?.colors.background || "#fff",
             }}
           >
-            <SlideContent
-              isMini={true}
-              slide={slide}
-              setSlideContent={() => {}}
-              renderBlock={(block: SlideBlock) => (
-                <Box
-                  data-block-id={block.id}
-                  sx={{
-                    width: "100%",
-                  }}
-                >
-                  <RenderBlock
-                    key={block.id}
-                    block={block}
-                    id={block.id}
-                    slideId={slide.id}
-                    editingBlock={null}
-                    editValue=""
-                    setEditValue={() => {}}
-                    setEditingBlock={() => {}}
-                    isMini={true}
-                  />
-                </Box>
-              )}
-            />
-          </Box>
-
-          <Box
-            sx={{
-              position: "absolute",
-              top: 4,
-              left: 0,
-              right: 0,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Typography
-              variant="caption"
+            <Box
+              id={`mini-${slide.id}`}
               sx={{
-                color: theme?.colors.heading,
-                fontFamily: theme?.fonts.heading,
-                fontWeight: "bold",
-                backgroundColor: "rgba(255, 255, 255, 0)",
-                px: 1,
-                borderRadius: "4px",
+                zoom: 0.13,
+                transformOrigin: "top left",
+                width: slideWidth,
+                height: slideHeight,
+                pointerEvents: "none",
+                overflow: "hidden",
               }}
             >
-              {i + 1}
-            </Typography>
+              <SlideContent
+                isMini={true}
+                slide={slide}
+                setSlideContent={() => {}}
+                renderBlock={(block: SlideBlock) => (
+                  <Box
+                    data-block-id={block.id}
+                    sx={{
+                      width: "100%",
+                    }}
+                  >
+                    <RenderBlock
+                      key={block.id}
+                      block={block}
+                      id={block.id}
+                      slideId={slide.id}
+                      editingBlock={null}
+                      editValue=""
+                      setEditValue={() => {}}
+                      setEditingBlock={() => {}}
+                      isMini={true}
+                    />
+                  </Box>
+                )}
+              />
+            </Box>
+
+            <Box
+              sx={{
+                position: "absolute",
+                top: 4,
+                left: 0,
+                right: 0,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Typography
+                variant="caption"
+                sx={{
+                  color: theme?.colors.heading,
+                  fontFamily: theme?.fonts.heading,
+                  fontWeight: "bold",
+                  backgroundColor: "rgba(255, 255, 255, 0)",
+                  px: 1,
+                  borderRadius: "4px",
+                }}
+              >
+                {i + 1}
+              </Typography>
+            </Box>
           </Box>
-        </Box>
-      ))}
+        ))}
+      </Box>
     </Box>
   );
 };

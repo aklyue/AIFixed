@@ -6,8 +6,10 @@ import {
   TextField,
   Snackbar,
   Alert,
+  lighten,
 } from "@mui/material";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import EditIcon from "@mui/icons-material/Edit";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { PlateSlide, Theme } from "../../../../../shared/types/markdownTypes";
 import { motion, AnimatePresence } from "framer-motion";
@@ -15,7 +17,8 @@ import SlideContent from "../../../blocks/SlideContent";
 
 import { LoadingOverlay } from "../../../../../shared/components";
 import { buttonAttributes } from "../../../../../shared/constants/buttonAttributes";
-import { useSlideApiAction } from "../../hooks";
+import { useSlideActions, useSlideApiAction } from "../../hooks";
+import EditSlideDialog from "../EditSlideDialog";
 
 interface SlideWithEditorProps {
   currentSlide: PlateSlide;
@@ -43,6 +46,14 @@ const SlideEditPrompt: React.FC<SlideWithEditorProps> = ({
     setEditing,
     setError,
   } = useSlideApiAction(currentSlide);
+
+  const {
+    handleUpdateSlideLayout,
+    setSelectedLayout,
+    selectedLayout,
+    slideEditing,
+    setSlideEditing,
+  } = useSlideActions();
 
   if (loading) return <LoadingOverlay />;
   return (
@@ -121,10 +132,10 @@ const SlideEditPrompt: React.FC<SlideWithEditorProps> = ({
                         minHeight: 20,
                         mt: 1,
                         px: 0,
-                        bgcolor: isSelected ? "#334e68" : "rgba(0,0,0,0)",
-                        color: isSelected ? "#fff" : "#334e68",
+                        bgcolor: isSelected ? "primary.main" : "rgba(0,0,0,0)",
+                        color: isSelected ? "#fff" : "primary.main",
                         "&:hover": {
-                          bgcolor: isSelected ? "#334e68" : "#334e68",
+                          bgcolor: isSelected ? "primary.main" : "primary.main",
                           color: "#fff",
                         },
                       }}
@@ -151,15 +162,15 @@ const SlideEditPrompt: React.FC<SlideWithEditorProps> = ({
                   sx={{
                     height: 50,
                     borderRadius: "12px",
-                    color: "#334e68",
-                    borderColor: "#334e68",
+                    color: "primary.main",
+                    borderColor: "primary.main",
                     px: 2,
                     justifyContent: "flex-start",
                     textTransform: "none",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
-                    "&:hover": { bgcolor: "#334e68" + "12" },
+                    "&:hover": { bgcolor: lighten("#2e2e2e", 0.95) },
                   }}
                 >
                   Отмена
@@ -172,10 +183,10 @@ const SlideEditPrompt: React.FC<SlideWithEditorProps> = ({
                   sx={{
                     height: 50,
                     borderRadius: "12px",
-                    bgcolor: "#334e68",
+                    bgcolor: "primary.main",
                     textTransform: "none",
                     color: "white",
-                    "&:hover": { bgcolor: "#334e68" },
+                    "&:hover": { bgcolor: "primary.main" },
                   }}
                 >
                   {"Сгенерировать"}
@@ -206,17 +217,36 @@ const SlideEditPrompt: React.FC<SlideWithEditorProps> = ({
                 position: "absolute",
                 top: 8,
                 right: 8,
-                bgcolor: "rgba(255,255,255,0.8)",
+                bgcolor: "white",
                 boxShadow: 1,
                 opacity: 0,
                 transform: "translateY(-5px)",
                 transition: "all 0.2s ease",
                 zIndex: 10,
-                "&:hover": { bgcolor: "rgba(255,255,255,1)" },
+                "&:hover": { bgcolor: "#eee" },
               }}
               onClick={() => setEditing(true)}
             >
               <AutoAwesomeIcon sx={{ color: theme?.colors.heading }} />
+            </IconButton>
+            <IconButton
+              className="hoverIcon"
+              size="small"
+              sx={{
+                position: "absolute",
+                top: 8,
+                right: 48,
+                bgcolor: "white",
+                boxShadow: 1,
+                opacity: 0,
+                transform: "translateY(-5px)",
+                transition: "all 0.2s ease",
+                zIndex: 10,
+                "&:hover": { bgcolor: "#eee" },
+              }}
+              onClick={() => setSlideEditing(true)}
+            >
+              <EditIcon sx={{ color: theme?.colors.heading }} />
             </IconButton>
           </motion.div>
         )}
@@ -235,6 +265,14 @@ const SlideEditPrompt: React.FC<SlideWithEditorProps> = ({
           {error}
         </Alert>
       </Snackbar>
+
+      <EditSlideDialog
+        handleChangeSlide={handleUpdateSlideLayout}
+        selectedLayout={selectedLayout}
+        setSelectedLayout={setSelectedLayout}
+        setSlideEditing={setSlideEditing}
+        slideEditing={slideEditing}
+      />
     </Box>
   );
 };

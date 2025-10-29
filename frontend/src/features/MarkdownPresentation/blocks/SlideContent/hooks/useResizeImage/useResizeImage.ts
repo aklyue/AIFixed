@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../../../app/store";
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import {
   pushHistory,
   updateBlock,
@@ -20,6 +20,7 @@ export const useResizeImage = ({
   inverted,
 }: useResizeImageProps) => {
   const dispatch = useDispatch<AppDispatch>();
+
   const block = useSelector((state: RootState) => {
     const slide = state.editor.slides.find((s) => s.id === slideId);
     return slide?.content.find((b) => b.id === blockId);
@@ -32,57 +33,74 @@ export const useResizeImage = ({
   );
 
   const [dragging, setDragging] = useState(false);
+  const [tempSize, setTempSize] = useState<number | null>(null);
+  const tempSizeRef = useRef<number | null>(null);
+
+  const startResize = useCallback(
+    (e: React.MouseEvent) => {
+      if (!block) return;
+      e.preventDefault();
+      setDragging(true);
+
+      const startPos = horizontal ? e.clientX : e.clientY;
+      const startSize = horizontal
+        ? block.widthPercent ?? 45
+        : block.heightPercent ?? 20;
+      const sensitivity = horizontal ? 0.0907 : 0.161;
+
+      const onMouseMove = (eMove: MouseEvent) => {
+        let delta = (horizontal ? eMove.clientX : eMove.clientY) - startPos;
+        if (inverted) delta = -delta;
+
+        const newSize = Math.min(
+          Math.max(startSize + delta * sensitivity, 10),
+          90
+        );
+
+        tempSizeRef.current = newSize;
+        setTempSize(newSize);
+      };
+
+      const onMouseUp = () => {
+        setDragging(false);
+        window.removeEventListener("mousemove", onMouseMove);
+        window.removeEventListener("mouseup", onMouseUp);
+
+        const finalSize = tempSizeRef.current ?? startSize;
+
+        dispatch(
+          updateBlock({
+            id: block.id,
+            newBlock: horizontal
+              ? { ...block, widthPercent: finalSize }
+              : { ...block, heightPercent: finalSize },
+          })
+        );
+        dispatch(pushHistory());
+        setTempSize(null);
+      };
+
+      window.addEventListener("mousemove", onMouseMove);
+      window.addEventListener("mouseup", onMouseUp);
+    },
+    [block, horizontal, inverted, dispatch]
+  );
 
   if (!block) {
     return {
       sizeValue: 0,
       sliderStyle: { top: 0, left: 0, width: 0, height: 0 },
-      startResize: () => {},
+      startResize,
       block: undefined,
-      theme: undefined,
+      theme,
+      dragging: false,
     };
   }
 
-  const startResize = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setDragging(true);
-    const startPos = horizontal ? e.clientX : e.clientY;
-    const startSize = horizontal
-      ? block.widthPercent ?? 45
-      : block.heightPercent ?? 20;
-    const sensitivity = horizontal ? 0.11 : 0.2;
+  const sizeValue =
+    tempSize ??
+    (horizontal ? block.widthPercent ?? 45 : block.heightPercent ?? 20);
 
-    const onMouseMove = (eMove: MouseEvent) => {
-      let delta = (horizontal ? eMove.clientX : eMove.clientY) - startPos;
-      if (inverted) delta = -delta;
-      const newSize = Math.min(
-        Math.max(startSize + delta * sensitivity, 10),
-        90
-      );
-      dispatch(
-        updateBlock({
-          id: block.id,
-          newBlock: horizontal
-            ? { ...block, widthPercent: newSize }
-            : { ...block, heightPercent: newSize },
-        })
-      );
-    };
-
-    const onMouseUp = () => {
-      setDragging(false);
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", onMouseUp);
-      dispatch(pushHistory());
-    };
-
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
-  };
-
-  const sizeValue = horizontal
-    ? block.widthPercent ?? 45
-    : block.heightPercent ?? 20;
   const sliderStyle = horizontal
     ? inverted
       ? { top: 0, left: 0, width: 6, height: "100%" }

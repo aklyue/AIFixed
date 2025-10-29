@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Box } from "@mui/material";
+import { Box, lighten } from "@mui/material";
 import { AnimatePresence } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../../app/store";
@@ -30,13 +30,26 @@ export const MarkdownPresentation: React.FC = () => {
   );
 
   return (
-    <Box sx={{ m: 1, p: 2, borderRadius: 4, bgcolor: "white", width: "100%" }}>
+    <Box
+      sx={{
+        borderRadius: 4,
+        bgcolor: lighten(theme?.colors.background || "#ffffff", 0.3),
+        width: "100%",
+        transition: "all 0.2s",
+      }}
+    >
       <AnimatePresence mode="wait">
         {!currentSlide ? (
           <EmptyState theme={theme} />
         ) : (
           <Box
-            sx={{ display: "flex", justifyContent: "space-between", pb: 16 }}
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              pb: 16,
+              bgcolor: lighten(theme?.colors.background || "#ffffff", 0.3),
+              transition: "all 0.2s",
+            }}
           >
             <SlideList
               slides={slides}

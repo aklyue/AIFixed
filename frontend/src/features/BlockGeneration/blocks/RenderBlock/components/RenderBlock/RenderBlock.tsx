@@ -1,5 +1,5 @@
 import React from "react";
-import { SlideBlock } from "../../../../shared/types";
+import { SlideBlock } from "../../../../../../shared/types";
 import {
   Box,
   Typography,

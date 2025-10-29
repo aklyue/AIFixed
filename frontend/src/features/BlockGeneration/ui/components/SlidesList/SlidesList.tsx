@@ -7,28 +7,32 @@ import {
   Select,
   MenuItem,
   useTheme,
+  lighten,
 } from "@mui/material";
-import {
-  DndContext,
-  closestCenter,
-} from "@dnd-kit/core";
+import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { SortableSlide } from "../SortableSlide/SortableSlide";
 import { AnimatePresence, motion } from "framer-motion";
-import { useGeneration } from "../../../../shared/hooks";
-import { LoadingOverlay } from "../../../../shared/components";
+import { useGeneration } from "../../../../../shared/hooks";
+import { LoadingOverlay } from "../../../../../shared/components";
 import { useSlidesList } from "../../hooks";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../../app/store";
 
 const MotionButton = motion(Button);
 
 export const SlidesList = () => {
   const { model, setModel, regenerateSlides, loading } = useGeneration();
-  const theme = useTheme();
+  const themeMui = useTheme();
   const { sensors, handleEditSlide, handleDragEnd, localSlides } =
     useSlidesList();
+
+  const theme = useSelector((s: RootState) =>
+    s.editor.availableThemes.find((t) => t.id === s.editor.globalThemeId)
+  );
 
   if (loading) return <LoadingOverlay />;
 
@@ -40,6 +44,8 @@ export const SlidesList = () => {
         p: 4,
         boxShadow: 0,
         borderRadius: 2,
+        bgcolor: lighten(theme?.colors.background || "#ffffff", 0.3),
+        transition: "all 0.2s",
       }}
     >
       <Typography variant="h5" fontWeight={700} mb={3}>
@@ -78,7 +84,7 @@ export const SlidesList = () => {
             borderRadius: "8px",
             color: "text.primary",
             bgcolor: "background.paper",
-            border: `1px solid ${theme.palette.primary.main}`,
+            border: `1px solid ${themeMui.palette.primary.main}`,
             textTransform: "none",
             fontSize: 15,
             "& .MuiSelect-select": {

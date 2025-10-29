@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../../app/store";
-import { PlateSlide } from "../../../../shared/types";
+import { AppDispatch, RootState } from "../../../../../app/store";
+import { PlateSlide } from "../../../../../shared/types";
 import { useEffect, useState } from "react";
 import {
   DragEndEvent,
@@ -12,7 +12,7 @@ import { arrayMove } from "@dnd-kit/sortable";
 import {
   reorderSlides,
   updateSlideContent,
-} from "../../../../app/store/slices/editorSlice";
+} from "../../../../../app/store/slices/editorSlice";
 
 export const useSlidesList = () => {
   const dispatch = useDispatch<AppDispatch>();

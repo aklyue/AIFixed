@@ -63,10 +63,12 @@ export interface PlateSlide {
   layout?:
     | "left-image"
     | "right-image"
+    | "top-image"
+    | "bottom-image"
     | "center"
     | "text-only"
-    | "top-image"
-    | "bottom-image";
+    | "grid-2x2"
+    | "grid-text-top-two-bottom";
   content: SlideBlock[];
   alignItems?: "flex-start" | "flex-end" | "center";
   theme?: Theme;

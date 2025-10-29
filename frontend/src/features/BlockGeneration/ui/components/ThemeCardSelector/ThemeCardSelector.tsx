@@ -1,8 +1,15 @@
-import { Box, Typography, Paper, Container, useTheme } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Paper,
+  Container,
+  useTheme,
+  lighten,
+} from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState, AppDispatch } from "../../../../app/store";
-import { setGlobalTheme } from "../../../../app/store/slices/editorSlice";
-import { themes } from "../../../../shared/constants";
+import { RootState, AppDispatch } from "../../../../../app/store";
+import { setGlobalTheme } from "../../../../../app/store/slices/editorSlice";
+import { themes } from "../../../../../shared/constants";
 import { motion, AnimatePresence } from "framer-motion";
 
 const MotionPaper = motion(Paper);
@@ -14,6 +21,10 @@ export const ThemeCardSelector = () => {
     (state: RootState) => state.editor.globalThemeId
   );
 
+  const theme = useSelector((s: RootState) =>
+    s.editor.availableThemes.find((t) => t.id === s.editor.globalThemeId)
+  );
+
   return (
     <Container
       component={Paper}
@@ -23,6 +34,8 @@ export const ThemeCardSelector = () => {
         p: 4,
         borderRadius: 2,
         boxShadow: 0,
+        bgcolor: lighten(theme?.colors.background || "#ffffff", 0.3),
+        transition: "all 0.2s",
       }}
     >
       <Typography variant="h5" fontWeight={700}>

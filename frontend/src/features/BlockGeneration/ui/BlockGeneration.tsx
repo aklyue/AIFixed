@@ -1,10 +1,12 @@
-import { Box, Button, Container } from "@mui/material";
-import { SlidesList } from "./SlidesList/SlidesList";
+import { Box, Button, Container, lighten } from "@mui/material";
+import { SlidesList } from "./components/SlidesList/SlidesList";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
-import { ThemeCardSelector } from "./ThemeCardSelector/ThemeCardSelector";
+import { ThemeCardSelector } from "./components/ThemeCardSelector/ThemeCardSelector";
 import { AnimatePresence, motion } from "framer-motion";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../app/store";
 
 const MotionBox = motion(Box);
 const MotionButton = motion(Button);
@@ -17,7 +19,14 @@ export const BlockGeneration = () => {
   const handleBack = () => navigate("/");
 
   return (
-    <MotionContainer sx={{ p: 4, position: "relative", pb: 12 }}>
+    <MotionContainer
+      sx={{
+        p: 4,
+        position: "relative",
+        pb: 12,
+        transition: "all 0.2s",
+      }}
+    >
       <Box
         sx={{
           position: "absolute",
