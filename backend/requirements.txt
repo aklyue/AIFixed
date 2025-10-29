@@ -1,0 +1,12 @@
+fastapi[all]
+python-pptx
+python-docx
+pdfplumber
+numpy
+pandas
+sentence-transformers
+huggingface-hub
+pydantic-settings
+docx2md
+pymupdf4llm
+fitz

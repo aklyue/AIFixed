@@ -1,0 +1,136 @@
+import {
+  Container,
+  Box,
+  Button,
+  Paper,
+  Typography,
+  Select,
+  MenuItem,
+  useTheme,
+} from "@mui/material";
+import {
+  DndContext,
+  closestCenter,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { SortableSlide } from "../SortableSlide/SortableSlide";
+import { AnimatePresence, motion } from "framer-motion";
+import { useGeneration } from "../../../../shared/hooks";
+import { LoadingOverlay } from "../../../../shared/components";
+import { useSlidesList } from "../../hooks";
+
+const MotionButton = motion(Button);
+
+export const SlidesList = () => {
+  const { model, setModel, regenerateSlides, loading } = useGeneration();
+  const theme = useTheme();
+  const { sensors, handleEditSlide, handleDragEnd, localSlides } =
+    useSlidesList();
+
+  if (loading) return <LoadingOverlay />;
+
+  return (
+    <Container
+      component={Paper}
+      sx={{
+        maxWidth: "1000px !important",
+        p: 4,
+        boxShadow: 0,
+        borderRadius: 2,
+      }}
+    >
+      <Typography variant="h5" fontWeight={700} mb={3}>
+        Первичная Настройка
+      </Typography>
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
+        <MotionButton
+          variant="contained"
+          onClick={regenerateSlides}
+          whileHover={{ scale: 1.05, boxShadow: "0 8px 24px rgba(0,0,0,0.12)" }}
+          sx={{
+            borderRadius: "8px",
+            bgcolor: "primary.main",
+            color: "white",
+            "&:hover": { bgcolor: "primary.main" },
+          }}
+        >
+          Перегенерировать
+        </MotionButton>
+
+        <Select
+          value={model}
+          onChange={(e) => setModel(e.target.value)}
+          sx={{
+            height: 40,
+            ml: 2,
+            maxWidth: 200,
+            borderRadius: "8px",
+            color: "text.primary",
+            bgcolor: "background.paper",
+            border: `1px solid ${theme.palette.primary.main}`,
+            textTransform: "none",
+            fontSize: 15,
+            "& .MuiSelect-select": {
+              display: "flex",
+              alignItems: "center",
+              pl: 2,
+              pr: 4,
+            },
+            "& .MuiOutlinedInput-notchedOutline": {
+              border: "none",
+            },
+            "& .MuiSelect-icon": {
+              color: "primary.main",
+              right: 10,
+            },
+            "&:hover": {
+              bgcolor: "action.hover",
+            },
+          }}
+        >
+          <MenuItem value="google/gemma-3-12b-it">gemma-3-12b-it</MenuItem>
+          <MenuItem value="moonshotai/kimi-k2-0905">kimi-k2-0905</MenuItem>
+          <MenuItem value="openai/gpt-oss-120b">gpt-oss-120b</MenuItem>
+        </Select>
+      </Box>
+      <AnimatePresence mode="popLayout">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.1 }}
+        >
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={localSlides.map((s) => s.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {localSlides.map((slide, i) => (
+                <SortableSlide
+                  key={slide.id}
+                  slide={slide}
+                  index={i}
+                  onEditSlide={handleEditSlide}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
+        </motion.div>
+      </AnimatePresence>
+    </Container>
+  );
+};

@@ -1,0 +1,54 @@
+import React, { useRef } from "react";
+import { Box } from "@mui/material";
+import { AnimatePresence } from "framer-motion";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../../../app/store";
+import { useSlideScroll } from "../hooks";
+import { getSlideBackground } from "../lib/utils/getSlideBackground";
+import EmptyState from "./components/EmptyState";
+import SlideList from "./components/SlideList";
+
+export const MarkdownPresentation: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const slides = useSelector((s: RootState) => s.editor.slides);
+  const currentIndex = useSelector((s: RootState) => s.editor.currentIndex);
+  const theme = useSelector((s: RootState) =>
+    s.editor.availableThemes.find((t) => t.id === s.editor.globalThemeId)
+  );
+
+  const currentSlide = slides[currentIndex];
+  const bgImage = getSlideBackground(theme, currentIndex);
+
+  useSlideScroll(
+    containerRef,
+    slides.length,
+    currentIndex,
+    dispatch,
+    currentSlide
+  );
+
+  return (
+    <Box sx={{ m: 1, p: 2, borderRadius: 4, bgcolor: "white", width: "100%" }}>
+      <AnimatePresence mode="wait">
+        {!currentSlide ? (
+          <EmptyState theme={theme} />
+        ) : (
+          <Box
+            sx={{ display: "flex", justifyContent: "space-between", pb: 16 }}
+          >
+            <SlideList
+              slides={slides}
+              currentSlide={currentSlide}
+              containerRef={containerRef}
+              theme={theme}
+              bgImage={bgImage}
+              dispatch={dispatch}
+            />
+          </Box>
+        )}
+      </AnimatePresence>
+    </Box>
+  );
+};

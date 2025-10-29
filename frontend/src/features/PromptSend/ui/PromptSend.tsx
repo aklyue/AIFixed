@@ -1,0 +1,243 @@
+import React from "react";
+import UploadFileIcon from "@mui/icons-material/AddCircle";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import {
+  Alert,
+  Box,
+  Button,
+  MenuItem,
+  Select,
+  Snackbar,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import { useGeneration } from "../../../shared/hooks";
+import { useNavigate } from "react-router-dom";
+import { LoadingOverlay } from "../../../shared/components";
+
+export const PromptSend: React.FC = () => {
+  const {
+    inputText,
+    setInputText,
+    fileInputRef,
+    fileStatus,
+    handleFileChange,
+    handleSubmit,
+    loading,
+    error,
+    setError,
+    model,
+    setModel,
+  } = useGeneration();
+
+  const theme = useTheme();
+
+  const navigate = useNavigate();
+
+  const onSubmit = async (e: React.FormEvent) => {
+    const success = await handleSubmit(e);
+    if (success) {
+      navigate("/generate");
+    }
+  };
+
+  if (loading) return <LoadingOverlay />;
+
+  return (
+    <Box
+      sx={{
+        boxSizing: "border-box",
+        display: "flex",
+        alignItems: "center",
+        p: 2,
+        flexDirection: "column",
+        position: "relative",
+      }}
+    >
+      <Box
+        textAlign="center"
+        sx={{
+          maxWidth: 1200,
+          mb: 4,
+        }}
+      >
+        <Typography
+          variant="h2"
+          fontWeight="bold"
+          sx={{
+            m: 0,
+            color: "text.primary",
+            maxWidth: 1000,
+          }}
+        >
+          Создавайте презентации без усилий за короткое время
+        </Typography>
+        <Typography
+          variant="h5"
+          sx={{
+            margin: 0,
+            mt: 2,
+            color: "text.secondary",
+            maxWidth: 1000,
+          }}
+        >
+          Трансформируйте свои идеи в профессиональные презентации. Просто
+          напишите свои мысли и ИИ сделает всё остальное.
+        </Typography>
+      </Box>
+
+      {/* Форма */}
+      <form onSubmit={onSubmit} style={{ padding: "8px 8px", width: "1000px" }}>
+        <TextField
+          fullWidth
+          multiline
+          minRows={6}
+          maxRows={10}
+          size="small"
+          placeholder="Прикрепите файл и введите в поле то, что хотите получить от ИИ в презентации."
+          value={inputText}
+          onChange={(e) => setInputText(e.target.value)}
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "12px",
+              pr: 1,
+              boxShadow: 4,
+              backgroundColor: "background.paper",
+              color: "text.primary",
+            },
+          }}
+        />
+
+        <Box
+          mt={2}
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            accept=".pdf,.docx"
+            onChange={handleFileChange}
+          />
+
+          {/* Кнопка загрузки и выбор модели */}
+          <Box>
+            <Button
+              onClick={() => fileInputRef.current?.click()}
+              startIcon={
+                fileStatus?.converted ? <CheckCircleIcon /> : <UploadFileIcon />
+              }
+              variant="outlined"
+              sx={{
+                height: 40,
+                borderRadius: "8px",
+                color: "primary.main",
+                borderColor: "primary.main",
+                maxWidth: 200,
+                px: 2,
+                justifyContent: "flex-start",
+                textTransform: "none",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                "&:hover": {
+                  bgcolor: "action.hover",
+                },
+              }}
+            >
+              <Box
+                component="span"
+                sx={{
+                  display: "inline-block",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  verticalAlign: "middle",
+                }}
+              >
+                {fileStatus?.name || "Прикрепить файл"}
+              </Box>
+            </Button>
+
+            <Select
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              sx={{
+                height: 40,
+                ml: 2,
+                maxWidth: 200,
+                borderRadius: "8px",
+                color: "text.primary",
+                bgcolor: "background.paper",
+                border: `1px solid ${theme.palette.primary.main}`,
+                textTransform: "none",
+                fontSize: 15,
+                "& .MuiSelect-select": {
+                  display: "flex",
+                  alignItems: "center",
+                  pl: 2,
+                  pr: 4,
+                },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  border: "none",
+                },
+                "& .MuiSelect-icon": {
+                  color: "primary.main",
+                  right: 10,
+                },
+                "&:hover": {
+                  bgcolor: "action.hover",
+                },
+              }}
+            >
+              <MenuItem value="google/gemma-3-12b-it">gemma-3-12b-it</MenuItem>
+              <MenuItem value="moonshotai/kimi-k2-0905">kimi-k2-0905</MenuItem>
+              <MenuItem value="openai/gpt-oss-120b">gpt-oss-120b</MenuItem>
+            </Select>
+          </Box>
+
+          {/* Кнопка отправки */}
+          <Button
+            type="submit"
+            variant="contained"
+            startIcon={<PlayArrowIcon />}
+            sx={{
+              height: 50,
+              borderRadius: "12px",
+              bgcolor: "primary.main",
+              textTransform: "none",
+              color: "primary.contrastText",
+              "&:hover": { bgcolor: "primary.dark" },
+            }}
+          >
+            Сгенерировать
+          </Button>
+        </Box>
+      </form>
+
+      {/* Ошибки */}
+      <Snackbar
+        open={!!error}
+        autoHideDuration={5000}
+        onClose={() => setError(null)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setError(null)}
+          severity="error"
+          sx={{
+            width: "100%",
+            color: "error.contrastText",
+            bgcolor: "error.main",
+          }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
+    </Box>
+  );
+};
