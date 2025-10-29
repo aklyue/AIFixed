@@ -3,12 +3,11 @@ import {
   Box,
   Button,
   IconButton,
-  Dialog,
-  DialogTitle,
-  DialogActions,
+  lighten,
+  useTheme,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteIcon from "@mui/icons-material/DeleteOutline";
 import UndoIcon from "@mui/icons-material/Undo";
 import RedoIcon from "@mui/icons-material/Redo";
 import ArrowBack from "@mui/icons-material/ArrowBackIos";
@@ -20,17 +19,9 @@ import {
   setCurrentIndex,
   undo,
 } from "../../../../../app/store/slices/editorSlice";
-import { PlateSlide } from "../../../../../shared/types";
 import { exportToPptx } from "../../../lib";
 import { useSlideActions } from "../../hooks";
-
-const layoutOptions: PlateSlide["layout"][] = [
-  "left-image",
-  "right-image",
-  "text-only",
-  "top-image",
-  "bottom-image",
-];
+import AddSlideDialog from "../AddSlideDialog";
 
 const SlideNavigationToolbar: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -40,6 +31,8 @@ const SlideNavigationToolbar: React.FC = () => {
       (t) => t.id === state.editor.globalThemeId
     )
   );
+
+  const muiTheme = useTheme();
 
   const {
     handleAddSlide,
@@ -57,12 +50,14 @@ const SlideNavigationToolbar: React.FC = () => {
   return (
     <Box sx={{ display: "flex", gap: 1 }}>
       <IconButton
+        color="primary"
         onClick={() => dispatch(setCurrentIndex(Math.max(currentIndex - 1, 0)))}
         disabled={currentIndex === 0}
       >
         <ArrowBack />
       </IconButton>
       <IconButton
+        color="primary"
         onClick={() =>
           dispatch(
             setCurrentIndex(Math.min(currentIndex + 1, slides.length - 1))
@@ -74,25 +69,26 @@ const SlideNavigationToolbar: React.FC = () => {
       </IconButton>
 
       <IconButton
+        color="primary"
         onClick={() => setAddDialogOpen(true)}
-        sx={{ ml: "auto", color: "#334e68" }}
+        sx={{ ml: "auto" }}
       >
-        <AddIcon />
+        <AddIcon color="primary" />
       </IconButton>
 
-      <IconButton color="error" onClick={handleDeleteSlide}>
+      <IconButton onClick={handleDeleteSlide} color="primary">
         <DeleteIcon />
       </IconButton>
 
       <IconButton
-        color="default"
+        color="primary"
         onClick={() => dispatch(undo())}
         disabled={historyIndex <= 0}
       >
         <UndoIcon />
       </IconButton>
       <IconButton
-        color="default"
+        color="primary"
         onClick={() => dispatch(redo())}
         disabled={historyIndex >= historyLength - 1}
       >
@@ -105,120 +101,26 @@ const SlideNavigationToolbar: React.FC = () => {
         }}
         sx={{
           ml: 1,
-          color: "#334e68",
+          color: "primary.main",
           bgcolor: "rgba(0,0,0,0)",
-          border: `1px solid #334e68`,
+          border: `1px solid`,
+          borderColor: "primary.main",
           transition: "all 0.2s",
           "&:hover": {
-            bgcolor: "#334e6812",
-            color: "#334e68",
+            bgcolor: lighten(muiTheme.palette.primary.main, 0.95),
           },
         }}
       >
         Export PPTX
       </Button>
 
-      <Dialog open={addDialogOpen} onClose={() => setAddDialogOpen(false)}>
-        <DialogTitle sx={{ width: "fit-content" }}>
-          Выберите шаблон слайда
-        </DialogTitle>
-        <Box
-          sx={{
-            p: 2,
-            display: "flex",
-            gap: 1,
-            flexWrap: "wrap",
-            width: "fit-content",
-          }}
-        >
-          {layoutOptions.map((layout) => {
-            const isSelected = selectedLayout === layout;
-
-            const renderMiniLayout = () => {
-              switch (layout) {
-                case "left-image":
-                  return (
-                    <Box sx={{ display: "flex", height: "100%" }}>
-                      <Box sx={{ flex: 1, bgcolor: "grey.400", mr: 0.5 }} />
-                      <Box sx={{ flex: 1, bgcolor: "grey.200" }} />
-                    </Box>
-                  );
-                case "right-image":
-                  return (
-                    <Box sx={{ display: "flex", height: "100%" }}>
-                      <Box sx={{ flex: 1, bgcolor: "grey.200", mr: 0.5 }} />
-                      <Box sx={{ flex: 1, bgcolor: "grey.400" }} />
-                    </Box>
-                  );
-                case "top-image":
-                  return (
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        height: "100%",
-                      }}
-                    >
-                      <Box sx={{ flex: 1, bgcolor: "grey.400", mb: 0.5 }} />
-                      <Box sx={{ flex: 1, bgcolor: "grey.200" }} />
-                    </Box>
-                  );
-                case "bottom-image":
-                  return (
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        height: "100%",
-                      }}
-                    >
-                      <Box sx={{ flex: 1, bgcolor: "grey.200", mb: 0.5 }} />
-                      <Box sx={{ flex: 1, bgcolor: "grey.400" }} />
-                    </Box>
-                  );
-                case "center":
-                case "text-only":
-                default:
-                  return (
-                    <Box
-                      sx={{
-                        width: "100%",
-                        height: "100%",
-                        bgcolor: "grey.200",
-                      }}
-                    />
-                  );
-              }
-            };
-
-            return (
-              <Box
-                key={layout}
-                onClick={() => setSelectedLayout(layout)}
-                sx={{
-                  width: 100,
-                  height: 60,
-                  border: 2,
-                  borderColor: isSelected ? "primary.main" : "grey.400",
-                  borderRadius: 1,
-                  cursor: "pointer",
-                  overflow: "hidden",
-                  transition: "all 0.1s",
-                  "&:hover": { borderColor: "primary.main" },
-                }}
-              >
-                {renderMiniLayout()}
-              </Box>
-            );
-          })}
-        </Box>
-        <DialogActions>
-          <Button onClick={() => setAddDialogOpen(false)}>Отмена</Button>
-          <Button variant="contained" onClick={handleAddSlide}>
-            Добавить
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <AddSlideDialog
+        addDialogOpen={addDialogOpen}
+        handleAddSlide={handleAddSlide}
+        selectedLayout={selectedLayout}
+        setAddDialogOpen={setAddDialogOpen}
+        setSelectedLayout={setSelectedLayout}
+      />
     </Box>
   );
 };

@@ -35,13 +35,15 @@ export const SlideList: React.FC<SlideListProps> = ({
       <Box
         sx={{
           flexShrink: 0,
-          maxWidth: 200,
+          width: 145,
           overflowY: "auto",
           display: "flex",
           flexDirection: "column",
           gap: 2,
           borderRadius: 2,
           p: 1,
+          height: "90vh",
+          justifyContent: "center",
         }}
       >
         <MiniSlides slides={slides} />
@@ -54,6 +56,7 @@ export const SlideList: React.FC<SlideListProps> = ({
             display: "flex",
             flexDirection: "column",
             gap: 4,
+            mt: 16,
             width: "100%",
           }}
         >
@@ -80,9 +83,11 @@ export const SlideList: React.FC<SlideListProps> = ({
       <Box
         sx={{
           flexShrink: 0,
-          height: "100%",
-          minWidth: 20,
+          minWidth: 40,
           overflowY: "auto",
+          height: "90vh",
+          display: "flex",
+          alignItems: "center",
           p: 1,
         }}
       >

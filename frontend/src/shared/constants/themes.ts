@@ -46,13 +46,13 @@ export const themes: Theme[] = [
   {
     id: "mystique",
     name: "Mystique",
-    colors: { background: "#1e0b3c", heading: "#7e5af2", paragraph: "#9b82ff" },
+    colors: { background: "#f6f1ff", heading: "#7e5af2", paragraph: "#9b82ff" },
     fonts: { heading: "Arial, sans-serif", paragraph: "Calibri, sans-serif" },
   },
   {
     id: "deepblue",
     name: "Deepblue",
-    colors: { background: "#0b3d4a", heading: "#00bcd4", paragraph: "#008080" },
+    colors: { background: "#ecfbff", heading: "#0b3d4a", paragraph: "#008080" },
     fonts: {
       heading: "Courier New, monospace",
       paragraph: "Calibri, sans-serif",

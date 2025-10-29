@@ -20,6 +20,8 @@ import ImageRowLayout from "./components/ImageRowLayout";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../app/store";
 import { updateSlideContent } from "../../../../app/store/slices/editorSlice";
+import Grid2x2Layout from "./components/Grid2x2Layout";
+import GridTextTopTwoBottomLayout from "./components/GridTextTopTwoBottomLayout";
 
 interface Props {
   isMini?: boolean;
@@ -114,6 +116,17 @@ export const SlideContent: React.FC<Props> = ({
         >
           {renderContentBlocks()}
         </ImageRowLayout>
+      );
+    case "grid-2x2":
+      return (
+        <Grid2x2Layout slide={slide}>{renderContentBlocks()}</Grid2x2Layout>
+      );
+
+    case "grid-text-top-two-bottom":
+      return (
+        <GridTextTopTwoBottomLayout slide={slide}>
+          {renderContentBlocks()}
+        </GridTextTopTwoBottomLayout>
       );
     case "center":
     case "text-only":

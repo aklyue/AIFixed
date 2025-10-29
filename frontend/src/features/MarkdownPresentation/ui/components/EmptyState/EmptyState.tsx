@@ -15,7 +15,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ theme }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      style={{ height: "89vh", boxSizing: "border-box", width: "100%" }}
+      style={{ height: "100%", boxSizing: "border-box", width: "100%", overflow: "hidden" }}
     >
       <Box
         sx={{
@@ -31,21 +31,19 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ theme }) => {
           background: `linear-gradient(135deg, ${
             theme?.colors.background || "#fff"
           } 0%, ${theme?.colors.paragraph + "22" || "#eee"} 100%)`,
-          color: theme?.colors.heading,
           textAlign: "center",
           p: 2,
           transition: "all 0.2s",
         }}
       >
         <Box>
-          <Typography variant="h3" sx={{ mb: 1 }}>
+          <Typography variant="h3" sx={{ mb: 1 }} color="text.primary">
             Добро пожаловать!
           </Typography>
-          <Typography variant="body1">
+          <Typography variant="body1" color="text.secondary">
             Здесь будут отображаться ваши слайды.
             <br />
-            Прикрепите файл и отправьте нашему ИИ сообщение с описанием
-            презентации!
+            Перейдите на основную страницу и отправьте сообщение с прикриплённым файлом нашему ИИ!
           </Typography>
         </Box>
       </Box>

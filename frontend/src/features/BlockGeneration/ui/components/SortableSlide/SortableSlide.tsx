@@ -1,13 +1,8 @@
 import React from "react";
-import {
-  Paper,
-  Box,
-  IconButton,
-  Typography,
-} from "@mui/material";
+import { Paper, Box, IconButton, Typography } from "@mui/material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import { RenderBlock } from "../RenderBlock/RenderBlock";
-import { PlateSlide } from "../../../../shared/types";
+import { RenderBlock } from "../../../blocks/RenderBlock/components";
+import { PlateSlide } from "../../../../../shared/types";
 import { motion } from "framer-motion";
 import { useSortableSlide } from "../../hooks";
 

@@ -6,6 +6,8 @@ import { AppDispatch } from "../../../../../app/store";
 import { updateBlock } from "../../../../../app/store/slices/editorSlice";
 import SlideEditPrompt from "../SlideEditPrompt";
 import { RenderBlock } from "../../../blocks/RenderBlock";
+import AddSlideDialog from "../AddSlideDialog";
+import { useSlideActions } from "../../hooks";
 
 const slideWidth = 1100;
 const slideHeight = 518;
@@ -32,6 +34,14 @@ export const SlideItem: React.FC<SlideItemProps> = ({
   const setSlideContent = (blocks: SlideBlock[]) => {
     blocks.forEach((b) => dispatch(updateBlock({ id: b.id, newBlock: b })));
   };
+
+  const {
+    handleAddNext,
+    setSelectedLayout,
+    setAddDialogOpen,
+    addDialogOpen,
+    selectedLayout,
+  } = useSlideActions();
 
   const renderBlock = (block: SlideBlock) => (
     <RenderBlock
@@ -95,11 +105,14 @@ export const SlideItem: React.FC<SlideItemProps> = ({
       <Box textAlign="center">
         <IconButton
           size="large"
+          onClick={() => setAddDialogOpen(true)}
           sx={{
+            boxShadow: "0 3px 6px rgba(0,0,0,0.11)",
             border: `1px solid #ccc`,
             bgcolor: "white",
             transform: "translateY(-50%)",
             transition: "all 0.2s",
+            zIndex: 11,
             "&:hover": {
               bgcolor: darken("#ffffff", 0.04),
               border: `1px solid ${theme?.colors.heading}`,
@@ -109,6 +122,13 @@ export const SlideItem: React.FC<SlideItemProps> = ({
           <AddIcon />
         </IconButton>
       </Box>
+      <AddSlideDialog
+        addDialogOpen={addDialogOpen}
+        handleAddSlide={handleAddNext}
+        selectedLayout={selectedLayout}
+        setAddDialogOpen={setAddDialogOpen}
+        setSelectedLayout={setSelectedLayout}
+      />
     </>
   );
 };

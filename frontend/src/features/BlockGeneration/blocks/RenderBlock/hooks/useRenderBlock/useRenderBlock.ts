@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SlideBlock } from "../../../../shared/types";
+import { SlideBlock } from "../../../../../../shared/types";
 
 interface useRenderBlockProps {
   block: SlideBlock;

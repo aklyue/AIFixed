@@ -1,5 +1,5 @@
 import { useSortable } from "@dnd-kit/sortable";
-import { PlateSlide } from "../../../../shared/types";
+import { PlateSlide } from "../../../../../shared/types";
 import { darken, useTheme } from "@mui/material";
 
 interface useSortableSlideProps {

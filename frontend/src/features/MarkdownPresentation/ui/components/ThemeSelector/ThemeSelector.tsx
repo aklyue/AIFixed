@@ -14,7 +14,7 @@ import {
   pushHistory,
   setGlobalTheme,
 } from "../../../../../app/store/slices/editorSlice";
-import PaletteIcon from "@mui/icons-material/Palette";
+import PaletteIcon from "@mui/icons-material/PaletteOutlined";
 
 function ThemeSelector() {
   const dispatch = useDispatch<AppDispatch>();
@@ -31,7 +31,10 @@ function ThemeSelector() {
   return (
     <Box>
       <Tooltip title="Сменить тему">
-        <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+        <IconButton
+          onClick={(e) => setAnchorEl(e.currentTarget)}
+          color="primary"
+        >
           <PaletteIcon />
         </IconButton>
       </Tooltip>

@@ -93,7 +93,7 @@ export const useMiniSlidesActions = (slides: PlateSlide[]) => {
         elementTop - (windowHeight / 2 - elementHeight / 2);
 
       window.scrollTo({
-        top: scrollPosition,
+        top: scrollPosition - 20,
         behavior: "smooth",
       });
     }
