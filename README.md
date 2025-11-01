@@ -386,12 +386,12 @@ GET /api/files/{filename}
     │       └── slices         // "Срезы" состояния (Redux slices) по сущностям
     │           └── логика изменения состояния (actions/reducers)
     ├── entities               // Доменные сущности приложения
-    │   └── например, User, Post, Project — модели данных
-    ├── features               // Основные функциональные блоки приложения (feature-first архитектура)
+    │   └── например, User, Post, Project — модели данных (пока пуст)
+    ├── features               // Основные функциональные блоки приложения (Feature Sliced Design архитектура)
     │   ├── AiChat
     │   │   └── ui             // Компоненты интерфейса чата с ИИ
     │   │       └── кнопки, формы, окно чата, отображение сообщений
-    │   ├── BlockGeneration     // Генератор блоков/слайдов для презентаций
+    │   ├── BlockGeneration     // Блок первичной настройки сгенерированных слайдов для презентаций
     │   │   ├── blocks
     │   │   │   └── RenderBlock
     │   │   │       ├── components // Компоненты для отображения блока
@@ -402,7 +402,7 @@ GET /api/files/{filename}
     │   │       ├── components     // Компоненты UI модуля BlockGeneration
     │   │       │   ├── SlidesList       // Список слайдов
     │   │       │   ├── SortableSlide    // Слайд, который можно перетаскивать
-    │   │       │   └── ThemeCardSelector // Выбор темы/стиля слайда
+    │   │       │   └── ThemeCardSelector // Выбор темы/стиля презентации
     │   │       └── hooks          // Хуки для компонентов UI
     │   │           ├── useSlidesList     // Логика списка слайдов
     │   │           └── useSortableSlide  // Логика перетаскивания слайда
@@ -410,7 +410,7 @@ GET /api/files/{filename}
     │   │   ├── hooks
     │   │   │   └── useHeader       // Логика работы шапки сайта (меню, кнопки, состояние)
     │   │   └── ui                  // Компоненты шапки (Header)
-    │   ├── MarkdownPresentation     // Редактор презентаций на Markdown
+    │   ├── MarkdownPresentation     // Запарсенная (markdown) визуальная презентация
     │   │   ├── blocks
     │   │   │   ├── RenderBlock
     │   │   │   │   ├── components   // UI-компоненты для каждого типа блока
@@ -474,8 +474,8 @@ GET /api/files/{filename}
     │   │       └── lib
     │   │           └── utils
     │   ├── navigation
-    │   │   └── ui               // Компоненты навигации (меню, хлебные крошки)
-    │   └── PromptSend            // Модуль отправки промптов пользователем
+    │   │   └── ui               // Компонент навигации
+    │   └── PromptSend            // Модуль основной страницы с отправкой промпта
     │       ├── blocks
     │       │   ├── FeaturesBlock
     │       │   ├── HowItWorksBlock
@@ -506,6 +506,7 @@ GET /api/files/{filename}
 
 - **React 19.2.0** - Основной фреймворк
 - **TypeScript** - Типизация
+- **Dnd-Kit** - Перетаскивание слайдов/блоков
 - **Material-UI** - UI компоненты
 - **Redux Toolkit** - Управление состоянием
 - **Framer Motion** - Анимации
@@ -523,6 +524,10 @@ interface Theme {
     heading: string;
     paragraph: string;
     backgroundImages?: string[];
+  };
+  fonts: {
+    heading: string;
+    paragraph: string;
   };
 }
 ```
