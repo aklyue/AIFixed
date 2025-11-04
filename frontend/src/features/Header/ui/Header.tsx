@@ -3,7 +3,7 @@ import { AppBar, Toolbar, Typography, IconButton, Box } from "@mui/material";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion, useAnimation } from "framer-motion";
-import SlideNavigationToolbar from "../../MarkdownPresentation/ui/components/SlideNavigationToolbar";
+import SlideNavigationToolbar from "../../presentation/ui/components/SlideNavigationToolbar";
 import { useHeader } from "../hooks";
 
 const MotionAppBar = motion(AppBar);

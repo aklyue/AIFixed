@@ -39,7 +39,7 @@ export const useGeneration = () => {
       {
         id: crypto.randomUUID(),
         type: "ai",
-        content: "Привет! Я помогу тебе отредактировать твой слайд.",
+        content: "Привет! Я помогу тебе пересоздать презентацию.",
       },
     ];
     setMessages(mockMessages);

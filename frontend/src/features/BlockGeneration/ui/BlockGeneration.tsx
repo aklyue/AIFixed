@@ -16,7 +16,7 @@ export const BlockGeneration = () => {
   const navigate = useNavigate();
 
   const handleProceed = () => navigate("/editor");
-  const handleBack = () => navigate("/");
+  const handleBack = () => navigate(-1);
 
   return (
     <MotionContainer

@@ -1,17 +1,12 @@
 import React from "react";
-import {
-  Box,
-  Button,
-  IconButton,
-  lighten,
-  useTheme,
-} from "@mui/material";
+import { Box, Button, IconButton, lighten, useTheme } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/DeleteOutline";
 import UndoIcon from "@mui/icons-material/Undo";
 import RedoIcon from "@mui/icons-material/Redo";
 import ArrowBack from "@mui/icons-material/ArrowBackIos";
 import ArrowForward from "@mui/icons-material/ArrowForwardIos";
+import UploadIcon from "@mui/icons-material/UploadOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../../app/store";
 import {
@@ -111,7 +106,8 @@ const SlideNavigationToolbar: React.FC = () => {
           },
         }}
       >
-        Export PPTX
+        Export
+        <UploadIcon />
       </Button>
 
       <AddSlideDialog

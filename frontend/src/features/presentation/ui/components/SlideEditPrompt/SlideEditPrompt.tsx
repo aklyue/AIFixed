@@ -41,6 +41,7 @@ const SlideEditPrompt: React.FC<SlideWithEditorProps> = ({
     editing,
     error,
     selectedBtn,
+    setSelectedBtn,
     textValue,
     setTextValue,
     setEditing,
@@ -95,7 +96,10 @@ const SlideEditPrompt: React.FC<SlideWithEditorProps> = ({
             <Box sx={{ p: 2, height: "100%", boxSizing: "border-box" }}>
               <TextField
                 value={textValue}
-                onChange={(e) => setTextValue(e.target.value)}
+                onChange={(e) => {
+                  setSelectedBtn(null);
+                  setTextValue(e.target.value);
+                }}
                 multiline
                 label="Редактировать"
                 minRows={5}
