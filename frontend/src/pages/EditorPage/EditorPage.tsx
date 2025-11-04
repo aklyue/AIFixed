@@ -15,7 +15,7 @@ function EditorPage() {
       >
         <Container
           sx={{
-            maxWidth: "2000px !important",
+            maxWidth: "100% !important",
             maxHeight: "100% !important",
             px: "0 !important",
             height: "100%",

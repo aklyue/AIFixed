@@ -60,29 +60,6 @@ export const renderMiniLayout = (layout: PlateSlide["layout"]) => {
         </Box>
       );
 
-    case "grid-text-top-two-bottom":
-      return (
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateRows: "1fr 1fr",
-            gap: 0.5,
-            height: "100%",
-          }}
-        >
-          <Box sx={{ bgcolor: "grey.200" }} />
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: 0.5,
-            }}
-          >
-            <Box sx={{ bgcolor: "grey.200" }} />
-            <Box sx={{ bgcolor: "grey.200" }} />
-          </Box>
-        </Box>
-      );
     case "center":
     case "text-only":
     default:

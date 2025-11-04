@@ -55,6 +55,8 @@ export interface SlideBlock {
   };
 
   justifyContent?: "flex-start" | "flex-end";
+
+  cellId?: string;
 }
 
 export interface PlateSlide {
@@ -67,8 +69,7 @@ export interface PlateSlide {
     | "bottom-image"
     | "center"
     | "text-only"
-    | "grid-2x2"
-    | "grid-text-top-two-bottom";
+    | "grid-2x2";
   content: SlideBlock[];
   alignItems?: "flex-start" | "flex-end" | "center";
   theme?: Theme;

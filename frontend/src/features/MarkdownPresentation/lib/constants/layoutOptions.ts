@@ -7,5 +7,4 @@ export const layoutOptions: PlateSlide["layout"][] = [
   "top-image",
   "bottom-image",
   "grid-2x2",
-  "grid-text-top-two-bottom",
 ];

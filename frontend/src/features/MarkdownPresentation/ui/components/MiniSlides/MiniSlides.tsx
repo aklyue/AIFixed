@@ -105,10 +105,15 @@ const MiniSlides: React.FC<{ slides: PlateSlide[] }> = ({ slides }) => {
             <Box
               sx={{
                 position: "absolute",
-                top: 4,
+                top: 0,
                 left: 0,
                 right: 0,
+                bgcolor: "rgba(255, 255, 255, 1)",
+                borderBottom: "1px solid #ccc",
+                borderRight: "1px solid #ccc",
+                width: 25,
                 display: "flex",
+                borderBottomRightRadius: 7,
                 justifyContent: "space-between",
                 alignItems: "center",
               }}
@@ -117,8 +122,8 @@ const MiniSlides: React.FC<{ slides: PlateSlide[] }> = ({ slides }) => {
                 variant="caption"
                 sx={{
                   color: theme?.colors.heading,
-                  fontFamily: theme?.fonts.heading,
                   fontWeight: "bold",
+
                   backgroundColor: "rgba(255, 255, 255, 0)",
                   px: 1,
                   borderRadius: "4px",
