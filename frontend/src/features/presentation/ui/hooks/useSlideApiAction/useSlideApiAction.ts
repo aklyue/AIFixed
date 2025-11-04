@@ -64,6 +64,7 @@ export const useSlideApiAction = (currentSlide: PlateSlide) => {
     editing,
     error,
     selectedBtn,
+    setSelectedBtn,
     textValue,
     setTextValue,
     setEditing,

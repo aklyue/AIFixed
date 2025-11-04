@@ -3,7 +3,10 @@ import { Box, IconButton, darken } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { Theme, SlideBlock, PlateSlide } from "../../../../../shared/types";
 import { AppDispatch } from "../../../../../app/store";
-import { updateBlock } from "../../../../../app/store/slices/editorSlice";
+import {
+  updateBlock,
+  updateSlideContent,
+} from "../../../../../app/store/slices/editorSlice";
 import SlideEditPrompt from "../SlideEditPrompt";
 import { RenderBlock } from "../../../blocks/RenderBlock";
 import AddSlideDialog from "../AddSlideDialog";
@@ -32,7 +35,12 @@ export const SlideItem: React.FC<SlideItemProps> = ({
   const [editValue, setEditValue] = useState<string>("");
 
   const setSlideContent = (blocks: SlideBlock[]) => {
-    blocks.forEach((b) => dispatch(updateBlock({ id: b.id, newBlock: b })));
+    dispatch(
+      updateSlideContent({
+        slideId: slide.id,
+        newContent: blocks,
+      })
+    );
   };
 
   const {

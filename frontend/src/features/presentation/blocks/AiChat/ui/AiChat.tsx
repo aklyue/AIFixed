@@ -10,18 +10,19 @@ import {
   darken,
   Snackbar,
   Alert,
+  lighten,
 } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
 import FileIcon from "@mui/icons-material/FileOpen";
 import SendIcon from "@mui/icons-material/Send";
-import { useGeneration } from "../../../shared/hooks";
+import { useGeneration } from "../../../../../shared/hooks";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../app/store";
-import { Theme } from "../../../shared/types";
-import { LoadingOverlay } from "../../../shared/components";
+import { RootState } from "../../../../../app/store";
+import { Theme } from "../../../../../shared/types";
+import { LoadingOverlay } from "../../../../../shared/components";
 
 export const AiChat: React.FC = () => {
   const {
@@ -52,11 +53,8 @@ export const AiChat: React.FC = () => {
         sx={{
           display: "flex",
           flexDirection: "column",
-          m: 1,
-          mr: 0,
-          border: `1px solid #334e684a`,
           borderRadius: 4,
-          minHeight: 300,
+          height: "100%",
           bgcolor: "white",
         }}
       >
@@ -69,8 +67,8 @@ export const AiChat: React.FC = () => {
             gap: 0.5,
           }}
         >
-          <AutoAwesomeIcon sx={{ color: "#334e68" }} />
-          <Typography sx={{ color: "#334e68" }}>
+          <AutoAwesomeIcon sx={{ color: "primary.main" }} />
+          <Typography sx={{ color: "primary.main" }}>
             <strong>AI Generate</strong>
           </Typography>
         </Box>
@@ -80,8 +78,8 @@ export const AiChat: React.FC = () => {
             height: "100%",
             overflowY: "auto",
             boxShadow: "none",
-            borderTop: `1px solid ${theme?.colors.paragraph + "4a"}`,
-            borderBottom: `1px solid ${theme?.colors.paragraph + "4a"}`,
+            borderTop: `1px solid`,
+            borderBottom: `1px solid`,
             borderRadius: 0,
             p: 1,
           }}
@@ -107,12 +105,15 @@ export const AiChat: React.FC = () => {
                     <Box
                       sx={{
                         maxWidth: "75%",
-                        borderRadius: 4,
+                        borderRadius: 2,
                         bgcolor:
                           msg.type === "user"
-                            ? darken("#f5f8ff", 0.1)
-                            : darken("#f5f8ff", 0.05),
-                        color: "#334e68",
+                            ? "#2e2e2e"
+                            : lighten("#2e2e2e", 0.9),
+                        color:
+                          msg.type === "user"
+                            ? lighten("#2e2e2e", 0.9)
+                            : "#2e2e2e",
                         p: 1.5,
                         wordBreak: "break-word",
                         whiteSpace: "pre-wrap",
@@ -125,7 +126,7 @@ export const AiChat: React.FC = () => {
                           sx={{
                             display: "flex",
                             alignItems: "center",
-                            bgcolor: darken("#f5f8ff", 0.14),
+                            bgcolor: darken("#2e2e2e", 0.1),
                             borderRadius: 1,
                             mt: 0.5,
                             p: 0.5,
@@ -164,7 +165,7 @@ export const AiChat: React.FC = () => {
               onChange={(e) => setInputText(e.target.value)}
               sx={{
                 "& .MuiOutlinedInput-root": {
-                  borderRadius: "12px",
+                  borderRadius: "8px",
                   pr: 1,
                 },
               }}
@@ -185,8 +186,8 @@ export const AiChat: React.FC = () => {
                         minWidth: 28,
                         borderRadius: "50%",
                         p: 0.5,
-                        color: "#334e68",
-                        "&:hover": { bgcolor: "#334e68" + "12" },
+                        color: "#2e2e2e",
+                        "&:hover": { bgcolor: lighten("#2e2e2e", 0.95) },
                       }}
                     >
                       {fileStatus?.converted ? (
@@ -204,17 +205,17 @@ export const AiChat: React.FC = () => {
               type="submit"
               aria-label="Send"
               sx={{
-                color: "#334e68",
+                color: "#2e2e2e",
                 bgcolor: "rgba(0,0,0,0)",
-                border: `1px solid #334e68`,
+                border: `1px solid #2e2e2e`,
                 transition: "all 0.2s",
-                borderRadius: "12px",
+                borderRadius: "8px",
                 p: 0.5,
                 minWidth: 50,
                 boxShadow: "none",
                 "&:hover": {
-                  bgcolor: "#334e68" + "12",
-                  color: "#334e68",
+                  bgcolor: lighten("#2e2e2e", 0.95),
+                  color: "#2e2e2e",
                   boxShadow: "none",
                 },
               }}

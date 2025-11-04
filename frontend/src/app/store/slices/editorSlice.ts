@@ -16,6 +16,11 @@ interface EditorState {
   revision: number;
   availableThemes: Theme[];
   globalThemeId: string;
+  customTheme: {
+    background?: string;
+    heading?: string;
+    paragraph?: string;
+  };
 }
 
 const initialState: EditorState = {
@@ -27,6 +32,11 @@ const initialState: EditorState = {
   revision: 0,
   availableThemes: themes,
   globalThemeId: "rosatom",
+  customTheme: {
+    background: undefined,
+    heading: undefined,
+    paragraph: undefined,
+  },
 };
 
 const editorSlice = createSlice({
@@ -157,29 +167,50 @@ const editorSlice = createSlice({
     },
     setGlobalTheme: (state, action: PayloadAction<string>) => {
       const themeId = action.payload;
-      const theme = state.availableThemes.find((t) => t.id === themeId);
-      if (!theme) return;
 
-      state.globalThemeId = themeId;
+      if (themeId === "custom" && state.customTheme) {
+        state.slides.forEach((slide) => {
+          slide.content = slide.content.map((block) => {
+            const isHeading = block.type === "heading";
+            return {
+              ...block,
+              style: {
+                ...block.style,
 
-      // обновляем style у всех блоков
-      state.slides.forEach((slide) => {
-        slide.content = slide.content.map((block) => {
-          const isHeading = block.type === "heading";
-          return {
-            ...block,
-            style: {
-              ...block.style,
-              fontFamily: isHeading
-                ? theme.fonts.heading
-                : theme.fonts.paragraph,
-              fontSize: isHeading ? 24 : 16,
-              fontWeight: isHeading ? 700 : 400,
-              color: isHeading ? theme.colors.heading : theme.colors.paragraph,
-            },
-          };
+                color: isHeading
+                  ? state.customTheme.heading
+                  : state.customTheme.paragraph,
+                background: state.customTheme.background,
+              },
+            };
+          });
         });
-      });
+        state.globalThemeId = "custom";
+      } else {
+        const theme = state.availableThemes.find((t) => t.id === themeId);
+        if (!theme) return;
+
+        state.slides.forEach((slide) => {
+          slide.content = slide.content.map((block) => {
+            const isHeading = block.type === "heading";
+            return {
+              ...block,
+              style: {
+                ...block.style,
+                fontFamily: isHeading
+                  ? theme.fonts.heading
+                  : theme.fonts.paragraph,
+                fontSize: isHeading ? 24 : 16,
+                fontWeight: isHeading ? 700 : 400,
+                color: isHeading
+                  ? theme.colors.heading
+                  : theme.colors.paragraph,
+              },
+            };
+          });
+        });
+        state.globalThemeId = themeId;
+      }
 
       state.history = state.history.slice(0, state.historyIndex + 1);
       state.history.push({
@@ -188,6 +219,16 @@ const editorSlice = createSlice({
       });
       state.historyIndex = state.history.length - 1;
       state.revision++;
+    },
+    setCustomTheme: (
+      state,
+      action: PayloadAction<{
+        background?: string;
+        heading?: string;
+        paragraph?: string;
+      }>
+    ) => {
+      state.customTheme = { ...state.customTheme, ...action.payload };
     },
     reorderSlides(
       state,
@@ -215,6 +256,7 @@ export const {
   markSlideVisited,
   resetVisitedSlides,
   setGlobalTheme,
+  setCustomTheme,
   reorderSlides,
 } = editorSlice.actions;
 export default editorSlice.reducer;

@@ -8,9 +8,6 @@ import CodeBlock from "./components/CodeBlock";
 import TableBlockWrapper from "./components/TableBlockWrapper";
 import ChartBlockWrapper from "./components/ChartBlockWrapper";
 import { Box } from "@mui/material";
-import { updateBlock } from "../../../../app/store/slices/editorSlice";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../app/store";
 
 interface RenderBlockProps {
   block: SlideBlock;
