@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { PlateSlide, Theme } from "../../../../../shared/types";
 import { AppDispatch } from "../../../../../app/store";
 import SlideItem from "../SlideItem";
-import MiniSlides from "../MiniSlides/MiniSlides";
+import MiniSlides from "../MiniSlides";
 import SlideToolbar from "../SlideToolbar";
 
 interface SlideListProps {

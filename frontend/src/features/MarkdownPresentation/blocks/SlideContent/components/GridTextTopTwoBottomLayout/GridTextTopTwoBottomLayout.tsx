@@ -8,7 +8,6 @@ interface Props {
 }
 
 const GridTextTopTwoBottomLayout: React.FC<Props> = ({ children }) => {
-  // разделим блоки: первый — для верхнего ряда, остальные — для нижних
   const topBlock = React.Children.toArray(children)[0];
   const bottomBlocks = React.Children.toArray(children).slice(1, 3);
 
@@ -16,7 +15,7 @@ const GridTextTopTwoBottomLayout: React.FC<Props> = ({ children }) => {
     <Box
       sx={{
         display: "grid",
-        gridTemplateRows: "1fr 1fr",
+        gridTemplateRows: "auto 1fr",
         gap: 2,
         p: 4,
         height: "100%",
@@ -48,12 +47,9 @@ const GridTextTopTwoBottomLayout: React.FC<Props> = ({ children }) => {
           <Box
             key={i}
             sx={{
-              bgcolor: "grey.100",
               borderRadius: 2,
               p: 2,
               display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
               textAlign: "center",
             }}
           >

@@ -12,7 +12,7 @@ export const useHeader = () => {
       controls.start({
         backgroundColor:
           isScrolled || location.pathname !== "/"
-            ? "rgba(255,255,255,0.85)"
+            ? "rgba(255,255,255,1)"
             : "rgba(255,255,255,0)",
         backdropFilter:
           isScrolled || location.pathname !== "/" ? "blur(6px)" : "blur(0px)",

@@ -17,7 +17,7 @@ export const useSlideScroll = (
       const elementTop = el.getBoundingClientRect().top + window.scrollY;
       const scrollPosition =
         elementTop - (window.innerHeight / 2 - el.offsetHeight / 2);
-      window.scrollTo({ top: scrollPosition, behavior: "smooth" });
+      window.scrollTo({ top: scrollPosition - 20, behavior: "smooth" });
     }
   }, [currentSlide]);
 
