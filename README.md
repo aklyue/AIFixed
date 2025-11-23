@@ -576,7 +576,7 @@ src/
 
 ```
 AH-git/
-├── 📁 backend/                 # Python FastAPI backend
+├── 📁 backend/                # Python FastAPI backend
 │   ├── 📁 src/                # Исходный код
 │   │   ├── 📁 modules/        # ML модули
 │   │   ├── 📁 routes/         # API маршруты
@@ -588,7 +588,8 @@ AH-git/
 │   └── 📄 requirements.txt    # Python зависимости
 ├── 📁 frontend/               # React TypeScript frontend
 │   ├── 📁 src/                # Исходный код
-│   │   ├── 📁 features/       # Основные функции
+        ├── 📁 app/            # Входная точка приложения
+│   │   ├── 📁 features/       # Основные фичи
 │   │   ├── 📁 pages/          # Страницы
 │   │   └── 📁 shared/         # Общие компоненты
 │   ├── 📄 Dockerfile          # Docker образ
@@ -638,6 +639,6 @@ AH-git/
 
 **Создано с ❤️ для автоматизации создания презентаций**
 
-[🔗 GitHub](https://github.com/your-repo) • [📧 Email](mailto:your-email@example.com) • [🐛 Issues](https://github.com/your-repo/issues)
+[🔗 GitHub](https://github.com/aklyue/AIFixed) • [📧 Email](mailto:olegglapshin@gmail.com) • [🐛 Issues](https://github.com/aklyue/AIFixed/issues)
 
 </div>
