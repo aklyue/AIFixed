@@ -159,8 +159,8 @@ DEFAULT_MODEL = "moonshotai/kimi-k2-0905"  # OpenRouter
 
 ```bash
 # Клонирование репозитория
-git clone <repository-url>
-cd <repository-name>
+git clone https://github.com/aklyue/AIFixed.git
+cd AIFixed
 
 # Создание .env файлов
 cp backend/.env.example backend/.env
