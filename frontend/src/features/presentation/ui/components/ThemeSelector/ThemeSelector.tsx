@@ -8,6 +8,8 @@ import {
   Button,
   Divider,
   Drawer,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import { TwitterPicker } from "react-color";
 import PaletteIcon from "@mui/icons-material/PaletteOutlined";
@@ -23,6 +25,9 @@ function ThemeSelector() {
     setOpen,
     customColors,
   } = useThemeActions();
+
+  const muiTheme = useTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
 
   return (
     <Box>

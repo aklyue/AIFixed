@@ -13,6 +13,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useEditableImage } from "../../../hooks";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface Props {
   slideId: string;
@@ -36,7 +37,12 @@ const EditableImage: React.FC<Props> = ({ slideId, blockId }) => {
     handleSave,
     fileInputRef,
     dragOver,
+    tapped,
+    isMobile,
+    handleTap,
   } = useEditableImage({ slideId, blockId });
+
+  const showIcons = (!isMobile && hover) || (isMobile && tapped);
 
   return (
     <Box
@@ -45,8 +51,10 @@ const EditableImage: React.FC<Props> = ({ slideId, blockId }) => {
         height: "100%",
         position: "relative",
       }}
+      data-block-id={"true"}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
+      onClick={isMobile ? handleTap : undefined}
     >
       <Box
         component="img"
@@ -54,30 +62,43 @@ const EditableImage: React.FC<Props> = ({ slideId, blockId }) => {
         alt="Image"
         sx={{ width: "100%", height: "100%", objectFit: "cover" }}
       />
-      {hover && (
-        <IconButton
-          size="small"
-          sx={{
-            position: "absolute",
-            top: 4,
-            left:
-              slide?.layout === "right-image" || slide?.layout === "top-image"
-                ? 4
-                : undefined,
-            right:
-              slide?.layout !== "right-image" && slide?.layout !== "top-image"
-                ? 4
-                : undefined,
-            bgcolor: "white",
-            boxShadow: 1,
-            "&:hover": { bgcolor: "#eee" },
-            color: theme?.colors.heading,
-          }}
-          onClick={() => setOpen(true)}
-        >
-          <EditIcon fontSize="small" />
-        </IconButton>
-      )}
+      <AnimatePresence>
+        {showIcons && (
+          <motion.div
+            key="edit-icon"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            style={{
+              position: "absolute",
+              top: 4,
+              left:
+                slide?.layout === "right-image" || slide?.layout === "top-image"
+                  ? 4
+                  : undefined,
+              right:
+                slide?.layout !== "right-image" && slide?.layout !== "top-image"
+                  ? 4
+                  : undefined,
+              zIndex: 10,
+            }}
+          >
+            <IconButton
+              size="small"
+              sx={{
+                bgcolor: "white",
+                boxShadow: 1,
+                "&:hover": { bgcolor: "#eee" },
+                color: theme?.colors.heading,
+              }}
+              onClick={() => setOpen(true)}
+            >
+              <EditIcon fontSize="small" />
+            </IconButton>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Dialog
         open={open}

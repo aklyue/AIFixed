@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Box, lighten } from "@mui/material";
+import { Box, lighten, useMediaQuery, useTheme } from "@mui/material";
 import { AnimatePresence } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../../app/store";
@@ -7,6 +7,7 @@ import { useSlideScroll } from "../hooks";
 import { getSlideBackground } from "../lib/utils/getSlideBackground";
 import EmptyState from "./components/EmptyState";
 import SlideList from "./components/SlideList";
+import SlideToolbar from "./components/SlideToolbar";
 
 export const MarkdownPresentation: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -17,6 +18,9 @@ export const MarkdownPresentation: React.FC = () => {
   const theme = useSelector((s: RootState) =>
     s.editor.availableThemes.find((t) => t.id === s.editor.globalThemeId)
   );
+
+  const muiTheme = useTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
 
   const currentSlide = slides[currentIndex];
   const bgImage = getSlideBackground(theme, currentIndex);
@@ -46,7 +50,7 @@ export const MarkdownPresentation: React.FC = () => {
             sx={{
               display: "flex",
               justifyContent: "space-between",
-              pb: 16,
+              pb: isMobile ? 0 : 16,
               bgcolor: lighten(theme?.colors.background || "#ffffff", 0.3),
               transition: "all 0.2s",
             }}
@@ -59,6 +63,7 @@ export const MarkdownPresentation: React.FC = () => {
               bgImage={bgImage}
               dispatch={dispatch}
             />
+            <SlideToolbar slideId={currentSlide.id} />{" "}
           </Box>
         )}
       </AnimatePresence>

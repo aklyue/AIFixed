@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import ResizableImage from "../ResizableImage";
 import { PlateSlide } from "../../../../../../shared/types";
 
@@ -20,6 +20,9 @@ const ImageRowLayout: React.FC<Props> = ({
 }) => {
   const inverted = layout === "bottom-image";
 
+  const muiTheme = useTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
+
   return (
     <Box
       sx={{
@@ -28,7 +31,7 @@ const ImageRowLayout: React.FC<Props> = ({
         flex: 1,
         overflow: "hidden",
         width: "100%",
-        height: "100%",
+        height: isMobile ? "70vh" : "100%",
         justifyContent: slide.alignItems,
       }}
     >
@@ -46,7 +49,7 @@ const ImageRowLayout: React.FC<Props> = ({
           display: "flex",
           flexDirection: "column",
           gap: 1.5,
-          p: 4,
+          p: isMobile ? 3 : 4,
           overflowY: "hidden",
         }}
       >

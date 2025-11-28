@@ -11,6 +11,7 @@ import {
   Snackbar,
   TextField,
   Typography,
+  useMediaQuery,
   useTheme,
 } from "@mui/material";
 import { useGeneration } from "../../../shared/hooks";
@@ -33,6 +34,7 @@ export const PromptSend: React.FC = () => {
   } = useGeneration();
 
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const navigate = useNavigate();
 
@@ -64,7 +66,7 @@ export const PromptSend: React.FC = () => {
         }}
       >
         <Typography
-          variant="h2"
+          variant={isMobile ? "h4" : "h2"}
           fontWeight="bold"
           sx={{
             m: 0,
@@ -75,7 +77,7 @@ export const PromptSend: React.FC = () => {
           Создавайте презентации без усилий за короткое время
         </Typography>
         <Typography
-          variant="h5"
+          variant={isMobile ? "subtitle1" : "h5"}
           sx={{
             margin: 0,
             mt: 2,
@@ -89,7 +91,10 @@ export const PromptSend: React.FC = () => {
       </Box>
 
       {/* Форма */}
-      <form onSubmit={onSubmit} style={{ padding: "8px 8px", width: "1000px" }}>
+      <form
+        onSubmit={onSubmit}
+        style={{ padding: "8px 8px", width: isMobile ? "100%" : "1000px" }}
+      >
         <TextField
           fullWidth
           multiline
@@ -114,6 +119,7 @@ export const PromptSend: React.FC = () => {
           mt={2}
           display="flex"
           alignItems="center"
+          flexDirection={isMobile ? "column" : "row"}
           justifyContent="space-between"
         >
           <input
@@ -125,7 +131,12 @@ export const PromptSend: React.FC = () => {
           />
 
           {/* Кнопка загрузки и выбор модели */}
-          <Box>
+          <Box
+            width={isMobile ? "100%" : undefined}
+            display={"flex"}
+            justifyContent={"space-between"}
+            mb={isMobile ? 2 : undefined}
+          >
             <Button
               onClick={() => fileInputRef.current?.click()}
               startIcon={
@@ -137,7 +148,7 @@ export const PromptSend: React.FC = () => {
                 borderRadius: "8px",
                 color: "primary.main",
                 borderColor: "primary.main",
-                maxWidth: 200,
+                maxWidth: isMobile ? "100%" : 200,
                 px: 2,
                 justifyContent: "flex-start",
                 textTransform: "none",
@@ -169,7 +180,7 @@ export const PromptSend: React.FC = () => {
               sx={{
                 height: 40,
                 ml: 2,
-                maxWidth: 200,
+                maxWidth: isMobile ? "100%" : 200,
                 borderRadius: "8px",
                 color: "text.primary",
                 bgcolor: "background.paper",
@@ -212,6 +223,7 @@ export const PromptSend: React.FC = () => {
               textTransform: "none",
               color: "primary.contrastText",
               "&:hover": { bgcolor: "primary.dark" },
+              width: isMobile ? "100%" : undefined
             }}
           >
             Сгенерировать

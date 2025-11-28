@@ -1,6 +1,6 @@
 export { MarkdownPresentation } from "./presentation/ui/MarkdownPresentation";
 export { AppRouter } from "./navigation/ui/AppRouter";
-export { PromptSend } from "./PromptSend/ui/PromptSend";
+export { PromptSend } from "./landing/ui/PromptSend";
 
 export * from "./presentation/ui/components/SlideNavigationToolbar";
 export * from "./presentation/ui/components/SlideToolbar";

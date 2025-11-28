@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import { PlateSlide } from "../../../../../../shared/types";
 
 interface Props {
@@ -8,6 +8,9 @@ interface Props {
 }
 
 const Grid2x2Layout: React.FC<Props> = ({ children }) => {
+  const muiTheme = useTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
+
   return (
     <Box
       sx={{
@@ -15,7 +18,7 @@ const Grid2x2Layout: React.FC<Props> = ({ children }) => {
         gridTemplateColumns: "1fr 1fr",
         gridTemplateRows: "1fr 1fr",
         gap: 2,
-        p: 4,
+        p: isMobile ? 2 : 4,
         width: "100%",
         height: "100%",
         boxSizing: "border-box",
@@ -25,6 +28,5 @@ const Grid2x2Layout: React.FC<Props> = ({ children }) => {
     </Box>
   );
 };
-
 
 export default Grid2x2Layout;

@@ -5,6 +5,7 @@ import {
   Container,
   useTheme,
   lighten,
+  useMediaQuery,
 } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../../../../app/store";
@@ -17,6 +18,7 @@ const MotionPaper = motion(Paper);
 export const ThemeCardSelector = () => {
   const dispatch = useDispatch<AppDispatch>();
   const themeMui = useTheme();
+  const isMobile = useMediaQuery(themeMui.breakpoints.down("md"));
   const currentThemeId = useSelector(
     (state: RootState) => state.editor.globalThemeId
   );
@@ -31,7 +33,7 @@ export const ThemeCardSelector = () => {
       sx={{
         position: "relative",
         maxWidth: "1000px !important",
-        p: 4,
+        p: isMobile ? 1 : 4,
         borderRadius: 2,
         boxShadow: 0,
         bgcolor: lighten(theme?.colors.background || "#ffffff", 0.3),
@@ -84,7 +86,7 @@ export const ThemeCardSelector = () => {
                 onClick={() => dispatch(setGlobalTheme(theme.id))}
                 sx={{
                   cursor: "pointer",
-                  width: 250,
+                  width: isMobile ? "100%" : 250,
                   p: 2,
                   border: "2px solid",
                   borderRadius: 2,

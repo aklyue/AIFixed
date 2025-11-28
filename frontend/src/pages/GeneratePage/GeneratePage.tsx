@@ -1,5 +1,5 @@
 import { Box, lighten } from "@mui/material";
-import { BlockGeneration } from "../../features/BlockGeneration";
+import { BlockGeneration } from "../../features/setupSlides";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 

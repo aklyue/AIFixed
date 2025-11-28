@@ -40,7 +40,7 @@ export const SortableSlide: React.FC<Props> = ({
           <IconButton
             {...listeners}
             {...attributes}
-            sx={{ cursor: "grab" }}
+            sx={{ cursor: "grab", touchAction: "none" }}
             size="small"
           >
             <DragIndicatorIcon />

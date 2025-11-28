@@ -15,7 +15,6 @@ export const useGridCreator = (slide: PlateSlide) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const imageBlocks = slide.content.filter((b) => b.type === "image");
-  console.log(imageBlocks);
   const firstImage = imageBlocks[0];
   const verticalBlocks = slide.content.filter((b) => b.id !== firstImage?.id);
 

@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { Box, IconButton, darken } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  darken,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { Theme, SlideBlock, PlateSlide } from "../../../../../shared/types";
 import { AppDispatch } from "../../../../../app/store";
@@ -11,9 +17,6 @@ import SlideEditPrompt from "../SlideEditPrompt";
 import { RenderBlock } from "../../../blocks/RenderBlock";
 import AddSlideDialog from "../AddSlideDialog";
 import { useSlideActions } from "../../hooks";
-
-const slideWidth = 1100;
-const slideHeight = 518;
 
 interface SlideItemProps {
   slide: PlateSlide;
@@ -42,6 +45,12 @@ export const SlideItem: React.FC<SlideItemProps> = ({
       })
     );
   };
+
+  const muiTheme = useTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
+
+  const slideWidth = 1100;
+  const slideHeight = 518;
 
   const {
     handleAddNext,
@@ -84,7 +93,7 @@ export const SlideItem: React.FC<SlideItemProps> = ({
             position: "relative",
             width: slideWidth,
             maxWidth: "100%",
-            aspectRatio: "16/9",
+            aspectRatio: isMobile ? undefined : "16/9",
             display: "flex",
             flexDirection: "column",
             borderRadius: 2,

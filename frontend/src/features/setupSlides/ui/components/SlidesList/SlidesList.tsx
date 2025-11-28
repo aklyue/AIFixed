@@ -8,6 +8,7 @@ import {
   MenuItem,
   useTheme,
   lighten,
+  useMediaQuery,
 } from "@mui/material";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
@@ -34,6 +35,9 @@ export const SlidesList = () => {
     s.editor.availableThemes.find((t) => t.id === s.editor.globalThemeId)
   );
 
+  const muiTheme = useTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
+
   if (loading) return <LoadingOverlay />;
 
   return (
@@ -41,7 +45,7 @@ export const SlidesList = () => {
       component={Paper}
       sx={{
         maxWidth: "1000px !important",
-        p: 4,
+        p: isMobile ? 1 : 4,
         boxShadow: 0,
         borderRadius: 2,
         bgcolor: lighten(theme?.colors.background || "#ffffff", 0.3),
@@ -69,9 +73,10 @@ export const SlidesList = () => {
             bgcolor: "primary.main",
             color: "white",
             "&:hover": { bgcolor: "primary.main" },
+            textTransform: isMobile ? "none" : undefined,
           }}
         >
-          Перегенерировать
+          {isMobile ? "Сгенерировать" : "Перегенерировать"}
         </MotionButton>
 
         <Select

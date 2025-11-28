@@ -23,7 +23,7 @@ export const HowItWorksBlock: React.FC<HowItWorksBlockProps> = ({
         }}
       >
         <Typography
-          variant="subtitle1"
+          variant="h6"
           color="text.secondary"
           textAlign="center"
           sx={{ mb: 1 }}

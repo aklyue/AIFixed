@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import EditableImage from "./EditableImage";
 import { useResizeImage } from "../../hooks";
 
@@ -24,13 +24,16 @@ const ResizableImage: React.FC<Props> = ({
       inverted,
     });
 
+  const muiTheme = useTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
+
   return (
     <Box
       sx={{
         position: "relative",
         flex: horizontal ? `0 0 ${sizeValue}%` : undefined,
         width: horizontal ? undefined : "100%",
-        height: horizontal ? "100%" : `${sizeValue}%`,
+        height: horizontal ? (isMobile ? undefined : "100%") : `${sizeValue}%`,
         userSelect: dragging ? "none" : undefined,
         overflow: "hidden",
       }}
@@ -38,15 +41,17 @@ const ResizableImage: React.FC<Props> = ({
       <EditableImage blockId={block!.id} slideId={slideId} />
       <Box
         sx={{
+          touchAction: horizontal ? "none" : "none",
           cursor: horizontal ? "col-resize" : "row-resize",
           position: "absolute",
           zIndex: 10,
-          bgcolor: "rgba(0, 0, 0, 0)",
+          bgcolor: isMobile ? theme?.colors.heading : "rgba(0, 0, 0, 0)",
           transition: "all 0.2s",
           "&:hover": { bgcolor: theme?.colors.heading },
           ...sliderStyle,
         }}
         onMouseDown={startResize}
+        onTouchStart={startResize}
       />
     </Box>
   );

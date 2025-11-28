@@ -1,9 +1,18 @@
 import React from "react";
-import { Box, Container, Typography, Paper, useTheme } from "@mui/material";
+import {
+  Box,
+  Container,
+  Typography,
+  Paper,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
 import { motion } from "framer-motion";
 import { dockerCommands, endpoints } from "../../lib";
 
 export const QuickStartBlock: React.FC = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
     <Container sx={{ py: 10, maxWidth: "1200px !important" }}>
@@ -37,11 +46,12 @@ export const QuickStartBlock: React.FC = () => {
           <Paper
             elevation={0}
             sx={{
-              p: 3,
+              p: isMobile ? 2 : 3,
               borderRadius: 3,
               border: "1px solid",
               borderColor: "divider",
               bgcolor: "grey.100",
+              fontSize: isMobile ? 12 : undefined,
               fontFamily: "Monaco, Menlo, monospace",
               color: "text.primary",
               whiteSpace: "pre",
@@ -73,6 +83,7 @@ export const QuickStartBlock: React.FC = () => {
             display: "flex",
             gap: 3,
             justifyContent: "center",
+            flexDirection: isMobile ? "column" : "row",
             flexWrap: { xs: "nowrap", sm: "nowrap", md: "nowrap" },
             overflowX: { xs: "auto", sm: "auto", md: "visible" },
             pb: { xs: 2, sm: 0 },
@@ -92,7 +103,7 @@ export const QuickStartBlock: React.FC = () => {
               <Paper
                 elevation={0}
                 sx={{
-                  width: 300,
+                  width: isMobile ? undefined : 300,
                   flex: "0 0 auto",
                   p: 4,
                   borderRadius: 3,
