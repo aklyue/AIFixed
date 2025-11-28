@@ -1,37 +1,43 @@
-import { PlateSlide, SlideBlock, Theme } from "../../../../../shared/types";
-import { Box, Typography } from "@mui/material";
+import { PlateSlide, SlideBlock } from "../../../../../shared/types";
+import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import SlideContent from "../../../blocks/SlideContent";
 import { RenderBlock } from "../../../blocks/RenderBlock";
 import { motion } from "framer-motion";
 import { useMiniSlidesActions } from "../../hooks";
 
-const slideWidth = 1100;
-const slideHeight = 618;
-
 const MiniSlides: React.FC<{ slides: PlateSlide[] }> = ({ slides }) => {
   const { currentIndex, containerRef, handleSlideClick, theme } =
     useMiniSlidesActions(slides);
+
+  const muiTheme = useTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
+
+  const slideWidth = isMobile ? 500 : 1100;
+  const slideHeight = isMobile ? 700 : 618;
 
   return (
     <Box
       ref={containerRef}
       sx={{
-        maxWidth: 145,
-        height: "95vh",
+        maxWidth: isMobile ? "100vw" : 145,
+        height: isMobile ? "auto" : "95vh",
         overflowY: "auto",
+        overflowX: isMobile ? "auto" : "hidden",
         display: "flex",
-        flexDirection: "column",
-        gap: 0.5,
-        justifyContent: "center",
+        flexDirection: isMobile ? "row" : "column",
+        gap: isMobile ? 1 : 0.5,
+        justifyContent: isMobile ? "flex-start" : "center",
         userSelect: "none",
         position: "fixed",
+        zIndex: isMobile ? 13 : undefined,
+        p: isMobile ? 1 : 0,
       }}
     >
       <Box
         sx={{
-          borderRight: "5px solid #ccc",
+          borderRight: isMobile ? "none" : "5px solid #ccc",
           display: "flex",
-          flexDirection: "column",
+          flexDirection: isMobile ? "row" : "column",
           gap: 1,
           borderRadius: 2,
         }}
@@ -50,18 +56,21 @@ const MiniSlides: React.FC<{ slides: PlateSlide[] }> = ({ slides }) => {
             whileHover={{ borderColor: theme?.colors.paragraph }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
             sx={{
-              width: "100%",
+              width: isMobile ? "auto" : "100%",
+              minWidth: isMobile ? 30 : undefined,
               boxSizing: "border-box",
               boxShadow: 1,
-              minHeight: 80,
+              minHeight: isMobile ? 30 : 80,
               borderRadius: 0.7,
               overflow: "hidden",
               borderStyle: "solid",
               borderWidth: 1,
               cursor: "pointer",
               position: "relative",
-              transition: "all 0.2s",
               background: theme?.colors.background || "#fff",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
             <Box
@@ -73,6 +82,9 @@ const MiniSlides: React.FC<{ slides: PlateSlide[] }> = ({ slides }) => {
                 height: slideHeight,
                 pointerEvents: "none",
                 overflow: "hidden",
+                position: isMobile ? "absolute" : "relative",
+                top: isMobile ? -9999 : 0,
+                left: isMobile ? -9999 : 0,
               }}
             >
               <SlideContent
@@ -80,12 +92,7 @@ const MiniSlides: React.FC<{ slides: PlateSlide[] }> = ({ slides }) => {
                 slide={slide}
                 setSlideContent={() => {}}
                 renderBlock={(block: SlideBlock) => (
-                  <Box
-                    data-block-id={block.id}
-                    sx={{
-                      width: "100%",
-                    }}
-                  >
+                  <Box data-block-id={block.id} sx={{ width: "100%" }}>
                     <RenderBlock
                       key={block.id}
                       block={block}
@@ -102,36 +109,48 @@ const MiniSlides: React.FC<{ slides: PlateSlide[] }> = ({ slides }) => {
               />
             </Box>
 
-            <Box
-              sx={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bgcolor: "rgba(255, 255, 255, 1)",
-                borderBottom: "1px solid #ccc",
-                borderRight: "1px solid #ccc",
-                width: 25,
-                display: "flex",
-                borderBottomRightRadius: 7,
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Typography
-                variant="caption"
+            {!isMobile ? (
+              <Box
                 sx={{
-                  color: theme?.colors.heading,
-                  fontWeight: "bold",
-
-                  backgroundColor: "rgba(255, 255, 255, 0)",
-                  px: 1,
-                  borderRadius: "4px",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bgcolor: "rgba(255, 255, 255, 1)",
+                  borderBottom: "1px solid #ccc",
+                  borderRight: "1px solid #ccc",
+                  width: 25,
+                  display: "flex",
+                  borderBottomRightRadius: 7,
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 }}
               >
-                {i + 1}
-              </Typography>
-            </Box>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: theme?.colors.heading,
+                    fontWeight: "bold",
+                    px: 1,
+                  }}
+                >
+                  {i + 1}
+                </Typography>
+              </Box>
+            ) : (
+              <Box>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: theme?.colors.heading,
+                    fontWeight: "bold",
+                    textAlign: "center",
+                  }}
+                >
+                  {i + 1}
+                </Typography>
+              </Box>
+            )}
           </Box>
         ))}
       </Box>

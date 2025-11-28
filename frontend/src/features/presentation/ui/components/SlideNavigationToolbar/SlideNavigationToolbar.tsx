@@ -1,5 +1,12 @@
 import React from "react";
-import { Box, Button, IconButton, lighten, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  lighten,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/DeleteOutline";
 import UndoIcon from "@mui/icons-material/Undo";
@@ -28,6 +35,7 @@ const SlideNavigationToolbar: React.FC = () => {
   );
 
   const muiTheme = useTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
 
   const {
     handleAddSlide,
@@ -44,38 +52,49 @@ const SlideNavigationToolbar: React.FC = () => {
 
   return (
     <Box sx={{ display: "flex", gap: 1 }}>
-      <IconButton
-        color="primary"
-        onClick={() => dispatch(setCurrentIndex(Math.max(currentIndex - 1, 0)))}
-        disabled={currentIndex === 0}
-      >
-        <ArrowBack />
-      </IconButton>
-      <IconButton
-        color="primary"
-        onClick={() =>
-          dispatch(
-            setCurrentIndex(Math.min(currentIndex + 1, slides.length - 1))
-          )
-        }
-        disabled={currentIndex === slides.length - 1}
-      >
-        <ArrowForward />
-      </IconButton>
+      {!isMobile && (
+        <Box>
+          <IconButton
+            size={isMobile ? "small" : "medium"}
+            color="primary"
+            onClick={() =>
+              dispatch(setCurrentIndex(Math.max(currentIndex - 1, 0)))
+            }
+            disabled={currentIndex === 0}
+          >
+            <ArrowBack />
+          </IconButton>
+          <IconButton
+            color="primary"
+            onClick={() =>
+              dispatch(
+                setCurrentIndex(Math.min(currentIndex + 1, slides.length - 1))
+              )
+            }
+            disabled={currentIndex === slides.length - 1}
+          >
+            <ArrowForward />
+          </IconButton>
+          <IconButton
+            color="primary"
+            onClick={() => setAddDialogOpen(true)}
+            sx={{ ml: "auto" }}
+          >
+            <AddIcon color="primary" />
+          </IconButton>
+        </Box>
+      )}
 
       <IconButton
+        onClick={handleDeleteSlide}
         color="primary"
-        onClick={() => setAddDialogOpen(true)}
-        sx={{ ml: "auto" }}
+        size={isMobile ? "small" : "medium"}
       >
-        <AddIcon color="primary" />
-      </IconButton>
-
-      <IconButton onClick={handleDeleteSlide} color="primary">
         <DeleteIcon />
       </IconButton>
 
       <IconButton
+        size={isMobile ? "small" : "medium"}
         color="primary"
         onClick={() => dispatch(undo())}
         disabled={historyIndex <= 0}
@@ -83,6 +102,7 @@ const SlideNavigationToolbar: React.FC = () => {
         <UndoIcon />
       </IconButton>
       <IconButton
+        size={isMobile ? "small" : "medium"}
         color="primary"
         onClick={() => dispatch(redo())}
         disabled={historyIndex >= historyLength - 1}
@@ -107,7 +127,7 @@ const SlideNavigationToolbar: React.FC = () => {
         }}
       >
         Export
-        <UploadIcon />
+        {!isMobile && <UploadIcon />}
       </Button>
 
       <AddSlideDialog

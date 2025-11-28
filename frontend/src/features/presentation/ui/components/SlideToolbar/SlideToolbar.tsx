@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Box, IconButton, Tooltip, Drawer } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Tooltip,
+  Drawer,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
 import ChatIcon from "@mui/icons-material/ChatOutlined";
 import SettingsIcon from "@mui/icons-material/SettingsOutlined";
 import CloseIcon from "@mui/icons-material/CloseOutlined";
@@ -30,6 +37,9 @@ const SlideToolbar: React.FC<Props> = ({ slideId }) => {
 
   const [isChatOpen, setChatOpen] = useState(false);
   const [isSettingsOpen, setSettingsOpen] = useState(false);
+
+  const muiTheme = useTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
 
   const handleIconClick = (action: string) => {
     switch (action) {
@@ -77,6 +87,7 @@ const SlideToolbar: React.FC<Props> = ({ slideId }) => {
           alignItems: "center",
           justifyContent: "center",
           gap: 1,
+          zIndex: 11,
         }}
       >
         <Tooltip title="Первичная настройка" placement="left">
@@ -124,7 +135,7 @@ const SlideToolbar: React.FC<Props> = ({ slideId }) => {
         onClose={() => setChatOpen(false)}
         sx={{ zIndex: 1401 }}
       >
-        <Box sx={{ width: 350, height: "100%", zIndex: 1401 }}>
+        <Box sx={{ width: isMobile ? 300 : 350, height: "100%", zIndex: 1401 }}>
           <AiChat />
         </Box>
       </Drawer>

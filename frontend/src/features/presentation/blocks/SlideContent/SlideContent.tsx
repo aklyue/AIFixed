@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import {
   DndContext,
   closestCenter,
@@ -7,6 +7,7 @@ import {
   useSensor,
   useSensors,
   useDroppable,
+  TouchSensor,
 } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -39,7 +40,17 @@ export const SlideContent: React.FC<Props> = ({ slide, renderBlock }) => {
     handleGridDragEnd,
   } = useGridCreator(slide);
 
-  const sensors = useSensors(useSensor(PointerSensor));
+  const muiTheme = useTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(TouchSensor, {
+      activationConstraint: isMobile
+        ? { delay: 150, tolerance: 5 }
+        : undefined,
+    })
+  );
 
   const renderVerticalBlocks = () => (
     <DndContext
@@ -172,7 +183,7 @@ export const SlideContent: React.FC<Props> = ({ slide, renderBlock }) => {
             gap: 1.5,
             height: "100%",
             boxSizing: "border-box",
-            p: 4,
+            p: isMobile ? 3 : 4,
             overflowY: "auto",
             justifyContent: slide.alignItems,
           }}

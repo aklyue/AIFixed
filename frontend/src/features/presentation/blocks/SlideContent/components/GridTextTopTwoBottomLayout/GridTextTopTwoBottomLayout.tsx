@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import { PlateSlide } from "../../../../../../shared/types";
 
 interface Props {
@@ -11,13 +11,16 @@ const GridTextTopTwoBottomLayout: React.FC<Props> = ({ children }) => {
   const topBlock = React.Children.toArray(children)[0];
   const bottomBlocks = React.Children.toArray(children).slice(1, 3);
 
+    const muiTheme = useTheme();
+    const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
+
   return (
     <Box
       sx={{
         display: "grid",
         gridTemplateRows: "auto 1fr",
         gap: 2,
-        p: 4,
+        p: isMobile ? 2 : 4,
         height: "100%",
         boxSizing: "border-box",
       }}

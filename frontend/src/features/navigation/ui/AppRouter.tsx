@@ -5,8 +5,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import EditorPage from "../../../pages/EditorPage/EditorPage";
 import PromptPage from "../../../pages/PromptPage/PromptPage";
 import GeneratePage from "../../../pages/GeneratePage/GeneratePage";
-import { Header } from "../../Header";
-import { Box } from "@mui/material";
+import { Header } from "../../../widgets/Header";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
+import { Footer } from "../../../widgets/Footer/ui/Footer";
 
 const PageWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <motion.div
@@ -55,13 +56,27 @@ const AnimatedRoutes = () => {
   );
 };
 
-export const AppRouter = () => (
-  <BrowserRouter>
-    <Suspense fallback={<div>Загрузка...</div>}>
-      <Box sx={{ height: 64 }}>
-        <Header />
-      </Box>
-      <AnimatedRoutes />
-    </Suspense>
-  </BrowserRouter>
-);
+export const AppRouter = () => {
+  const isMobile = useMediaQuery(useTheme().breakpoints.down("md"));
+  return (
+    <BrowserRouter>
+      <Suspense fallback={<div>Загрузка...</div>}>
+        <Box
+          sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+        >
+          <Box sx={{ height: 64, flexShrink: 0 }}>
+            <Header />
+          </Box>
+
+          <Box sx={{ flexGrow: 1 }}>
+            <AnimatedRoutes />
+          </Box>
+
+          <Box sx={{ height: isMobile ? 64 : 120, flexShrink: 0 }}>
+            <Footer />
+          </Box>
+        </Box>
+      </Suspense>
+    </BrowserRouter>
+  );
+};

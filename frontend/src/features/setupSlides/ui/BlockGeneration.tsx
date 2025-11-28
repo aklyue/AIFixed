@@ -1,4 +1,11 @@
-import { Box, Button, Container, lighten } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  lighten,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import { SlidesList } from "./components/SlidesList/SlidesList";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -18,10 +25,13 @@ export const BlockGeneration = () => {
   const handleProceed = () => navigate("/editor");
   const handleBack = () => navigate(-1);
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
   return (
     <MotionContainer
       sx={{
-        p: 4,
+        p: isMobile ? 1 : 4,
         position: "relative",
         pb: 12,
         transition: "all 0.2s",
@@ -69,11 +79,12 @@ export const BlockGeneration = () => {
         exit={{ opacity: 0, y: 20 }}
         transition={{ duration: 0.2 }}
         onClick={handleBack}
-        startIcon={<ArrowBackIcon />}
+        startIcon={isMobile ? undefined : <ArrowBackIcon />}
         sx={{
           position: "fixed",
           top: 84,
-          left: 24,
+          left: isMobile ? undefined : 24,
+          right: isMobile ? 12 : undefined,
           bgcolor: "grey.100",
           color: "primary.main",
           borderRadius: "12px",
@@ -82,7 +93,7 @@ export const BlockGeneration = () => {
           zIndex: 10,
         }}
       >
-        Назад
+        {isMobile ? <ArrowBackIcon /> : "Назад"}
       </MotionButton>
 
       <AnimatePresence mode="popLayout">
@@ -111,7 +122,7 @@ export const BlockGeneration = () => {
       <Box
         sx={{
           position: "fixed",
-          bottom: 24,
+          bottom: isMobile ? 60 : 24,
           left: "50%",
           transform: "translateX(-50%)",
           zIndex: 10,
@@ -132,10 +143,11 @@ export const BlockGeneration = () => {
             }}
             sx={{
               height: 50,
+              width: isMobile ? 250 : undefined,
               borderRadius: "12px",
               bgcolor: "primary.main",
               color: "white",
-              px: 4,
+              px: isMobile ? 1 : 4,
               "&:hover": { bgcolor: "primary.main" },
             }}
           >

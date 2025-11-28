@@ -27,6 +27,7 @@ function EditSlideDialog({
         sx={{
           p: 2,
           display: "flex",
+          justifyContent: "center",
           gap: 1,
           flexWrap: "wrap",
           width: "fit-content",

@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 import { PlateSlide, Theme } from "../../../../../shared/types";
 import { AppDispatch } from "../../../../../app/store";
@@ -24,25 +24,30 @@ export const SlideList: React.FC<SlideListProps> = ({
   bgImage,
   dispatch,
 }) => {
+  const muiTheme = useTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
+
   return (
     <Box
       sx={{
         display: "flex",
         justifyContent: "space-between",
+        flexDirection: isMobile ? "column" : "row",
         width: "100%",
       }}
     >
       <Box
         sx={{
           flexShrink: 0,
-          width: 145,
-          overflowY: "auto",
+          width: isMobile ? "auto" : 145,
+          overflowY: isMobile ? undefined : "auto",
+          overflowX: isMobile ? "auto" : undefined,
           display: "flex",
-          flexDirection: "column",
-          gap: 2,
+          flexDirection: isMobile ? "row" : "column",
+          gap: isMobile ? 1 : 2,
           borderRadius: 2,
           p: 1,
-          height: "90vh",
+          height: isMobile ? undefined : "90vh",
           justifyContent: "center",
         }}
       >
@@ -55,9 +60,10 @@ export const SlideList: React.FC<SlideListProps> = ({
           sx={{
             display: "flex",
             flexDirection: "column",
-            gap: 4,
-            mt: 16,
-            width: "100%",
+            gap: isMobile ? 0 : 4,
+            mt: isMobile ? 8 : 16,
+            width: isMobile ? "95%" : "100%",
+            paddingX: isMobile ? 1 : undefined,
           }}
         >
           {slides.map((slide, index) => (
@@ -86,12 +92,13 @@ export const SlideList: React.FC<SlideListProps> = ({
           minWidth: 40,
           overflowY: "auto",
           height: "90vh",
-          display: "flex",
+          display: isMobile ? "none" : "flex",
+          position: isMobile ? "fixed" : undefined,
           alignItems: "center",
           p: 1,
         }}
       >
-        <SlideToolbar slideId={currentSlide.id} />{" "}
+        
       </Box>
     </Box>
   );

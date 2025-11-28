@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   IconButton,
@@ -7,6 +7,8 @@ import {
   Snackbar,
   Alert,
   lighten,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import EditIcon from "@mui/icons-material/Edit";
@@ -17,7 +19,11 @@ import SlideContent from "../../../blocks/SlideContent";
 
 import { LoadingOverlay } from "../../../../../shared/components";
 import { buttonAttributes } from "../../../../../shared/constants/buttonAttributes";
-import { useSlideActions, useSlideApiAction } from "../../hooks";
+import {
+  useIconsReveal,
+  useSlideActions,
+  useSlideApiAction,
+} from "../../hooks";
 import EditSlideDialog from "../EditSlideDialog";
 
 interface SlideWithEditorProps {
@@ -56,21 +62,29 @@ const SlideEditPrompt: React.FC<SlideWithEditorProps> = ({
     setSlideEditing,
   } = useSlideActions();
 
+  const { hovered, tapped, setHovered, handleSlideTap, setIsAnimating } =
+    useIconsReveal();
+
+  const muiTheme = useTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
+
+
   if (loading) return <LoadingOverlay />;
+
+  const showIcons = (!isMobile && hovered) || (isMobile && tapped);
+
   return (
     <Box
       id={currentSlide.id}
       sx={{
         position: "relative",
         height: "100%",
-        // border: `1px solid #ccc`,
         boxShadow: 2,
         borderRadius: 2,
         overflow: "hidden",
         flexShrink: 0,
         transition: "all 0.2s",
         "&:hover": {
-          // border: `1px solid ${theme?.colors.heading}`,
           "& .hoverIcon": {
             opacity: 1,
             transform: "translateY(0)",
@@ -79,8 +93,11 @@ const SlideEditPrompt: React.FC<SlideWithEditorProps> = ({
         display: "flex",
         flexDirection: "column",
       }}
+      onMouseEnter={() => !isMobile && setHovered(true)}
+      onMouseLeave={() => !isMobile && setHovered(false)}
+      onClick={isMobile ? handleSlideTap : undefined}
     >
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence>
         {editing ? (
           <motion.div
             key="editor-open"
@@ -214,44 +231,50 @@ const SlideEditPrompt: React.FC<SlideWithEditorProps> = ({
               renderBlock={renderBlock}
             />
 
-            <IconButton
-              className="hoverIcon"
-              size="small"
-              sx={{
-                position: "absolute",
-                top: 8,
-                right: 8,
-                bgcolor: "white",
-                boxShadow: 1,
-                opacity: 0,
-                transform: "translateY(-5px)",
-                transition: "all 0.2s ease",
-                zIndex: 10,
-                "&:hover": { bgcolor: "#eee" },
-              }}
-              onClick={() => setEditing(true)}
-            >
-              <AutoAwesomeIcon sx={{ color: theme?.colors.heading }} />
-            </IconButton>
-            <IconButton
-              className="hoverIcon"
-              size="small"
-              sx={{
-                position: "absolute",
-                top: 8,
-                right: 48,
-                bgcolor: "white",
-                boxShadow: 1,
-                opacity: 0,
-                transform: "translateY(-5px)",
-                transition: "all 0.2s ease",
-                zIndex: 10,
-                "&:hover": { bgcolor: "#eee" },
-              }}
-              onClick={() => setSlideEditing(true)}
-            >
-              <EditIcon sx={{ color: theme?.colors.heading }} />
-            </IconButton>
+            <AnimatePresence>
+              {showIcons && (
+                <motion.div
+                  key="slide-icons"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.15 }}
+                  onAnimationStart={() => setIsAnimating(true)}
+                  onAnimationComplete={() => setIsAnimating(false)}
+                  style={{
+                    position: "absolute",
+                    top: 10,
+                    right: 10,
+                    display: "flex",
+                    gap: 8,
+                    zIndex: 10,
+                  }}
+                >
+                  <IconButton
+                    size="small"
+                    sx={{
+                      bgcolor: "white",
+                      boxShadow: 1,
+                      "&:hover": { bgcolor: "#eee" },
+                    }}
+                    onClick={() => setEditing(true)}
+                  >
+                    <AutoAwesomeIcon sx={{ color: theme?.colors.heading }} />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    sx={{
+                      bgcolor: "white",
+                      boxShadow: 1,
+                      "&:hover": { bgcolor: "#eee" },
+                    }}
+                    onClick={() => setSlideEditing(true)}
+                  >
+                    <EditIcon sx={{ color: theme?.colors.heading }} />
+                  </IconButton>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>

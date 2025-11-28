@@ -9,6 +9,8 @@ import {
   Button,
   MenuItem,
   TextField,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -51,12 +53,17 @@ const EditableWrapper: React.FC<EditableWrapperProps> = ({
     setFontFamily,
     fontSize,
     setFontSize,
+    tapped,
+    setTapped,
   } = useEditableWrapper({ block, onSettingsChange });
+
+  const isMobile = useMediaQuery(useTheme().breakpoints.down("md"));
+
   return (
     <Box
       sx={{
         position: "relative",
-        border: hovered ? "1px dashed #bbb" : "1px solid transparent",
+        border: hovered || tapped ? "1px dashed #bbb" : "1px solid transparent",
         borderRadius: 1,
         transition: "all 0.2s",
         "&:hover": {
@@ -64,21 +71,39 @@ const EditableWrapper: React.FC<EditableWrapperProps> = ({
           backgroundColor: theme?.colors.background || "#fff",
         },
       }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseEnter={() => !isMobile && setHovered(true)}
+      onMouseLeave={() => !isMobile && setHovered(false)}
+      onClick={() => isMobile && setTapped(!tapped)}
+      data-block-id={"true"}
     >
       {children}
 
-      {hovered && (
-        <Box
+      <Box
+        sx={{
+          position: "absolute",
+          top: 4,
+          right: 4,
+          display: "flex",
+          gap: 0.5,
+          opacity: hovered || tapped ? 1 : 0,
+          pointerEvents: hovered || tapped ? "auto" : "none",
+          transition: "opacity 0.2s",
+        }}
+      >
+        <IconButton
+          size="small"
           sx={{
-            position: "absolute",
-            top: 4,
-            right: 4,
-            display: "flex",
-            gap: 0.5,
+            bgcolor: "white",
+            boxShadow: 1,
+            "&:hover": { bgcolor: "#eee" },
+            color: theme?.colors.heading,
           }}
+          onClick={onEdit}
         >
+          <EditIcon fontSize="small" />
+        </IconButton>
+
+        {onSettingsChange && (
           <IconButton
             size="small"
             sx={{
@@ -87,45 +112,30 @@ const EditableWrapper: React.FC<EditableWrapperProps> = ({
               "&:hover": { bgcolor: "#eee" },
               color: theme?.colors.heading,
             }}
-            onClick={onEdit}
+            onClick={openSettings}
           >
-            <EditIcon fontSize="small" />
+            <SettingsIcon fontSize="small" />
           </IconButton>
+        )}
 
-          {onSettingsChange && (
-            <IconButton
-              size="small"
-              sx={{
-                bgcolor: "white",
-                boxShadow: 1,
-                "&:hover": { bgcolor: "#eee" },
-                color: theme?.colors.heading,
-              }}
-              onClick={openSettings}
-            >
-              <SettingsIcon fontSize="small" />
-            </IconButton>
-          )}
-
-          {onDelete && (
-            <IconButton
-              size="small"
-              sx={{
-                bgcolor: "white",
-                boxShadow: 1,
-                "&:hover": { bgcolor: "#eee" },
-                color: theme?.colors.heading,
-              }}
-              onClick={() => {
-                onDelete();
-                dispatch(pushHistory());
-              }}
-            >
-              <DeleteIcon fontSize="small" />
-            </IconButton>
-          )}
-        </Box>
-      )}
+        {onDelete && (
+          <IconButton
+            size="small"
+            sx={{
+              bgcolor: "white",
+              boxShadow: 1,
+              "&:hover": { bgcolor: "#eee" },
+              color: theme?.colors.heading,
+            }}
+            onClick={() => {
+              onDelete();
+              dispatch(pushHistory());
+            }}
+          >
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        )}
+      </Box>
 
       <Dialog open={settingsOpen} onClose={() => setSettingsOpen(false)}>
         <DialogTitle>Настройки текста</DialogTitle>

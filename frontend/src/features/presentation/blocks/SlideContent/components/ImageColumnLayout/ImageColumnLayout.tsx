@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import ResizableImage from "../ResizableImage";
 import { PlateSlide } from "../../../../../../shared/types";
 
@@ -19,6 +19,9 @@ const ImageColumnLayout: React.FC<Props> = ({
   children,
 }) => {
   const inverted = layout === "right-image";
+
+  const muiTheme = useTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
 
   return (
     <Box
@@ -41,7 +44,7 @@ const ImageColumnLayout: React.FC<Props> = ({
       <Box
         sx={{
           flex: 1,
-          p: 4,
+          p: isMobile ? 3 : 4,
           display: "flex",
           flexDirection: "column",
           gap: 1.5,

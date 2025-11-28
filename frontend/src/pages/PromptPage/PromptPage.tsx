@@ -1,9 +1,9 @@
 import { Box } from "@mui/material";
 import { PromptSend } from "../../features";
-import FeaturesBlock from "../../features/PromptSend/blocks/FeaturesBlock";
-import WhyUsBlock from "../../features/PromptSend/blocks/WhyUsBlock";
-import HowItWorksBlock from "../../features/PromptSend/blocks/HowItWorksBlock";
-import QuickStartBlock from "../../features/PromptSend/blocks/QuickStartBlock";
+import FeaturesBlock from "../../features/landing/blocks/FeaturesBlock";
+import WhyUsBlock from "../../features/landing/blocks/WhyUsBlock";
+import HowItWorksBlock from "../../features/landing/blocks/HowItWorksBlock";
+import QuickStartBlock from "../../features/landing/blocks/QuickStartBlock";
 import { LoadingOverlay } from "../../shared/components";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";

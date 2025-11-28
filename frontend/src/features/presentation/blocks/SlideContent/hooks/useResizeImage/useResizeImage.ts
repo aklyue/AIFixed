@@ -37,19 +37,37 @@ export const useResizeImage = ({
   const tempSizeRef = useRef<number | null>(null);
 
   const startResize = useCallback(
-    (e: React.MouseEvent) => {
+    (e: React.MouseEvent | React.TouchEvent) => {
       if (!block) return;
       e.preventDefault();
       setDragging(true);
 
-      const startPos = horizontal ? e.clientX : e.clientY;
+      const startPos =
+        "touches" in e
+          ? horizontal
+            ? e.touches[0].clientX
+            : e.touches[0].clientY
+          : horizontal
+          ? e.clientX
+          : e.clientY;
       const startSize = horizontal
         ? block.widthPercent ?? 45
         : block.heightPercent ?? 20;
       const sensitivity = horizontal ? 0.0907 : 0.161;
 
-      const onMouseMove = (eMove: MouseEvent) => {
-        let delta = (horizontal ? eMove.clientX : eMove.clientY) - startPos;
+      console.log("horizontal:", horizontal, "inverted:", inverted, "startPos:", startPos);
+
+      const onMove = (moveEvent: MouseEvent | TouchEvent) => {
+        const currentPos =
+          "touches" in moveEvent
+            ? horizontal
+              ? moveEvent.touches[0].clientX
+              : moveEvent.touches[0].clientY
+            : horizontal
+            ? (moveEvent as MouseEvent).clientX
+            : (moveEvent as MouseEvent).clientY;
+
+        let delta = currentPos - startPos;
         if (inverted) delta = -delta;
 
         const newSize = Math.min(
@@ -59,12 +77,15 @@ export const useResizeImage = ({
 
         tempSizeRef.current = newSize;
         setTempSize(newSize);
+        console.log("delta", delta, "newSize", newSize);
       };
 
-      const onMouseUp = () => {
+      const onEnd = () => {
         setDragging(false);
-        window.removeEventListener("mousemove", onMouseMove);
-        window.removeEventListener("mouseup", onMouseUp);
+        window.removeEventListener("mousemove", onMove);
+        window.removeEventListener("mouseup", onEnd);
+        window.removeEventListener("touchmove", onMove);
+        window.removeEventListener("touchend", onEnd);
 
         const finalSize = tempSizeRef.current ?? startSize;
 
@@ -80,8 +101,10 @@ export const useResizeImage = ({
         setTempSize(null);
       };
 
-      window.addEventListener("mousemove", onMouseMove);
-      window.addEventListener("mouseup", onMouseUp);
+      window.addEventListener("mousemove", onMove);
+      window.addEventListener("mouseup", onEnd);
+      window.addEventListener("touchmove", onMove, { passive: false });
+      window.addEventListener("touchend", onEnd);
     },
     [block, horizontal, inverted, dispatch]
   );

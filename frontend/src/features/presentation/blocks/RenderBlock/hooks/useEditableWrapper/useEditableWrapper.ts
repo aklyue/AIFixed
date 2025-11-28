@@ -25,6 +25,9 @@ export const useEditableWrapper = ({
       (t) => t.id === state.editor.globalThemeId
     )
   );
+
+  const [tapped, setTapped] = useState(false);
+
   const openSettings = () => {
     setFontFamily((block?.style?.fontFamily || "Arial").split(",")[0].trim());
     setFontSize(block?.style?.fontSize || 16);
@@ -48,5 +51,7 @@ export const useEditableWrapper = ({
     setFontFamily,
     fontSize,
     setFontSize,
+    tapped,
+    setTapped,
   };
 };

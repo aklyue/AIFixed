@@ -7,6 +7,8 @@ import {
   ListItem,
   InputBase,
   darken,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import { useRenderBlock } from "../../hooks";
 
@@ -20,6 +22,9 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({ block, onEdit }) => {
     block,
     onEdit,
   });
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   if (editing) {
     return (
@@ -105,8 +110,10 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({ block, onEdit }) => {
             p: 1,
             backgroundColor: darken("#f5f5f5", 0.05),
             fontFamily: "monospace",
-            whiteSpace: "pre",
+            wordBreak: isMobile ? "break-all" : undefined,
+            whiteSpace: isMobile ? "pre-line" : "pre",
             cursor: "pointer",
+            width: isMobile ? "95%" : undefined,
           }}
           onClick={handleClick}
         >

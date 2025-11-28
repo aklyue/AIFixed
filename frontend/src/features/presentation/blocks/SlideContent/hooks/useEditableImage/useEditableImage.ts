@@ -6,6 +6,7 @@ import {
   pushHistory,
   updateBlock,
 } from "../../../../../../app/store/slices/editorSlice";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 export const useEditableImage = ({
   slideId,
@@ -35,6 +36,17 @@ export const useEditableImage = ({
       (t) => t.id === state.editor.globalThemeId
     )
   );
+
+  const muiTheme = useTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
+  const [tapped, setTapped] = useState(false);
+
+  const showIcons = (!isMobile && hover) || (isMobile && tapped);
+
+  const handleTap = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    setTapped((prev) => !prev);
+  };
 
   if (!block) {
     return {
@@ -103,5 +115,9 @@ export const useEditableImage = ({
     handleSave,
     fileInputRef,
     dragOver,
+    tapped,
+    setTapped,
+    isMobile,
+    handleTap,
   };
 };

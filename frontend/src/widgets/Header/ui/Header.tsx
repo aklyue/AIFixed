@@ -1,9 +1,17 @@
 import React, { useEffect } from "react";
-import { AppBar, Toolbar, Typography, IconButton, Box } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Box,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion, useAnimation } from "framer-motion";
-import SlideNavigationToolbar from "../../presentation/ui/components/SlideNavigationToolbar";
+import SlideNavigationToolbar from "../../../features/presentation/ui/components/SlideNavigationToolbar";
 import { useHeader } from "../hooks";
 
 const MotionAppBar = motion(AppBar);
@@ -11,6 +19,10 @@ const MotionAppBar = motion(AppBar);
 export const Header: React.FC = () => {
   const navigate = useNavigate();
   const { controls, location } = useHeader();
+
+  const theme = useTheme();
+
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
     <MotionAppBar
@@ -31,7 +43,7 @@ export const Header: React.FC = () => {
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          gap: 2,
+          gap: isMobile ? 0 : 2,
         }}
       >
         <Box
@@ -45,11 +57,11 @@ export const Header: React.FC = () => {
             <AutoAwesomeIcon sx={{ color: "primary.main" }} />
           </IconButton>
           <Typography
-            variant="h6"
+            variant={isMobile ? "subtitle2" : "h6"}
             component="div"
             sx={{ color: "text.primary" }}
           >
-            Bandito Gangsterito
+            AIFixed
           </Typography>
         </Box>
         {location.pathname === "/editor" && <SlideNavigationToolbar />}
