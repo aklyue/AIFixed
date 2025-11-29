@@ -90,7 +90,6 @@ export const PromptSend: React.FC = () => {
         </Typography>
       </Box>
 
-      {/* Форма */}
       <form
         onSubmit={onSubmit}
         style={{ padding: "8px 8px", width: isMobile ? "100%" : "1000px" }}
@@ -130,7 +129,6 @@ export const PromptSend: React.FC = () => {
             onChange={handleFileChange}
           />
 
-          {/* Кнопка загрузки и выбор модели */}
           <Box
             width={isMobile ? "100%" : undefined}
             display={"flex"}
@@ -211,7 +209,6 @@ export const PromptSend: React.FC = () => {
             </Select>
           </Box>
 
-          {/* Кнопка отправки */}
           <Button
             type="submit"
             variant="contained"
@@ -231,7 +228,6 @@ export const PromptSend: React.FC = () => {
         </Box>
       </form>
 
-      {/* Ошибки */}
       <Snackbar
         open={!!error}
         autoHideDuration={5000}

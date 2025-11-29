@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   Container,
-  lighten,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -12,8 +11,6 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { ThemeCardSelector } from "./components/ThemeCardSelector/ThemeCardSelector";
 import { AnimatePresence, motion } from "framer-motion";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../app/store";
 
 const MotionBox = motion(Box);
 const MotionButton = motion(Button);

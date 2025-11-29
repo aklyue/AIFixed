@@ -150,11 +150,12 @@ const SlideToolbar: React.FC<Props> = ({ slideId }) => {
             style={{
               position: "fixed",
               right: 70,
-              transform: "translateY(-50%)",
+              top: 0,
+              bottom: 0,
               display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
               flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
               gap: 5,
             }}
           >

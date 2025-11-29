@@ -1,13 +1,15 @@
 import React from "react";
-import { Typography, Box, useMediaQuery, useTheme } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import { ReactComponent as LogoPC } from "../../../shared/assets/logo/logo-pc.svg";
+import { ReactComponent as LogoPhone } from "../../../shared/assets/logo/logo-phone.svg";
 
 export const Footer: React.FC = () => {
   const isMobile = useMediaQuery(useTheme().breakpoints.down("md"));
 
   return (
     <Box
-      color="transparent"
+      bgcolor={"#FCFCFC"}
       sx={{
         display: "flex",
         height: "100%",
@@ -16,14 +18,7 @@ export const Footer: React.FC = () => {
         gap: isMobile ? 2 : 4,
       }}
     >
-      <AutoAwesomeIcon sx={{ color: "primary.main", fontSize: isMobile ? "2rem" : "3rem" }} />
-      <Typography
-        variant={isMobile ? "h6" : "h4"}
-        component="div"
-        sx={{ color: "text.primary", fontWeight: "bold" }}
-      >
-        AIFixed
-      </Typography>
+      {isMobile ? <LogoPhone /> : <LogoPC />}
     </Box>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   AppBar,
   Toolbar,
@@ -9,8 +9,9 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import { useLocation, useNavigate } from "react-router-dom";
-import { motion, useAnimation } from "framer-motion";
+import { ReactComponent as Logo } from "../../../shared/assets/logo/logo-cut.svg";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import SlideNavigationToolbar from "../../../features/presentation/ui/components/SlideNavigationToolbar";
 import { useHeader } from "../hooks";
 
@@ -54,7 +55,7 @@ export const Header: React.FC = () => {
           }}
         >
           <IconButton onClick={() => navigate("/")}>
-            <AutoAwesomeIcon sx={{ color: "primary.main" }} />
+            <Logo sx={{ color: "primary.main" }} />
           </IconButton>
           <Typography
             variant={isMobile ? "subtitle2" : "h6"}

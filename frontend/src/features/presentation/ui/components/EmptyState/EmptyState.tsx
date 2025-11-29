@@ -15,7 +15,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ theme }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      style={{ height: "100%", boxSizing: "border-box", width: "100%", overflow: "hidden" }}
+      style={{ height: "100vh ", boxSizing: "border-box", width: "100%", overflow: "hidden" }}
     >
       <Box
         sx={{
@@ -25,8 +25,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ theme }) => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          border: `1px solid #ccc`,
-          borderRadius: 2,
+          borderBottom: `1px solid #ccc`,
           overflow: "hidden",
           background: `linear-gradient(135deg, ${
             theme?.colors.background || "#fff"
