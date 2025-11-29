@@ -54,16 +54,24 @@ export const Header: React.FC = () => {
             alignItems: "center",
           }}
         >
-          <IconButton onClick={() => navigate("/")}>
+          <IconButton
+            onClick={() => navigate("/")}
+            sx={{
+              width: 51,
+              height: 51,
+            }}
+          >
             <Logo sx={{ color: "primary.main" }} />
           </IconButton>
-          <Typography
-            variant={isMobile ? "subtitle2" : "h6"}
-            component="div"
-            sx={{ color: "text.primary" }}
-          >
-            AIFixed
-          </Typography>
+          {(!isMobile || location.pathname !== "/editor") && (
+            <Typography
+              variant={isMobile ? "subtitle2" : "h6"}
+              component="div"
+              sx={{ color: "text.primary" }}
+            >
+              AIFixed
+            </Typography>
+          )}
         </Box>
         {location.pathname === "/editor" && <SlideNavigationToolbar />}
       </Toolbar>
