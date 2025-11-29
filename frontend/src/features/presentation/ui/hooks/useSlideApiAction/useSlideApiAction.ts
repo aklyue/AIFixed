@@ -4,8 +4,7 @@ import { updateSlideContent } from "../../../../../app/store/slices/editorSlice"
 import { markdownToSlides } from "../../../../../shared/utils/markdownToSlides";
 import { useState } from "react";
 import { PlateSlide } from "../../../../../shared/types";
-
-const API_URL = process.env.REACT_APP_API_URL;
+import { editSlide } from "../../../../../entities";
 
 export const useSlideApiAction = (currentSlide: PlateSlide) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -18,23 +17,15 @@ export const useSlideApiAction = (currentSlide: PlateSlide) => {
   const handleSave = async (currentSlide: PlateSlide) => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/presentation/edit`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text: textValue || undefined,
-          action: "custom",
-          slide: {
-            slide_id: currentSlide.id,
-            title: currentSlide.title || "",
-            content: currentSlide.content || "",
-          },
-        }),
+      const markdownString = await editSlide({
+        slide: {
+          slide_id: currentSlide.id,
+          title: currentSlide.title || "",
+          content: currentSlide.content || "",
+        },
+        text: textValue,
       });
 
-      if (!response.ok) throw new Error("Ошибка при отправке данных");
-
-      const markdownString = await response.text();
       const parsedSlides = markdownToSlides(markdownString);
       const updatedBlocks = parsedSlides[0]?.content || [];
 

@@ -1,10 +1,10 @@
 import { Theme } from "../types";
-import AtomBg from "../assets/images/bg_atom_4.3.png";
+import AtomBg from "../assets/images/blue-slide-bg.jpg";
 
 export const themes: Theme[] = [
   {
-    id: "rosatom",
-    name: "RosAtom",
+    id: "eclipse",
+    name: "Eclipse",
     colors: {
       backgroundImages: [
         `url('${AtomBg}') center/cover no-repeat`,
