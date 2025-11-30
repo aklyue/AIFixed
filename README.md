@@ -1,3 +1,6 @@
+
+![AIFixed](frontend/src/shared/assets/logo/logo.png)
+
 # 🚀 AIFixed
 
 <div align="center">
