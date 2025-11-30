@@ -31,7 +31,7 @@ const initialState: EditorState = {
   visitedSlides: [],
   revision: 0,
   availableThemes: themes,
-  globalThemeId: "rosatom",
+  globalThemeId: "eclipse",
   customTheme: {
     background: undefined,
     heading: undefined,

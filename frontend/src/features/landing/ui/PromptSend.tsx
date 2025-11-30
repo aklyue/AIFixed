@@ -125,7 +125,7 @@ export const PromptSend: React.FC = () => {
             type="file"
             ref={fileInputRef}
             style={{ display: "none" }}
-            accept=".pdf,.docx, .pptx"
+            accept=".pdf,.docx,.pptx,.txt,.md"
             onChange={handleFileChange}
           />
 
@@ -220,7 +220,7 @@ export const PromptSend: React.FC = () => {
               textTransform: "none",
               color: "primary.contrastText",
               "&:hover": { bgcolor: "primary.dark" },
-              width: isMobile ? "100%" : undefined
+              width: isMobile ? "100%" : undefined,
             }}
           >
             Сгенерировать
