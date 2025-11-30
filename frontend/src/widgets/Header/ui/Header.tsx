@@ -8,7 +8,6 @@ import {
   useTheme,
   useMediaQuery,
 } from "@mui/material";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { ReactComponent as Logo } from "../../../shared/assets/logo/logo-cut.svg";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";

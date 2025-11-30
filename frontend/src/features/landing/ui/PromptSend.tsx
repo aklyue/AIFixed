@@ -55,7 +55,6 @@ export const PromptSend: React.FC = () => {
         alignItems: "center",
         p: 2,
         flexDirection: "column",
-        position: "relative",
       }}
     >
       <Box
@@ -92,7 +91,11 @@ export const PromptSend: React.FC = () => {
 
       <form
         onSubmit={onSubmit}
-        style={{ padding: "8px 8px", width: isMobile ? "100%" : "1000px" }}
+        style={{
+          padding: "8px 8px",
+          maxWidth: isMobile ? "100%" : "1000px",
+          width: "100%",
+        }}
       >
         <TextField
           fullWidth
@@ -232,7 +235,8 @@ export const PromptSend: React.FC = () => {
         open={!!error}
         autoHideDuration={5000}
         onClose={() => setError(null)}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        sx={{ zIndex: 2000 }}
       >
         <Alert
           onClose={() => setError(null)}
@@ -241,6 +245,7 @@ export const PromptSend: React.FC = () => {
             width: "100%",
             color: "error.contrastText",
             bgcolor: "error.main",
+            zIndex: 1101
           }}
         >
           {error}
