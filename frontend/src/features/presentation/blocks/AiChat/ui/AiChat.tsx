@@ -176,7 +176,7 @@ export const AiChat: React.FC = () => {
                       type="file"
                       ref={fileInputRef}
                       style={{ display: "none" }}
-                      accept=".pdf,.docx"
+                      accept=".pdf,.docx, .pptx"
                       onChange={handleFileChange}
                     />
                     <Button
