@@ -667,6 +667,6 @@ AH-git/
 
 **Создано с ❤️ для автоматизации создания презентаций**
 
-[🔗 GitHub](https://github.com/aklyue/AIFixed) • [📧 Email](mailto:olegglapshin@gmail.com) • [🐛 Issues](https://github.com/aklyue/AIFixed/issues)
+[🔗 GitHub](https://github.com/aklyue/AIFixed) • [📦 Releases](https://github.com/aklyue/AIFixed/releases) • [📧 Email](mailto:olegglapshin@gmail.com) • [🐛 Issues](https://github.com/aklyue/AIFixed/issues)
 
 </div>
