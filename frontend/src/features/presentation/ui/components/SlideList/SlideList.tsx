@@ -40,7 +40,6 @@ export const SlideList: React.FC<SlideListProps> = ({
         sx={{
           flexShrink: 0,
           width: isMobile ? "auto" : 145,
-          overflowY: isMobile ? undefined : "auto",
           overflowX: isMobile ? "auto" : undefined,
           display: "flex",
           flexDirection: isMobile ? "row" : "column",

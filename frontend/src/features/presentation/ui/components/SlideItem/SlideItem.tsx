@@ -91,8 +91,8 @@ export const SlideItem: React.FC<SlideItemProps> = ({
           id={slide.id}
           sx={{
             position: "relative",
-            width: slideWidth,
-            maxWidth: "100%",
+            width: "100%",
+            maxWidth: 1100,
             aspectRatio: isMobile ? undefined : "16/9",
             display: "flex",
             flexDirection: "column",

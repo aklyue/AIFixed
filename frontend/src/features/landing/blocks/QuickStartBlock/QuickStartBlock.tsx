@@ -16,7 +16,6 @@ export const QuickStartBlock: React.FC = () => {
 
   return (
     <Container sx={{ py: 10, maxWidth: "1200px !important" }}>
-      {/* Верхний текст */}
       <Box textAlign="center" mb={6}>
         <Typography variant="h6" color="text.secondary" sx={{ mb: 1 }}>
           Быстрый старт
@@ -81,36 +80,34 @@ export const QuickStartBlock: React.FC = () => {
         <Box
           sx={{
             display: "flex",
+            flexWrap: "wrap",
             gap: 3,
             justifyContent: "center",
-            flexDirection: isMobile ? "column" : "row",
-            flexWrap: { xs: "nowrap", sm: "nowrap", md: "nowrap" },
-            overflowX: { xs: "auto", sm: "auto", md: "visible" },
-            pb: { xs: 2, sm: 0 },
           }}
         >
-          {endpoints.map((endpoint) => (
+          {endpoints.map((endpoint, index) => (
             <motion.div
               key={endpoint.label}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{
-                duration: 0.4,
-                delay: parseInt(endpoint.label) * 0.1,
-              }}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
+              style={{ flex: "1 1 calc(33.333% - 16px)", display: "flex" }}
             >
               <Paper
                 elevation={0}
                 sx={{
-                  width: isMobile ? undefined : 300,
-                  flex: "0 0 auto",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
                   p: 4,
                   borderRadius: 3,
                   border: "1px solid",
                   borderColor: "divider",
                   textAlign: "center",
                   bgcolor: "background.paper",
+                  width: "100%",
                   transition: "all 0.2s",
                   "&:hover": {
                     borderColor: "ActiveBorder",

@@ -49,6 +49,7 @@ export const FeaturesBlock: React.FC = () => {
             sm: "1fr 1fr",
             md: "1fr 1fr 1fr",
           },
+          alignItems: "stretch",
         }}
       >
         {features.map((feature, index) => {
@@ -56,6 +57,7 @@ export const FeaturesBlock: React.FC = () => {
           return (
             <motion.div
               key={index}
+              style={{ display: "flex", height: "100%" }}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
@@ -72,7 +74,7 @@ export const FeaturesBlock: React.FC = () => {
                   borderRadius: 2,
                   cursor: "default",
                   transition: "all 0.2s",
-                  height: 100,
+                  minHeight: 100,
                   "&:hover": {
                     scale: 1.04,
                     boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
