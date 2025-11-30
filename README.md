@@ -73,12 +73,7 @@
 
 ## 🎥 Предпросмотр сервиса
 
-<div align="center">
-  <video width="80%" controls>
-    <source src="frontend/public/assets/videos/HowItWorks.mp4" type="video/mp4">
-    Ваш браузер не поддерживает видео тег.
-  </video>
-</div>
+![MainPage](frontend/public/og-image.png)
 
 ---
 
