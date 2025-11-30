@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Button, Box, Divider } from "@mui/material";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import StarIcon from "@mui/icons-material/Star";
@@ -49,6 +49,7 @@ export const GithubButton = ({ isMobile }: { isMobile: boolean }) => {
           gap: 0.5,
           position: isMobile ? "absolute" : "static",
           right: isMobile ? 16 : "auto",
+          pl: 1,
         }}
       >
         <StarIcon fontSize="small" />
