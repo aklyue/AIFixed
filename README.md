@@ -346,25 +346,12 @@ services:
 
 #### Генерация презентации
 ```http
-POST /api/presentation/generate
+POST /api/message
 Content-Type: multipart/form-data
 
 text: "Описание презентации"
 file: [uploaded file]
 model: "moonshotai/kimi-k2-0905"
-```
-
-#### Редактирование слайда
-```http
-POST /api/presentation/edit
-Content-Type: application/json
-
-{
-  "text": "Новый текст слайда",
-  "slide": {...},
-  "action": "polish",
-  "model": "moonshotai/kimi-k2-0905"
-}
 ```
 
 #### Получение файла
