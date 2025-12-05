@@ -31,8 +31,10 @@ export const useSettings = () => {
         })
       );
 
-      if (!updatedUser.is_verified) {
+      if (email !== user.email && !updatedUser.is_verified) {
         navigate(`/verify-email?email=${encodeURIComponent(email)}`);
+      } else {
+        navigate("/")
       }
     } catch (err: any) {
       setError(err.message || "Ошибка обновления");

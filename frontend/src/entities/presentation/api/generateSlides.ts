@@ -15,7 +15,7 @@ export const generateSlides = async ({
   if (file) formData.append("file", file);
 
   const response = await fetch(
-    `${process.env.REACT_APP_API_URL}/presentation/generate`,
+    `${process.env.REACT_APP_API_URL}/message`,
     {
       method: "POST",
       body: formData,

@@ -372,6 +372,32 @@ Content-Type: application/json
 GET /api/files/{filename}
 ```
 
+#### Авторизация пользователя
+```http
+POST /api/auth/register
+
+POST /api/auth/login
+
+GET /api/auth/me
+```
+
+#### Верификация
+```http
+POST /api/auth/email/send_code
+
+POST /api/auth/email/verify
+```
+
+#### Настройки пользователя
+```http
+PUT /api/edit
+```
+
+#### Подробное описание маршрутов
+```http
+http://localhost:8000/docs
+```
+
 ### 📋 Схемы данных
 
 #### GeneratePresInSchema
@@ -405,11 +431,39 @@ GET /api/files/{filename}
     │       └── slices                 // Redux-slices по доменным сущностям
     │           └── reducers/actions — управление состоянием
     │
-    ├── entities                       // Доменные сущности
-    │   └── presentation               // Сущность "Презентация"
-    │       └── api                    // API-запросы, связанные с презентациями
+    ├── entities                    // Доменные сущности
+    │   // Содержит всё, что относится к конкретным моделям данных: API, UI-компоненты и хуки
+    │   ├── auth                    // Авторизация и аутентификация
+    │   │   ├── api                 // Запросы к бэкенду по авторизации
+    │   │   └── model
+    │   ├── github                  // Интеграция с GitHub
+    │   │   └── api                 // API-запросы к GitHub
+    │   ├── presentation            // Сущность "Презентация"
+    │   │   ├── api                 // API для работы с презентациями
+    │   │   └── ui                  // UI-компоненты для работы с презентациями
+    │   │       └── MyPresentations // Компоненты для отображения списка презентаций пользователя
+    │   └── user                    // Сущность "Пользователь"
+    │       ├── api                 // API-запросы для получения/обновления данных пользователя
+    │       ├── model
+    │       └── ui
+    │           ├── components
+    │           │   └── SettingsForm // Компонент формы настроек пользователя
+    │           └── hooks
+    │               └── useSettings  // Кастомный хук логики настроек
     │
     ├── features                       // Фичи (завершённые пользовательские сценарии)
+    │   ├── auth
+    │   │   ├── blocks
+    │   │   │   ├── components
+    │   │   │   │   ├── LoginBlock
+    │   │   │   │   ├── RegistrationBlock
+    │   │   │   │   └── VerificationBlock
+    │   │   │   └── hooks
+    │   │   │       └── useVerify    // Хук для подтверждения email
+    │   │   └── ui
+    │   │       └── hooks
+    │   │           ├── useAuth      // Хук для логики авторизации
+    │   │           └── useTabsChange // Хук для переключения вкладок
     │   ├── landing                    // Главная страница сайта
     │   │   ├── blocks                 // Отдельные секции landing page
     │   │   │   ├── FeaturesBlock
@@ -420,8 +474,10 @@ GET /api/files/{filename}
     │   │   │   └── constants          // Константы для landing page
     │   │   └── ui                     // UI-компоненты главной страницы
     │   │
-    │   ├── navigation                 // Навигация приложения
-    │   │   └── ui                     // Компоненты навигации
+    │   ├── navigation               // Навигация приложения
+    │   │   └── ui
+    │   │       └── components
+    │   │           └── ProtectedRoute // Компонент маршрута с проверкой авторизации
     │   │
     │   ├── presentation               // Большая фича редактора презентаций
     │   │   ├── blocks                 // Блоки слайдов
@@ -507,10 +563,14 @@ GET /api/files/{filename}
     │               ├── useSlidesList
     │               └── useSortableSlide
     │
-    ├── pages                           // Страницы приложения (роуты)
+    ├── pages                        // Страницы приложения (роуты)
+    │   ├── AuthPage
     │   ├── EditorPage
     │   ├── GeneratePage
-    │   └── PromptPage
+    │   ├── MyPresentationsPage
+    │   ├── PromptPage
+    │   ├── SettingsPage
+    │   └── VerificationPage
     │
     ├── shared                          // Переиспользуемый код (shared kernel)
     │   ├── assets                      // Изображения, иконки, статические файлы
@@ -520,12 +580,18 @@ GET /api/files/{filename}
     │   ├── types                       // Глобальные TS-типы
     │   └── utils                       // Вспомогательные функции
     │
-    └── widgets                         // Готовые UI-составные блоки (Header, Footer)
+    └── widgets                      // Готовые UI-составные блоки (Header, Footer)
         ├── Footer
+        │   ├── blocks
+        │   │   ├── components
+        │   │   └── hooks
         │   └── ui
         └── Header
-            ├── hooks (логика хедера)
-            └── ui   (компоненты хедера)
+            ├── blocks
+            │   ├── components
+            │   └── hooks
+            ├── hooks
+            └── ui
 ```
 
 ### 🎨 Технологии
