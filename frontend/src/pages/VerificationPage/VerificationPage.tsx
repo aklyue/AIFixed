@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import VerificationBlock from "../../features/auth/blocks/components/VerificationBlock";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 
 function VerificationPage() {
+  const isMobile = useMediaQuery(useTheme().breakpoints.down("md"));
   return (
     <Box
       sx={{
-        height: "95vh",
+        height: isMobile ? undefined : "95vh",
         display: "flex",
         justifyContent: "center",
-        alignItems: "center",
+        alignItems: isMobile ? undefined : "center",
       }}
     >
       <VerificationBlock />

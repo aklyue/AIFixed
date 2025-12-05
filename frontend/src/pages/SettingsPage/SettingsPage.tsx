@@ -8,12 +8,18 @@ function SettingsPage() {
     <Box
       sx={{
         p: isMobile ? 2 : 4,
+        height: "95vh",
       }}
     >
-      <Typography variant="h4" mb={3}>
-        Настройки пользователя
-      </Typography>
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: isMobile ? undefined : "center",
+          height: "100%",
+          gap: 5,
+        }}
+      >
         <SettingsForm />
       </Box>
     </Box>

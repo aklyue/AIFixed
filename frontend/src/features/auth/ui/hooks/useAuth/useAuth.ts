@@ -13,7 +13,6 @@ export const useAuth = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Для Snackbar
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
