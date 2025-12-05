@@ -10,3 +10,9 @@ pydantic-settings
 docx2md
 pymupdf4llm
 fitz
+psycopg2-binary
+SQLAlchemy
+alembic
+python-jose[cryptography]
+passlib[bcrypt]
+bcrypt==4.3.0

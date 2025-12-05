@@ -1,5 +1,7 @@
 import EditorPage from "./EditorPage/EditorPage";
 import PromptPage from "./PromptPage/PromptPage";
 import GeneratePage from "./GeneratePage/GeneratePage";
+import AuthPage from "./AuthPage/AuthPage";
+import SettingsPage from "./SettingsPage/SettingsPage"
 
-export { EditorPage, PromptPage, GeneratePage };
+export { EditorPage, PromptPage, GeneratePage, AuthPage, SettingsPage };

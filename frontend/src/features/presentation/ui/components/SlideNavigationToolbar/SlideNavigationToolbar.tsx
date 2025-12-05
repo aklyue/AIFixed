@@ -24,6 +24,7 @@ import {
 import { exportToPptx } from "../../../lib";
 import { useSlideActions } from "../../hooks";
 import AddSlideDialog from "../AddSlideDialog";
+import { useSavePresentation } from "../../../../../shared/hooks";
 
 const SlideNavigationToolbar: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -49,6 +50,8 @@ const SlideNavigationToolbar: React.FC = () => {
     historyLength,
     selectedLayout,
   } = useSlideActions();
+
+  const { save } = useSavePresentation();
 
   return (
     <Box sx={{ display: "flex", gap: 1 }}>
@@ -113,6 +116,7 @@ const SlideNavigationToolbar: React.FC = () => {
       <Button
         onClick={() => {
           exportToPptx(slides, theme!);
+          save();
         }}
         sx={{
           ml: 1,

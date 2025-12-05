@@ -1,7 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.routes import message_routes, file_routes, test_routes
+from src.database import Base, engine
+from src.schemas.user_schemas import User, Presentation
+
+from src.routes import message_routes, file_routes, test_routes, auth_routes, presentation_routes, user_routes
 
 app = FastAPI(
     title="API Documentation",
@@ -31,5 +34,8 @@ app.add_middleware(
 app.include_router(message_routes.router)
 app.include_router(file_routes.router)
 app.include_router(test_routes.router)
+app.include_router(auth_routes.router)
+app.include_router(presentation_routes.router)
+app.include_router(user_routes.router)
 
-
+Base.metadata.create_all(bind=engine)
