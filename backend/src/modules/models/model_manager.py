@@ -2,10 +2,14 @@ import os
 import logging
 
 # Сначала задаем кэш HuggingFace
-CACHE_DIR = r"D:\ModelsCache"
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+CACHE_DIR = os.path.join(PROJECT_DIR, "..", "..", "..", "models_cache")
+
 os.makedirs(CACHE_DIR, exist_ok=True)
+
 os.environ["HF_HOME"] = CACHE_DIR
 os.environ["TRANSFORMERS_CACHE"] = CACHE_DIR
+os.environ["HF_DATASETS_CACHE"] = os.path.join(CACHE_DIR, "datasets")
 
 
 from typing import Optional
@@ -42,7 +46,7 @@ class ModelManager:
             logging.info(f"Loading embedding model: {model_name}")
             try:
                 device = "cuda" if torch.cuda.is_available() else "cpu"
-                self._embedding_model = SentenceTransformer(model_name, device=device)
+                self._embedding_model = SentenceTransformer(model_name, device=device, cache_folder=CACHE_DIR)
                 _ = self._embedding_model.encode(["warmup"], normalize_embeddings=False)
                 logging.info(f"✓ Embedding model {model_name} ready on {device}")
             except Exception as e:

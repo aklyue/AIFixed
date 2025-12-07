@@ -85,7 +85,7 @@
 //         if (fileInputRef.current) fileInputRef.current.value = "";
 //         resolve(true);
 //         dispatch(setLoading(false));
-//       }, 6000);
+//       }, 500);
 //     });
 //   };
 
