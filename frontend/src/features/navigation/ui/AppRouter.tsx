@@ -12,6 +12,7 @@ import { AuthPage, SettingsPage } from "../../../pages";
 import VerificationPage from "../../../pages/VerificationPage/VerificationPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MyPresentationsPage from "../../../pages/MyPresentationsPage/MyPresentationsPage";
+import OAuthSuccess from "../../../shared/components/OAuthSuccess";
 
 const PageWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <motion.div
@@ -28,7 +29,8 @@ const PageWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 const AnimatedRoutes = () => {
   const location = useLocation();
   const isMobile = useMediaQuery(useTheme().breakpoints.down("md"));
-  const hideFooter = location.pathname === "/projects" || location.pathname === "/settings";
+  const hideFooter =
+    location.pathname === "/projects" || location.pathname === "/settings";
 
   return (
     <>
@@ -100,6 +102,9 @@ const AnimatedRoutes = () => {
               </PageWrapper>
             }
           />
+
+          {/* Отдельный роут для успешного aouth */}
+          <Route path="/auth/success" element={<OAuthSuccess />} />
         </Routes>
         {!hideFooter && (
           <Box sx={{ height: isMobile ? 64 : 120, flexShrink: 0 }}>

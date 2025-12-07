@@ -29,6 +29,7 @@ class _Settings(BaseSettings):
     GOOGLE_CLIENT_ID: str
     GOOGLE_CLIENT_SECRET: str
     GOOGLE_REDIRECT_URI: str
+    FRONT_URL: str
     
     # SMTP
     SMTP_HOST: str
