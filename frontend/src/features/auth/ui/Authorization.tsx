@@ -72,11 +72,11 @@ function Authorization() {
               height: isMobile ? "auto" : "100%",
               width: isMobile ? "100%" : "50%",
             }}
-          >
+          > 
             <Button
               variant="outlined"
               color="primary"
-              href="/auth/google"
+              onClick={() => window.location.href = `${process.env.REACT_APP_API_URL}/auth/google/login`}
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -89,7 +89,7 @@ function Authorization() {
             <Button
               variant="outlined"
               color="primary"
-              href="/auth/github"
+              onClick={() => window.location.href = `${process.env.REACT_APP_API_URL}/auth/github/login`}
               sx={{
                 display: "flex",
                 alignItems: "center",

@@ -249,6 +249,36 @@ TEMPFILE_CLEANUP_INTERVAL_SECONDS=3600
 
 # Environment
 ENVIRONMENT=production
+
+# PostgreSQL
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=password
+POSTGRES_DB=yourdb
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+
+# JWT
+SECRET_KEY=your_secret_key
+ALGORITHM=HS256
+
+# SMTP
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASSWORD=smtp_password
+SMTP_FROM_EMAIL=your_email@gmail.com
+
+# GitHub OAuth
+GITHUB_CLIENT_ID=github_client_id
+GITHUB_CLIENT_SECRET=github_client_secret_key
+GITHUB_REDIRECT_URI=http://localhost:8000/auth/github/callback
+
+# Google OAuth
+GOOGLE_CLIENT_ID=google_client_id
+GOOGLE_CLIENT_SECRET=google_client_secret_key
+GOOGLE_REDIRECT_URI=http://localhost:8000/auth/google/callback
+FRONT_URL=http://localhost:3000
+
 ```
 
 #### Frontend (.env)
@@ -386,6 +416,15 @@ GET /api/auth/me
 POST /api/auth/email/send_code
 
 POST /api/auth/email/verify
+```
+
+#### OAuth 2.0
+```https
+GET /api/auth/github/login
+GET /api/auth/github/callback
+
+GET /api/auth/google/login
+GET /api/auth/google/callback
 ```
 
 #### Настройки пользователя
