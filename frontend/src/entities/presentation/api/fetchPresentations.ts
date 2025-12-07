@@ -9,7 +9,7 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 export const fetchPresentations = async (): Promise<Presentation[]> => {
   try {
-    const res = await fetch(`${API_URL}/my-presentations`, {
+    const res = await fetch(`${API_URL}/presentation/my-presentations`, {
       credentials: "include",
     });
     if (!res.ok) throw new Error("Ошибка загрузки презентаций");

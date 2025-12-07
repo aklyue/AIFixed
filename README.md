@@ -429,7 +429,7 @@ GET /api/auth/google/callback
 
 #### Настройки пользователя
 ```http
-PUT /api/edit
+PUT /api/user/edit
 ```
 
 #### Подробное описание маршрутов
@@ -613,7 +613,7 @@ http://localhost:8000/docs
     │
     ├── shared                          // Переиспользуемый код (shared kernel)
     │   ├── assets                      // Изображения, иконки, статические файлы
-    │   ├── components                  // Общие UI-компоненты (например, Loader)
+    │   ├── components                  // Общие UI-компоненты (например, Loader, OAuthSuccess)
     │   ├── constants                   // Глобальные константы приложения
     │   ├── hooks                       // Переиспользуемые хуки
     │   ├── types                       // Глобальные TS-типы

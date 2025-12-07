@@ -6,10 +6,14 @@ numpy
 pandas
 sentence-transformers
 huggingface-hub
+sentencepiece
+protobuf
 pydantic-settings
 docx2md
 pymupdf4llm
-fitz
+PyMuPDF
+qdrant-client
+openpyxl
 psycopg2-binary
 SQLAlchemy
 alembic

@@ -2,7 +2,7 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 export const deletePresentation = async (id: string) => {
   try {
-    const res = await fetch(`${API_URL}/presentations/${id}`, {
+    const res = await fetch(`${API_URL}/presentation/presentations/${id}`, {
       method: "DELETE",
       credentials: "include",
     });

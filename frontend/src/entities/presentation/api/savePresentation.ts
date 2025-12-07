@@ -9,7 +9,7 @@ export interface SavePresentationPayload {
 
 export const savePresentation = async (payload: SavePresentationPayload) => {
   try {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/save-presentation`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/presentation/save-presentation`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

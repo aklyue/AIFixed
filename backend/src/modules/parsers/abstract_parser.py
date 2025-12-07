@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 import re
 
-from src.config import settings
 from src.services.tempfile_service import tempfile_service
 
 
@@ -21,4 +20,4 @@ class AbstractParser(ABC):
 
     def _image_to_md(self, content: bytes, ext: str, alt: str = "") -> str:
         image_path = tempfile_service.save_file(content, ext)
-        return f"![{alt}]({settings.DOMAIN}files/{image_path})"
+        return f"![{alt}](/files/{image_path})"
