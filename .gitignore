@@ -61,3 +61,6 @@ tempfiles
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Models Cache
+backend/models_cache/
