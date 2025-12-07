@@ -419,7 +419,7 @@ POST /api/auth/email/verify
 ```
 
 #### OAuth 2.0
-```https
+```http
 GET /api/auth/github/login
 GET /api/auth/github/callback
 
