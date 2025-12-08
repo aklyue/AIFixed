@@ -194,7 +194,9 @@ docker-compose up --build
 | `/editor`     | `EditorPage` — редактор для доработки и сохранения сгенерированной презентации |
 | `/auth`       | `AuthorizationPage` - страница авторизации |
 | `/settings`   | `SettingsPage` - настройки пользователя |
-| `/presentations` | `MyPresentationsPage` - список созданных презентаций (только для авторизованных пользователей) |
+| `/projects` | `MyPresentationsPage` - список созданных презентаций (только для авторизованных пользователей) |
+| `verify-email` | `VerificationPage` - подтверждение кода при регистрации |
+| `/auth/success` | `OAuthSuccess` - fallback-компонент успешной OAuth-авторизации |
 
 Все страницы обернуты в компонент `PageWrapper` для единого оформления и управления макетом.
 
