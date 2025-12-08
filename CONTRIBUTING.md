@@ -1,4 +1,4 @@
-# CONTRIBUTING.md
+# Вклад (Contributing) в AIFixed
 
 # Руководство по внесению вклада в AIFixed
 
