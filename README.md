@@ -192,10 +192,10 @@ docker-compose up --build
 | `/`           | `PromptPage` — главная страница, знакомство с сервисом и отправка промпта |
 | `/generate`   | `GeneratePage` — генерация контента на основе промпта |
 | `/editor`     | `EditorPage` — редактор для доработки и сохранения сгенерированной презентации |
-| `/auth`       | `AuthorizationPage` - страница авторизации |
+| `/auth`       | `AuthPage` - страница авторизации |
 | `/settings`   | `SettingsPage` - настройки пользователя |
 | `/projects` | `MyPresentationsPage` - список созданных презентаций (только для авторизованных пользователей) |
-| `verify-email` | `VerificationPage` - подтверждение кода при регистрации |
+| `/verify-email` | `VerificationPage` - подтверждение кода при регистрации |
 | `/auth/success` | `OAuthSuccess` - fallback-компонент успешной OAuth-авторизации |
 
 Все страницы обернуты в компонент `PageWrapper` для единого оформления и управления макетом.
