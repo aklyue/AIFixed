@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Box, lighten, useMediaQuery, useTheme } from "@mui/material";
 import { AnimatePresence } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
@@ -8,6 +8,7 @@ import { getSlideBackground } from "../lib/utils/getSlideBackground";
 import EmptyState from "./components/EmptyState";
 import SlideList from "./components/SlideList";
 import SlideToolbar from "./components/SlideToolbar";
+import { useSavePresentation } from "../../../shared/hooks";
 
 export const MarkdownPresentation: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -32,6 +33,18 @@ export const MarkdownPresentation: React.FC = () => {
     dispatch,
     currentSlide
   );
+
+  const { save } = useSavePresentation();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (slides.length > 0) {
+        save();
+      }
+    }, 180000);
+
+    return () => clearInterval(interval);
+  }, [slides, save]);
 
   return (
     <Box

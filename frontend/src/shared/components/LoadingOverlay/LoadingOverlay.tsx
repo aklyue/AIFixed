@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Box, CircularProgress, Typography } from "@mui/material";
 
-export const LoadingOverlay: React.FC = () => {
+interface LoadingOverlayProps {
+  title?: string;
+}
+
+export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ title }) => {
   const [dots, setDots] = useState("");
 
   useEffect(() => {
@@ -29,7 +33,7 @@ export const LoadingOverlay: React.FC = () => {
       }}
     >
       <CircularProgress sx={{ color: "primary.main" }} />
-      <Typography>Генерация{dots}</Typography>
+      <Typography>{title || "Генерация"}{dots}</Typography>
     </Box>
   );
 };

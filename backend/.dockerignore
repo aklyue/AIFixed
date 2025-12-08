@@ -29,4 +29,7 @@ Thumbs.db
 
 # Test cache
 .pytest_cache/
-.coverage 
+.coverage
+
+# Models Cache
+models_cache/

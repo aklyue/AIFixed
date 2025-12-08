@@ -192,6 +192,11 @@ docker-compose up --build
 | `/`           | `PromptPage` — главная страница, знакомство с сервисом и отправка промпта |
 | `/generate`   | `GeneratePage` — генерация контента на основе промпта |
 | `/editor`     | `EditorPage` — редактор для доработки и сохранения сгенерированной презентации |
+| `/auth`       | `AuthPage` - страница авторизации |
+| `/settings`   | `SettingsPage` - настройки пользователя |
+| `/projects` | `MyPresentationsPage` - список созданных презентаций (только для авторизованных пользователей) |
+| `/verify-email` | `VerificationPage` - подтверждение кода при регистрации |
+| `/auth/success` | `OAuthSuccess` - fallback-компонент успешной OAuth-авторизации |
 
 Все страницы обернуты в компонент `PageWrapper` для единого оформления и управления макетом.
 
@@ -249,6 +254,36 @@ TEMPFILE_CLEANUP_INTERVAL_SECONDS=3600
 
 # Environment
 ENVIRONMENT=production
+
+# PostgreSQL
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=password
+POSTGRES_DB=yourdb
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+
+# JWT
+SECRET_KEY=your_secret_key
+ALGORITHM=HS256
+
+# SMTP
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASSWORD=smtp_password
+SMTP_FROM_EMAIL=your_email@gmail.com
+
+# GitHub OAuth
+GITHUB_CLIENT_ID=github_client_id
+GITHUB_CLIENT_SECRET=github_client_secret_key
+GITHUB_REDIRECT_URI=http://localhost:8000/auth/github/callback
+
+# Google OAuth
+GOOGLE_CLIENT_ID=google_client_id
+GOOGLE_CLIENT_SECRET=google_client_secret_key
+GOOGLE_REDIRECT_URI=http://localhost:8000/auth/google/callback
+FRONT_URL=http://localhost:3000
+
 ```
 
 #### Frontend (.env)
@@ -359,6 +394,41 @@ model: "moonshotai/kimi-k2-0905"
 GET /api/files/{filename}
 ```
 
+#### Авторизация пользователя
+```http
+POST /api/auth/register
+
+POST /api/auth/login
+
+GET /api/auth/me
+```
+
+#### Верификация
+```http
+POST /api/auth/email/send_code
+
+POST /api/auth/email/verify
+```
+
+#### OAuth 2.0
+```https
+GET /api/auth/github/login
+GET /api/auth/github/callback
+
+GET /api/auth/google/login
+GET /api/auth/google/callback
+```
+
+#### Настройки пользователя
+```http
+PUT /api/user/edit
+```
+
+#### Подробное описание маршрутов
+```http
+http://localhost:8000/docs
+```
+
 ### 📋 Схемы данных
 
 #### GeneratePresInSchema
@@ -392,11 +462,39 @@ GET /api/files/{filename}
     │       └── slices                 // Redux-slices по доменным сущностям
     │           └── reducers/actions — управление состоянием
     │
-    ├── entities                       // Доменные сущности
-    │   └── presentation               // Сущность "Презентация"
-    │       └── api                    // API-запросы, связанные с презентациями
+    ├── entities                    // Доменные сущности
+    │   // Содержит всё, что относится к конкретным моделям данных: API, UI-компоненты и хуки
+    │   ├── auth                    // Авторизация и аутентификация
+    │   │   ├── api                 // Запросы к бэкенду по авторизации
+    │   │   └── model
+    │   ├── github                  // Интеграция с GitHub
+    │   │   └── api                 // API-запросы к GitHub
+    │   ├── presentation            // Сущность "Презентация"
+    │   │   ├── api                 // API для работы с презентациями
+    │   │   └── ui                  // UI-компоненты для работы с презентациями
+    │   │       └── MyPresentations // Компоненты для отображения списка презентаций пользователя
+    │   └── user                    // Сущность "Пользователь"
+    │       ├── api                 // API-запросы для получения/обновления данных пользователя
+    │       ├── model
+    │       └── ui
+    │           ├── components
+    │           │   └── SettingsForm // Компонент формы настроек пользователя
+    │           └── hooks
+    │               └── useSettings  // Кастомный хук логики настроек
     │
     ├── features                       // Фичи (завершённые пользовательские сценарии)
+    │   ├── auth
+    │   │   ├── blocks
+    │   │   │   ├── components
+    │   │   │   │   ├── LoginBlock
+    │   │   │   │   ├── RegistrationBlock
+    │   │   │   │   └── VerificationBlock
+    │   │   │   └── hooks
+    │   │   │       └── useVerify    // Хук для подтверждения email
+    │   │   └── ui
+    │   │       └── hooks
+    │   │           ├── useAuth      // Хук для логики авторизации
+    │   │           └── useTabsChange // Хук для переключения вкладок
     │   ├── landing                    // Главная страница сайта
     │   │   ├── blocks                 // Отдельные секции landing page
     │   │   │   ├── FeaturesBlock
@@ -407,8 +505,10 @@ GET /api/files/{filename}
     │   │   │   └── constants          // Константы для landing page
     │   │   └── ui                     // UI-компоненты главной страницы
     │   │
-    │   ├── navigation                 // Навигация приложения
-    │   │   └── ui                     // Компоненты навигации
+    │   ├── navigation               // Навигация приложения
+    │   │   └── ui
+    │   │       └── components
+    │   │           └── ProtectedRoute // Компонент маршрута с проверкой авторизации
     │   │
     │   ├── presentation               // Большая фича редактора презентаций
     │   │   ├── blocks                 // Блоки слайдов
@@ -494,25 +594,35 @@ GET /api/files/{filename}
     │               ├── useSlidesList
     │               └── useSortableSlide
     │
-    ├── pages                           // Страницы приложения (роуты)
+    ├── pages                        // Страницы приложения (роуты)
+    │   ├── AuthPage
     │   ├── EditorPage
     │   ├── GeneratePage
-    │   └── PromptPage
+    │   ├── MyPresentationsPage
+    │   ├── PromptPage
+    │   ├── SettingsPage
+    │   └── VerificationPage
     │
     ├── shared                          // Переиспользуемый код (shared kernel)
     │   ├── assets                      // Изображения, иконки, статические файлы
-    │   ├── components                  // Общие UI-компоненты (например, Loader)
+    │   ├── components                  // Общие UI-компоненты (например, Loader, OAuthSuccess)
     │   ├── constants                   // Глобальные константы приложения
     │   ├── hooks                       // Переиспользуемые хуки
     │   ├── types                       // Глобальные TS-типы
     │   └── utils                       // Вспомогательные функции
     │
-    └── widgets                         // Готовые UI-составные блоки (Header, Footer)
+    └── widgets                      // Готовые UI-составные блоки (Header, Footer)
         ├── Footer
+        │   ├── blocks
+        │   │   ├── components
+        │   │   └── hooks
         │   └── ui
         └── Header
-            ├── hooks (логика хедера)
-            └── ui   (компоненты хедера)
+            ├── blocks
+            │   ├── components
+            │   └── hooks
+            ├── hooks
+            └── ui
 ```
 
 ### 🎨 Технологии

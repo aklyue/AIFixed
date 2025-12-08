@@ -8,6 +8,11 @@ import GeneratePage from "../../../pages/GeneratePage/GeneratePage";
 import { Header } from "../../../widgets/Header";
 import { Box, useMediaQuery, useTheme } from "@mui/material";
 import { Footer } from "../../../widgets/Footer/ui/Footer";
+import { AuthPage, SettingsPage } from "../../../pages";
+import VerificationPage from "../../../pages/VerificationPage/VerificationPage";
+import ProtectedRoute from "./components/ProtectedRoute";
+import MyPresentationsPage from "../../../pages/MyPresentationsPage/MyPresentationsPage";
+import OAuthSuccess from "../../../shared/components/OAuthSuccess";
 
 const PageWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <motion.div
@@ -23,41 +28,95 @@ const PageWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 
 const AnimatedRoutes = () => {
   const location = useLocation();
+  const isMobile = useMediaQuery(useTheme().breakpoints.down("md"));
+  const hideFooter =
+    location.pathname === "/projects" || location.pathname === "/settings";
 
   return (
-    <AnimatePresence mode="wait" initial>
-      <Routes location={location} key={location.pathname}>
-        <Route
-          path="/"
-          element={
-            <PageWrapper>
-              <PromptPage />
-            </PageWrapper>
-          }
-        />
-        <Route
-          path="/generate"
-          element={
-            <PageWrapper>
-              <GeneratePage />
-            </PageWrapper>
-          }
-        />
-        <Route
-          path="/editor"
-          element={
-            <PageWrapper>
-              <EditorPage />
-            </PageWrapper>
-          }
-        />
-      </Routes>
-    </AnimatePresence>
+    <>
+      <AnimatePresence mode="wait" initial>
+        <Routes location={location} key={location.pathname}>
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <PageWrapper>
+                  <PromptPage />
+                </PageWrapper>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/generate"
+            element={
+              <ProtectedRoute>
+                <PageWrapper>
+                  <GeneratePage />
+                </PageWrapper>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/editor"
+            element={
+              <ProtectedRoute>
+                <PageWrapper>
+                  <EditorPage />
+                </PageWrapper>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/projects"
+            element={
+              <ProtectedRoute>
+                <PageWrapper>
+                  <MyPresentationsPage />
+                </PageWrapper>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <PageWrapper>
+                  <SettingsPage />
+                </PageWrapper>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/auth"
+            element={
+              <PageWrapper>
+                <AuthPage />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="/verify-email"
+            element={
+              <PageWrapper>
+                <VerificationPage />
+              </PageWrapper>
+            }
+          />
+
+          {/* Отдельный роут для успешного aouth */}
+          <Route path="/auth/success" element={<OAuthSuccess />} />
+        </Routes>
+        {!hideFooter && (
+          <Box sx={{ height: isMobile ? 64 : 120, flexShrink: 0 }}>
+            <Footer />
+          </Box>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
 export const AppRouter = () => {
-  const isMobile = useMediaQuery(useTheme().breakpoints.down("md"));
   return (
     <BrowserRouter>
       <Suspense fallback={<div>Загрузка...</div>}>
@@ -70,10 +129,6 @@ export const AppRouter = () => {
 
           <Box sx={{ flexGrow: 1 }}>
             <AnimatedRoutes />
-          </Box>
-
-          <Box sx={{ height: isMobile ? 64 : 120, flexShrink: 0 }}>
-            <Footer />
           </Box>
         </Box>
       </Suspense>

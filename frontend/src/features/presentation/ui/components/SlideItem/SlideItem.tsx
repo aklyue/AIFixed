@@ -49,7 +49,7 @@ export const SlideItem: React.FC<SlideItemProps> = ({
   const muiTheme = useTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
 
-  const slideWidth = 1100;
+  const slideWidth = 900;
   const slideHeight = 518;
 
   const {
@@ -91,7 +91,7 @@ export const SlideItem: React.FC<SlideItemProps> = ({
           id={slide.id}
           sx={{
             position: "relative",
-            width: "100%",
+            width: isMobile ? "100%" : slideWidth,
             maxWidth: 1100,
             aspectRatio: isMobile ? undefined : "16/9",
             display: "flex",

@@ -1,9 +1,6 @@
 import React from "react";
 import "./App.css";
 import { AppRouter } from "../features";
-import { Theme } from "../shared/types/markdownTypes";
-import { useSelector } from "react-redux";
-import { RootState } from "./store";
 
 function App() {
   return <AppRouter />;

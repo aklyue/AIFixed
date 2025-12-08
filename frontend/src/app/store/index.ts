@@ -3,6 +3,7 @@ import editorReducer from "./slices/editorSlice";
 import markdownReducer from "./slices/markdownSlice";
 import promptReducer from "./slices/promptSlice";
 import uiReducer from "./slices/uiSlice";
+import authReducer from "./slices/authSlice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     markdown: markdownReducer,
     prompt: promptReducer,
     ui: uiReducer,
+    auth: authReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
