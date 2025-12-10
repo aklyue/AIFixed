@@ -19,6 +19,15 @@ export interface SlideBlock {
   id: string;
   type: string;
   text?: string;
+  richText?: InlinePart[];
+
+  richItems?: Array<
+    Array<{
+      type: "text" | "bold" | "italic" | "link";
+      value: string;
+    }>
+  >;
+
   items?: string[];
   url?: string;
   language?: string;
@@ -57,6 +66,13 @@ export interface SlideBlock {
   justifyContent?: "flex-start" | "flex-end";
 
   cellId?: string;
+}
+
+export interface InlinePart {
+  text: string;
+  bold?: boolean;
+  italic?: boolean;
+  code?: boolean;
 }
 
 export interface PlateSlide {

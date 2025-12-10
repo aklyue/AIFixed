@@ -84,7 +84,20 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({ block, onEdit }) => {
           sx={{ mb: 1, cursor: generating ? undefined : "pointer" }}
           onClick={handleClick}
         >
-          {block.text}
+          {block.richText
+            ? block.richText.map((p, i) => (
+                <span
+                  key={i}
+                  style={{
+                    fontWeight: p.bold ? 700 : 400,
+                    fontStyle: p.italic ? "italic" : "normal",
+                    fontFamily: p.code ? "monospace" : undefined,
+                  }}
+                >
+                  {p.text}
+                </span>
+              ))
+            : block.text}
         </Typography>
       );
     case "list":
@@ -93,9 +106,27 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({ block, onEdit }) => {
           sx={{ mb: 1, cursor: generating ? undefined : "pointer" }}
           onClick={handleClick}
         >
-          {block.items?.map((item, i) => (
-            <ListItem key={i} sx={{ pl: 2, py: 0 }}>
-              {item}
+          {block.richItems!.map((itemParts, i) => (
+            <ListItem key={i} sx={{ pl: 2, py: 0, display: "list-item" }}>
+              <Typography
+                component="span"
+                sx={{
+                  lineHeight: 1.6,
+                }}
+              >
+                {itemParts.map((p, j) => (
+                  <span
+                    key={j}
+                    style={{
+                      fontWeight: p.type === "bold" ? 700 : 400,
+                      fontStyle: p.type === "italic" ? "italic" : "normal",
+                      textDecoration: p.type === "link" ? "underline" : "none",
+                    }}
+                  >
+                    {p.value}
+                  </span>
+                ))}
+              </Typography>
             </ListItem>
           ))}
         </List>

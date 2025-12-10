@@ -4,6 +4,7 @@ import EditableWrapper from "../EditableWrapper";
 import TextEditor from "../TextEditor";
 import { HeadingBlockProps } from "../HeadingBlock/HeadingBlock";
 import { useTextBlocksEditor } from "../../hooks";
+import { SlideBlock } from "../../../../../../shared/types";
 
 const ListBlock: React.FC<HeadingBlockProps> = ({
   block,
@@ -37,20 +38,20 @@ const ListBlock: React.FC<HeadingBlockProps> = ({
       value={editValue}
       onChange={setEditValue}
       onBlur={handleBlur}
-      block={block}
+      block={block as SlideBlock}
     />
   ) : (
     <EditableWrapper
       onEdit={handleEdit}
       onDelete={handleDelete}
       onSettingsChange={handleSettingsChange}
-      block={block}
+      block={block as SlideBlock}
     >
       <Box
         component={block.type === "ordered-list" ? "ol" : "ul"}
         sx={{ pl: 4, m: 0, minHeight: 40, minWidth: 75 }}
       >
-        {block.items?.map((item, i) => (
+        {(block.richItems || block.items)?.map((item, i) => (
           <Box
             key={i}
             component="li"
@@ -66,11 +67,26 @@ const ListBlock: React.FC<HeadingBlockProps> = ({
                   block.style?.fontFamily || theme?.fonts.paragraph || "Arial",
                 fontSize: block.style?.fontSize || 16,
                 color: block.style?.color || theme?.colors.paragraph || "#000",
-                display: "flex",
-                alignItems: "center",
               }}
             >
-              {item}
+              {
+                Array.isArray(item)
+                  ? item.map((part, j) => (
+                      <span
+                        key={j}
+                        style={{
+                          fontWeight: part.type === "bold" ? 700 : 400,
+                          fontStyle:
+                            part.type === "italic" ? "italic" : "normal",
+                          textDecoration:
+                            part.type === "link" ? "underline" : "none",
+                        }}
+                      >
+                        {part.value}
+                      </span>
+                    ))
+                  : item
+              }
             </Typography>
           </Box>
         ))}
