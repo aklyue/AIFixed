@@ -1,4 +1,3 @@
-
 ![AIFixed](frontend/src/shared/assets/logo/logo.png)
 
 <div align="center">
@@ -378,14 +377,18 @@ services:
 
 ### 🎯 Основные эндпоинты
 
-#### Генерация презентации
+#### Презентация
 ```http
-POST /api/message
+POST /api/presentation/generate
 Content-Type: multipart/form-data
 
 text: "Описание презентации"
 file: [uploaded file]
 model: "moonshotai/kimi-k2-0905"
+```
+
+```http
+POST api/
 ```
 
 #### Получение файла
