@@ -379,6 +379,8 @@ services:
 
 #### Презентация
 ```http
+"Генерация презентации"
+
 POST /api/presentation/generate
 Content-Type: multipart/form-data
 
@@ -388,25 +390,25 @@ model: "moonshotai/kimi-k2-0905"
 ```
 
 ```http
-Получение презентаций (для авторизованных пользователей)
+"Получение презентаций (для авторизованных пользователей)"
 
 GET /api/presentation/my-presentations
 ```
 
 ```http
-Сохранение презентации (для авторизованных пользователей)
+"Сохранение презентации (для авторизованных пользователей)"
 
 POST /api/presentation/save-presentation
 ```
 
 ```http
-Удаление презентации (для авторизованных пользователей)
+"Удаление презентации (для авторизованных пользователей)"
 
 DELETE /api/presentation/{presentation_id}
 ```
 
 ```http
-Редактирование презентации
+"Редактирование презентации"
 
 POST /api/presentation/edit
 ```
