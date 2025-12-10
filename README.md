@@ -289,7 +289,6 @@ FRONT_URL=http://localhost:3000
 #### Frontend (.env)
 ```env
 REACT_APP_API_URL=http://localhost:8000/api
-REACT_APP_WS_URL=ws://localhost:8000/ws
 ```
 
 ### 🎛️ Настройки модели
