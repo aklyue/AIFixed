@@ -388,7 +388,27 @@ model: "moonshotai/kimi-k2-0905"
 ```
 
 ```http
-POST api/
+Получение презентаций (для авторизованных пользователей)
+
+GET api/presentation/my-presentations
+```
+
+```http
+Сохранение презентации (для авторизованных пользователей)
+
+POST api/presentation/save-presentation
+```
+
+```http
+Удаление презентации (для авторизованных пользователей)
+
+DELETE api/presentation/{presentation_id}
+```
+
+```http
+Редактирование презентации
+
+POST api/presentation/edit
 ```
 
 #### Получение файла
