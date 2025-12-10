@@ -19,7 +19,7 @@ export const getContext = async (file: File, model: string, onChunk?: (chunk: st
     if (done) break;
     const chunk = new TextDecoder().decode(value);
     result += chunk;
-    onChunk?.(chunk); // вызываем callback сразу на каждый кусок
+    onChunk?.(chunk);
   }
 
   return result;

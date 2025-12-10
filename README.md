@@ -192,6 +192,11 @@ docker-compose up --build
 | `/`           | `PromptPage` — главная страница, знакомство с сервисом и отправка промпта |
 | `/generate`   | `GeneratePage` — генерация контента на основе промпта |
 | `/editor`     | `EditorPage` — редактор для доработки и сохранения сгенерированной презентации |
+| `/auth`       | `AuthPage` - страница авторизации |
+| `/settings`   | `SettingsPage` - настройки пользователя |
+| `/projects` | `MyPresentationsPage` - список созданных презентаций (только для авторизованных пользователей) |
+| `/verify-email` | `VerificationPage` - подтверждение кода при регистрации |
+| `/auth/success` | `OAuthSuccess` - fallback-компонент успешной OAuth-авторизации |
 
 Все страницы обернуты в компонент `PageWrapper` для единого оформления и управления макетом.
 
@@ -376,25 +381,12 @@ services:
 
 #### Генерация презентации
 ```http
-POST /api/presentation/generate
+POST /api/message
 Content-Type: multipart/form-data
 
 text: "Описание презентации"
 file: [uploaded file]
 model: "moonshotai/kimi-k2-0905"
-```
-
-#### Редактирование слайда
-```http
-POST /api/presentation/edit
-Content-Type: application/json
-
-{
-  "text": "Новый текст слайда",
-  "slide": {...},
-  "action": "polish",
-  "model": "moonshotai/kimi-k2-0905"
-}
 ```
 
 #### Получение файла
