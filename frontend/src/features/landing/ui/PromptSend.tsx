@@ -39,10 +39,8 @@ export const PromptSend: React.FC = () => {
   const navigate = useNavigate();
 
   const onSubmit = async (e: React.FormEvent) => {
-    const success = await handleSubmit(e);
-    if (success) {
-      navigate("/generate");
-    }
+    const success = handleSubmit(e);
+    navigate("/generate");
   };
 
   if (loading) return <LoadingOverlay />;
@@ -245,7 +243,7 @@ export const PromptSend: React.FC = () => {
             width: "100%",
             color: "error.contrastText",
             bgcolor: "error.main",
-            zIndex: 1101
+            zIndex: 1101,
           }}
         >
           {error}

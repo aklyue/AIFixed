@@ -20,7 +20,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ title }) => {
       sx={{
         position: "absolute",
         inset: 0,
-        zIndex: 10,
+        zIndex: 1000,
         display: "flex",
         flexDirection: "column",
         gap: 0.5,

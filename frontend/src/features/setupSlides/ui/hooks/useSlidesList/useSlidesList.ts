@@ -15,6 +15,7 @@ import {
 } from "../../../../../app/store/slices/editorSlice";
 
 export const useSlidesList = () => {
+  const { generating } = useSelector((state: RootState) => state.prompt);
   const dispatch = useDispatch<AppDispatch>();
   const slides = useSelector(
     (state: RootState) => state.editor.slides
@@ -29,6 +30,7 @@ export const useSlidesList = () => {
   const sensors = useSensors(useSensor(PointerSensor));
 
   const handleDragEnd = (event: DragEndEvent) => {
+    if (generating) return;
     const { active, over } = event;
     if (over && active.id !== over.id) {
       const oldIndex = localSlides.findIndex((s) => s.id === active.id);
@@ -42,6 +44,7 @@ export const useSlidesList = () => {
   };
 
   const handleEditSlide = (slideId: string, newContent: any[]) => {
+    if (generating) return;
     setLocalSlides((prev) =>
       prev.map((s) => (s.id === slideId ? { ...s, content: newContent } : s))
     );

@@ -1,6 +1,7 @@
 from enum import Enum
 from pathlib import Path
 import textwrap
+from typing import ClassVar
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import EmailStr
@@ -16,6 +17,12 @@ class _Settings(BaseSettings):
     DEFAULT_MODEL: str = "moonshotai/kimi-k2-0905"
     DEFAULT_EMBEDDING_MODEL: str = "openai/gpt-oss-120b"
     CROSS_ENCODER_MODEL: str = "google/gemma-3-12b-it"
+    
+    DEFAULT_MODEL_VALUES: ClassVar[list[str]] = [
+        "moonshotai/kimi-k2-0905",
+        "openai/gpt-oss-120b",
+        "google/gemma-3-12b-it"
+    ]
 
     # Qdrant
     QDRANT_HOST: str = "http://localhost:6333"

@@ -312,22 +312,19 @@ setup_logging(logging.INFO)
 api_key = model_api_utils.get_api_key()
 
 
-async def generate_presentation(
-    user_prompt: str, project_context: str, model: str
-) -> AsyncGenerator:
+async def generate_presentation(user_prompt: str, project_context: str, model: str):
     pipe = IntegratedPipeline(
         api_key=api_key,
         embedding_model=settings.DEFAULT_EMBEDDING_MODEL,
         llm_model=model,
     )
-
     pipe.load_documents([project_context])
 
     for slide in pipe.run(user_prompt, project_context=project_context):
         title = slide.get("title", "Untitled")
         content = slide.get("content", "")
-
-        yield f"# {title}\n\n{content.strip()}\n\n"
+        chunk = f"# {title}\n\n{content.strip()}\n\n"
+        yield chunk
 
 
 def edit_one_slide(user_prompt, slide: dict, action: str, model: str) -> str:
