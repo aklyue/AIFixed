@@ -39,9 +39,10 @@ const MiniSlides: React.FC<{ slides: PlateSlide[] }> = ({ slides }) => {
           height: isMobile ? undefined : "80vh",
           flexDirection: isMobile ? "row" : "column",
           overflowY: "auto",
-          justifyContent: "space-between",
+          justifyContent: isMobile ? "center" : "space-between",
           gap: 1,
           borderRadius: 1,
+          flexWrap: isMobile ? "wrap" : undefined,
         }}
       >
         {slides.map((slide, i) => (

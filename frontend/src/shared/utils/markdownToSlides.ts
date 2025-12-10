@@ -5,7 +5,7 @@ import { visitParents } from "unist-util-visit-parents";
 import { nanoid } from "nanoid";
 import { parseChartBlock } from "./parseChartBlock";
 
-import { PlateSlide } from "../types/markdownTypes";
+import { InlinePart, PlateSlide } from "../types/markdownTypes";
 
 export function markdownToSlides(markdown: string): PlateSlide[] {
   const tree: any = unified().use(remarkParse).use(remarkGfm).parse(markdown);
@@ -20,6 +20,56 @@ export function markdownToSlides(markdown: string): PlateSlide[] {
     .map((part) => "# " + part.trim());
 
   let slideIndex = -1;
+
+  function extractInlineParts(
+    children: any[]
+  ): { text: string; bold?: boolean; italic?: boolean; code?: boolean }[] {
+    const parts: {
+      text: string;
+      bold?: boolean;
+      italic?: boolean;
+      code?: boolean;
+    }[] = [];
+
+    const push = (text: string, style: any = {}) => {
+      if (!text) return;
+      parts.push({ text, ...style });
+    };
+
+    for (const child of children) {
+      switch (child.type) {
+        case "text":
+          push(child.value);
+          break;
+
+        case "strong": {
+          const text = child.children.map((c: any) => c.value || "").join("");
+          push(text, { bold: true });
+          break;
+        }
+
+        case "emphasis": {
+          const text = child.children.map((c: any) => c.value || "").join("");
+          push(text, { italic: true });
+          break;
+        }
+
+        case "inlineCode": {
+          push(child.value, { code: true });
+          break;
+        }
+
+        default: {
+          // fallback: вытаскиваем как plain
+          const text =
+            child.children?.map((c: any) => c.value || "").join("") || "";
+          push(text);
+        }
+      }
+    }
+
+    return parts;
+  }
 
   visitParents(tree, (node, parents: any[]) => {
     node.parent = parents[parents.length - 1] || null;
@@ -56,50 +106,51 @@ export function markdownToSlides(markdown: string): PlateSlide[] {
         break;
 
       case "paragraph":
-        if (currentSlide) {
-          if (
-            !node.parent ||
-            (node.parent.type !== "listItem" &&
-              node.parent.type !== "blockquote")
-          ) {
-            const text = node.children.map((n: any) => n.value || "").join("");
-            if (text.trim()) {
-              currentSlide.content.push({
-                id: nanoid(),
-                type: "paragraph",
-                text,
-                style: { fontWeight: 400 },
-              });
-            }
+        if (
+          !node.parent ||
+          (node.parent.type !== "listItem" && node.parent.type !== "blockquote")
+        )
+          if (currentSlide) {
+            const inline = extractInlineParts(node.children);
+            const flat = inline.map((i) => i.text).join("");
+
+            currentSlide.content.push({
+              id: nanoid(),
+              type: "paragraph",
+              text: flat,
+              richText: inline,
+              style: { fontWeight: 400 },
+            });
           }
-        }
         break;
 
       case "list":
         if (currentSlide) {
-          const items = node.children.map((li: any) =>
-            li.children
-              .map((c: any) => {
-                if (c.type === "paragraph") {
-                  return c.children.map((n: any) => n.value || "").join("");
-                }
-                if (c.type === "text") {
-                  return c.value || "";
-                }
-                return "";
-              })
-              .join("")
-          );
+          const richItems: Array<
+            Array<{ type: "text" | "bold" | "italic" | "link"; value: string }>
+          > = node.children.map((li: any) => {
+            const paragraph = li.children.find(
+              (c: any) => c.type === "paragraph"
+            );
+            if (!paragraph) return [];
 
-          console.log("LIST NODE", {
-            ordered: node.ordered,
-            items,
+            const inline: InlinePart[] = extractInlineParts(paragraph.children);
+
+            return inline.map((p: InlinePart) => ({
+              type: p.bold ? "bold" : p.italic ? "italic" : "text",
+              value: p.text,
+            }));
           });
 
+          const items: string[] = richItems.map((i) =>
+            i.map((p) => p.value).join("")
+          );
+
           currentSlide.content.push({
+            id: nanoid(),
             type: node.ordered ? "ordered-list" : "list",
             items,
-            id: nanoid(),
+            richItems,
           });
         }
         break;

@@ -98,17 +98,39 @@ export const exportToPptx = (slides: PlateSlide[], theme: Theme) => {
           });
           break;
         case "paragraph":
-          pptSlide.addText(block.text ?? "", {
-            x,
-            y,
-            w,
-            h,
-            fontSize: fontSize,
-            bold: bold,
-            align: block.justifyContent === "flex-end" ? "right" : "left",
-            color: color,
-            fontFace: fontFace,
-          });
+          if (block.richText?.length) {
+            const richText = block.richText.map((part) => ({
+              text: part.text,
+              options: {
+                bold: part.bold,
+                italic: part.italic,
+                fontFace: part.code ? "Courier New" : fontFace,
+                color,
+                fontSize,
+              },
+            }));
+
+            pptSlide.addText(richText, {
+              x,
+              y,
+              w,
+              h,
+              align: block.justifyContent === "flex-end" ? "right" : "left",
+              valign: "top",
+            });
+          } else {
+            pptSlide.addText(block.text ?? "", {
+              x,
+              y,
+              w,
+              h,
+              fontFace,
+              fontSize,
+              bold,
+              color,
+              align: block.justifyContent === "flex-end" ? "right" : "left",
+            });
+          }
           break;
         case "quote":
           const isRight = block.justifyContent === "flex-end";
@@ -167,32 +189,101 @@ export const exportToPptx = (slides: PlateSlide[], theme: Theme) => {
         case "list":
         case "ordered-list": {
           const isOrdered = block.type === "ordered-list";
-          const text = (block.items ?? [])
-            .map((item, index) =>
-              isOrdered ? `${index + 1}. ${item}` : `• ${item}`
-            )
-            .join("\n");
 
-          pptSlide.addText(text, {
-            x,
-            y,
-            w,
-            h,
-            fontSize: fontSize,
-            fontFace: fontFace,
-            bold: bold,
-            align: block.justifyContent === "flex-end" ? "right" : "left",
-            color: color,
-          });
+          if (block.richItems?.length) {
+            const lines = block.richItems.map((itemParts, index) => {
+              const prefix = isOrdered ? `${index + 1}. ` : "• ";
+
+              const richText = itemParts.map((part) => ({
+                text: part.value,
+                options: {
+                  bold: part.type === "bold",
+                  italic: part.type === "italic",
+                  underline: part.type === "link",
+                  fontSize,
+                  color,
+                },
+              }));
+
+              return [
+                { text: prefix, options: { bold, fontFace, fontSize, color } },
+                ...richText,
+              ];
+            });
+
+            const finalRichText = lines.reduce((acc, line, idx) => {
+              if (idx > 0) acc.push({ text: "\n", options: {} });
+              acc.push(...line);
+              return acc;
+            }, [] as { text: string; options: any }[]);
+
+            pptSlide.addText(finalRichText, {
+              x,
+              y,
+              w,
+              h,
+              align: block.justifyContent === "flex-end" ? "right" : "left",
+              valign: "top",
+            });
+          } else {
+            const text = (block.items ?? [])
+              .map((item, index) =>
+                isOrdered ? `${index + 1}. ${item}` : `• ${item}`
+              )
+              .join("\n");
+
+            pptSlide.addText(text, {
+              x,
+              y,
+              w,
+              h,
+              fontSize,
+              fontFace,
+              bold,
+              align: block.justifyContent === "flex-end" ? "right" : "left",
+              color,
+            });
+          }
+
           break;
         }
-
         case "table":
           if (block.table) {
+            const { headers, rows } = block.table;
+
+            // Создаём кортеж из 4 границ для PptxGenJS
+            const makeBorders = (
+              color: string = "000000",
+              pt: number = 1
+            ): [any, any, any, any] => [
+              { color, pt }, // top
+              { color, pt }, // right
+              { color, pt }, // bottom
+              { color, pt }, // left
+            ];
+
             const tableData = [
-              block.table.headers.map((h) => ({ text: h })),
-              ...block.table.rows.map((row) =>
-                row.map((cell) => ({ text: cell }))
+              headers.map((h) => ({
+                text: h,
+                options: {
+                  bold: true,
+                  fontFace: fontFace,
+                  fontSize: fontSize,
+                  color: color,
+                  border: makeBorders(), // строго 4 элемента
+                },
+              })),
+              ...rows.map((row) =>
+                row.map((cell) => ({
+                  text: cell,
+                  options: {
+                    bold: false,
+                    fontFace: fontFace,
+                    fontSize: fontSize,
+                    color: color,
+                    border: makeBorders(),
+                  },
+                }))
               ),
             ];
 
@@ -201,10 +292,8 @@ export const exportToPptx = (slides: PlateSlide[], theme: Theme) => {
               y,
               w,
               h,
-              fontSize: block.style?.fontSize,
-              fontFace: fontFace,
-              bold: bold,
-              color: color,
+              valign: "middle",
+              align: "center",
             });
           }
           break;
