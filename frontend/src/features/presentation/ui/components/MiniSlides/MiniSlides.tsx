@@ -21,7 +21,6 @@ const MiniSlides: React.FC<{ slides: PlateSlide[] }> = ({ slides }) => {
       sx={{
         maxWidth: isMobile ? "100vw" : 145,
         height: isMobile ? "auto" : "95vh",
-        overflowY: "auto",
         overflowX: isMobile ? "auto" : "hidden",
         display: "flex",
         flexDirection: isMobile ? "row" : "column",
@@ -37,9 +36,12 @@ const MiniSlides: React.FC<{ slides: PlateSlide[] }> = ({ slides }) => {
         sx={{
           borderRight: isMobile ? "none" : "5px solid #ccc",
           display: "flex",
+          height: isMobile ? undefined : "80vh",
           flexDirection: isMobile ? "row" : "column",
+          overflowY: "auto",
+          justifyContent: "space-between",
           gap: 1,
-          borderRadius: 2,
+          borderRadius: 1,
         }}
       >
         {slides.map((slide, i) => (

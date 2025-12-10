@@ -5,6 +5,8 @@ import { RenderBlock } from "../../../blocks/RenderBlock/components";
 import { PlateSlide } from "../../../../../shared/types";
 import { motion } from "framer-motion";
 import { useSortableSlide } from "../../hooks";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../../app/store";
 
 interface Props {
   slide: PlateSlide;
@@ -26,6 +28,8 @@ export const SortableSlide: React.FC<Props> = ({
   const { attributes, listeners, style, handleEdit, setNodeRef } =
     useSortableSlide({ slide, onEditSlide });
 
+  const { generating } = useSelector((state: RootState) => state.prompt);
+
   return (
     <motion.div initial={initial} animate={animate} transition={transitionA}>
       <Paper
@@ -38,6 +42,7 @@ export const SortableSlide: React.FC<Props> = ({
       >
         <Box sx={{ display: "flex", alignItems: "center", mr: 2 }}>
           <IconButton
+            disabled={generating}
             {...listeners}
             {...attributes}
             sx={{ cursor: "grab", touchAction: "none" }}

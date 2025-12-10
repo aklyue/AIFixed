@@ -1,16 +1,12 @@
-import {
-  Box,
-  Button,
-  Container,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import { Box, Button, Container, useMediaQuery, useTheme } from "@mui/material";
 import { SlidesList } from "./components/SlidesList/SlidesList";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { ThemeCardSelector } from "./components/ThemeCardSelector/ThemeCardSelector";
 import { AnimatePresence, motion } from "framer-motion";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../app/store";
 
 const MotionBox = motion(Box);
 const MotionButton = motion(Button);
@@ -18,8 +14,12 @@ const MotionContainer = motion(Container);
 
 export const BlockGeneration = () => {
   const navigate = useNavigate();
+  const { generating } = useSelector((state: RootState) => state.prompt);
 
-  const handleProceed = () => navigate("/editor");
+  const handleProceed = () => {
+    if (generating) return;
+    navigate("/editor");
+  };
   const handleBack = () => navigate(-1);
 
   const theme = useTheme();
@@ -147,6 +147,7 @@ export const BlockGeneration = () => {
               px: isMobile ? 1 : 4,
               "&:hover": { bgcolor: "primary.main" },
             }}
+            disabled={generating}
           >
             Перейти к Презентации
           </MotionButton>

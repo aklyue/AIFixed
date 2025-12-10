@@ -1,6 +1,8 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { PlateSlide } from "../../../../../shared/types";
 import { darken, useTheme } from "@mui/material";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../../app/store";
 
 interface useSortableSlideProps {
   slide: PlateSlide;
@@ -13,6 +15,8 @@ export const useSortableSlide = ({
 }: useSortableSlideProps) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: slide.id });
+
+  const { generating } = useSelector((state: RootState) => state.prompt);
 
   const theme = useTheme();
 
@@ -29,6 +33,7 @@ export const useSortableSlide = ({
   };
 
   const handleEdit = (blockId: string, textOrItems: string | string[]) => {
+    if (generating) return;
     const newContent = slide.content.map((b) =>
       b.id === blockId
         ? {

@@ -1,95 +1,124 @@
 export const testMarkdown = `
-# Введение в Искусственный Интеллект
+# Российский финансовый рынок 2022–2025
 
-ИИ развивается стремительно и находит применение в разных сферах: от медицины до развлечений.
+Российский финансовый рынок в 2022–2025 годах переживает период глубоких изменений, связанных с трансформацией экономических связей, ограничениями внешнего характера, ростом самостоятельности внутреннего капитала и увеличением интереса населения к инвестициям. Брокерские компании стали ключевым механизмом, обеспечивающим частным инвесторам доступ к финансовым инструментам, вложениям и накоплениям.
 
-![AI Concept](https://images.unsplash.com/photo-1598363432216-501262ed9cee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTE0MjJ8MHwxfHNlYXJjaHwxfHxoaXN0b3JpY2FsJTIwdGltZWxpbmUlMjBzaG93Y2FzaW5nJTIwbWFqb3IlMjB0ZWNobm9sb2dpY2FsJTIwaW52ZW50aW9ucyUyMGZyb20lMjBhbmNpZW50JTIwdG8lMjBtb2Rlcm4lMjB0aW1lcyUyQyUyMGhpZ2hsaWdodGluZyUyMGtleSUyMG1pbGVzdG9uZXN8ZW58MHwwfHx8MTc2MTc0OTczN3ww&ixlib=rb-4.1.0&q=80&w=1080)
+![Financial Market](https://images.unsplash.com/photo-1605902711622-cfb43c443e29?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTE0MjJ8MHwxfHNlYXJjaHwxfHxmaW5hbmNlJTIwc2hvdyUyMG1hcmtldHN8ZW58MHwwfHx8MTc2MTc1Mjc4NXww&ixlib=rb-4.1.0&q=80&w=1080)
 
----
-
-# История ИИ
-
-Первые исследования ИИ начались в 1950-х годах. С тех пор технологии развивались по следующим направлениям:
-
-- Символьный ИИ
-- Машинное обучение
-- Глубокое обучение
-- Генеративные модели
-
-1. Автономные автомобили
-2. Оптимизация маршрутов
-3. Предиктивное обслуживание
-
-![AI Timeline](https://images.unsplash.com/photo-1695139468725-21232d5003d6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTE0MjJ8MHwxfHNlYXJjaHwxfHxzb2xhciUyMHBhbmVscyUyMG9uJTIwcm9vZnRvcHMlMjBhbmQlMjB3aW5kJTIwdHVyYmluZXMlMjBpbiUyMGElMjBsdXNoJTIwZ3JlZW4lMjBsYW5kc2NhcGUlMkMlMjB3aXRoJTIwYSUyMGNsZWFyJTIwYmx1ZSUyMHNreXxlbnwwfDF8fHwxNzYxNzQ5NzQwfDA&ixlib=rb-4.1.0&q=80&w=1080)
+Рост числа инвесторов на Московской бирже превысил 25 млн человек к 2023 году, что стимулировало брокеров к внедрению новых технологий, развитию цифровых сервисов и усилению конкуренции. В рамках исследования рассматриваются две брокерские компании: ИФК «Солид» и Газпромбанк Инвестиции, представляющие разные модели развития.
 
 ---
 
-# Применение ИИ
+# Глава 1. Общая характеристика и позиционирование брокеров
 
-## Медицина
+## 1.1 Общая характеристика брокерских компаний
 
-ИИ помогает диагностировать болезни быстрее и точнее.
+Брокеры в России выполняют функцию посредников между инвесторами и финансовыми рынками, обеспечивая доступ к акциям, облигациям, валюте, деривативам, структурным продуктам и фондам.  
 
-> "ИИ может распознать рак на ранней стадии лучше, чем большинство врачей."
+Основные типы брокеров:  
+- **Банковские брокеры**: СберБанк, ВТБ, Газпромбанк — мощная инфраструктура и доверие населения.  
+- **Независимые компании**: БКС, Финам — широкий спектр услуг и аналитики.  
+- **Специализированные инвестиционные компании**: ИФК «Солид» — профессиональные стратегии и индивидуальное управление активами.  
 
-![Medical AI](https://images.unsplash.com/photo-1613270335953-e4701b99b3ff?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTE0MjJ8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMHVzaW5nJTIwbGFwdG9wcyUyMGluJTIwYSUyMGJyaWdodCUyQyUyMG1vZGVybiUyMGNsYXNzcm9vbSUyMHNldHRpbmclMjBjb21iaW5lZCUyMHdpdGglMjBvbmxpbmUlMjBlZHVjYXRpb24lMjB2aXN1YWxzfGVufDB8MHx8fDE3NjE3NDk3NDd8MA&ixlib=rb-4.1.0&q=80&w=1080)
+Тенденции рынка: цифровизация, упрощение продуктов, интеграция с банковскими суперприложениями, рост конкуренции и внимания регулятора к рискам.
 
-## Транспорт
+# 1.2 История и профиль ИФК «Солид» и Газпромбанк Инвестиции
 
-- Автономные автомобили
-- Оптимизация маршрутов
-- Предиктивное обслуживание
+- **ИФК «Солид»** — старейший инвестиционный дом России (1990-е годы), ориентирован на профессионалов рынка, корпоративных клиентов и долгосрочные стратегии.  
+- **Газпромбанк Инвестиции** — подразделение крупной банковской группы, интегрированное с цифровой банковской инфраструктурой, удобное мобильное приложение для массового инвестора.  
+
+![Brokers](https://images.unsplash.com/photo-1554224154-22dec7ec8818?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTE0MjJ8MHwxfHNlYXJjaHwxfHxpbmVzdG1lbnQlMjBhcHBsaWNhdGlvbnxlbnwwfDF8fHwxNzYxNzUyNzg1fDA&ixlib=rb-4.1.0&q=80&w=1080)
 
 ---
 
-# Технологии
+# Глава 2. Услуги и результаты деятельности
 
-![Medical AI](https://images.unsplash.com/photo-1757140304674-92e6837ef4ec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTE0MjJ8MHwxfHNlYXJjaHwxfHxmdXR1cmlzdGljJTIwY2l0eSUyMHNreWxpbmUlMjB3aXRoJTIwYXVnbWVudGVkJTIwcmVhbGl0eSUyMGludGVyZmFjZXMlMjBhbmQlMjBkaWdpdGFsJTIwb3ZlcmxheXMlMjBkZW1vbnN0cmF0aW5nJTIwYWR2YW5jZWQlMjB0ZWNobm9sb2d5fGVufDB8MXx8fDE3NjE3NDk3NTF8MA&ixlib=rb-4.1.0&q=80&w=1080)
+## 2.1 Продуктовые линейки брокеров
 
-\`\`\`python
-from sklearn.linear_model import LinearRegression
-model = LinearRegression()
-model.fit(X_train, y_train)
-from sklearn.linear_model import LinearRegression
-model = LinearRegression()
-model.fit(X_train, y_train)
-from sklearn.linear_model import LinearRegression
-model = LinearRegression()
-model.fit(X_train, y_train)
-from sklearn.linear_model import LinearRegression
-model = LinearRegression()
-model.fit(X_train, y_train)
+**ИФК «Солид»**:  
+- Доступ к ценным бумагам и Московской бирже  
+- Индивидуальные инвестиционные счета  
+- Доверительное управление активами  
+- Персональные консультанты и аналитика  
+
+**Газпромбанк Инвестиции**:  
+- Мобильное приложение для массового инвестора  
+- Покупка акций, облигаций, фондов, структурных продуктов  
+- Интеграция с банковскими сервисами и быстрыми платежами  
+- Автоматизированные стратегии, подборки идей, образовательные материалы  
+
+# 2.2 Финансовые показатели и клиентская активность
+
+### Рост числа клиентов Газпромбанк Инвестиции (2022–2025)
+
+\`\`\`chart
+type: line
+title: "Динамика числа клиентов Газпромбанк Инвестиции"
+labels: ["2022", "2023", "2024", "2025"]
+values: [1200000, 1600000, 2100000, 2500000]
+colors: ["#597ad3"]
 \`\`\`
 
----
+# Активные клиенты в 2022 и 2025 гг
 
-# Отчёт по продажам
-
-## Статистика за октябрь
-
-| Товар | Кол-во | Цена |
-|-------|---------|------|
-| Ноутбук | 5 | 50000 |
-| Мышь | 10 | 1500 |
-| Клавиатура | 7 | 2500 |
+| Компания | 2022 | 2025 |
+|----------|------|------|
+| ИФК «Солид» | 15 000 | 18 000 |
+| Газпромбанк Инвестиции | 300 000 | 550 000 |
 
 ---
 
-# Структура источников финансирования
+# Глава 3. Технологии и сравнительный анализ
+
+## 3.1 Технологические решения
+
+**Газпромбанк Инвестиции**:  
+- Регулярные обновления приложения  
+- Функции анализа, автоматизации, мгновенное пополнение через СБП  
+- Центр взаимодействия клиента с банком  
+
+**ИФК «Солид»**:  
+- Развитие классических инструментов управления активами  
+- Аналитика, отчётность, стабильность операций  
+- Цифровые сервисы менее масштабны по сравнению с банковскими брокерами  
+
+![Technology](https://images.unsplash.com/photo-1603791440384-56cd371ee9a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTE0MjJ8MHwxfHNlYXJjaHwxfHx0ZWNobm9sb2d5fCUyMGFwcHxlbnwwfDF8fHwxNzYxNzUyNzg1fDA&ixlib=rb-4.1.0&q=80&w=1080)
+
+# Распределение услуг брокеров
 
 \`\`\`chart
 type: pie
-title: "Источники финансирования программы"
-labels: ["Собственные средства", "Привлеченные средства", "Прочие источники"]
-values: [1512499.98, 1760708.86, 365944.34]
-colors: ["#597ad3", "#de7c59", "#59d387"]
+title: "Распределение услуг брокеров"
+labels: ["Акции", "Облигации", "Фонды", "Структурные продукты", "Валютные операции"]
+values: [40, 25, 20, 10, 5]
+colors: ["#597ad3", "#de7c59", "#59d387", "#f1c232", "#9e5c8f"]
 \`\`\`
+
+# 3.2 Сравнительный анализ
+
+| Показатель | ИФК «Солид» | Газпромбанк Инвестиции |
+|------------|-------------|-----------------------|
+| Ориентация | Профессиональные инвесторы | Массовый рынок |
+| Продукты | Персонализированные стратегии | Мобильное приложение, простота использования |
+| Рост клиентов | Умеренный | Быстрый |
+| Технологии | Классические решения | Современные цифровые сервисы |
+| Преимущества | Экспертиза, репутация | Масштаб, скорость, интеграция |
 
 ---
 
 # Заключение
 
-ИИ изменяет наш мир, создавая новые возможности и вызовы.
+Исследование показало, что ИФК «Солид» и Газпромбанк Инвестиции занимают разные ниши на финансовом рынке.  
 
-![Future AI](https://images.unsplash.com/photo-1747208556572-a3e940d7bf9e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTE0MjJ8MHwxfHNlYXJjaHwxfHxoaXN0b3JpY2FsJTIwdGltZWxpbmUlMjBvZiUyMHRlY2hub2xvZ2ljYWwlMjBhZHZhbmNlbWVudHMlMjBzaG93Y2FzaW5nJTIwbWFqb3IlMjBpbnZlbnRpb25zJTIwZnJvbSUyMHRoZSUyMHdoZWVsJTIwdG8lMjB0aGUlMjBpbnRlcm5ldHxlbnwwfDF8fHwxNzYxNzUyNzg1fDA&ixlib=rb-4.1.0&q=80&w=1080)
+- **Газпромбанк Инвестиции** — технологически ориентированный брокер с широким спектром цифровых услуг.  
+- **ИФК «Солид»** — профессиональный партнер для опытных клиентов, предлагающий персональные стратегии.  
+
+### Технологическая зрелость брокеров (оценка по 5 ключевым показателям)
+
+\`\`\`chart
+type: radar
+title: "Технологическая зрелость брокеров"
+labels: ["Скорость операций", "Мобильное приложение", "Аналитика", "Интеграции", "Автоматизация"]
+values: [[60, 85, 70, 90, 80]]
+\`\`\`
 `;

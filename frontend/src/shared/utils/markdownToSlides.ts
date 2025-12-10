@@ -112,10 +112,7 @@ export function markdownToSlides(markdown: string): PlateSlide[] {
             id: nanoid(),
           });
 
-          const imageBlocks = currentSlide.content.filter(
-            (b) => b.type === "image"
-          );
-          if (imageBlocks.length === 1) {
+          if (currentSlide.layout === "text-only") {
             currentSlide.layout = lastLayout;
 
             switch (lastLayout) {

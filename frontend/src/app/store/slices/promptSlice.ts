@@ -5,12 +5,14 @@ interface PromptStateProps {
   file: File | null;
   text: string;
   loading: boolean;
+  generating: boolean;
 }
 
 const initialState: PromptStateProps = {
   file: null,
   text: "",
   loading: false,
+  generating: false,
 };
 
 const promptSlice = createSlice({
@@ -28,8 +30,12 @@ const promptSlice = createSlice({
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
+    setGenerating: (state, action: PayloadAction<boolean>) => {
+      state.generating = action.payload;
+    },
   },
 });
 
-export const { setPromptSettings, setLoading } = promptSlice.actions;
+export const { setPromptSettings, setLoading, setGenerating } =
+  promptSlice.actions;
 export default promptSlice.reducer;

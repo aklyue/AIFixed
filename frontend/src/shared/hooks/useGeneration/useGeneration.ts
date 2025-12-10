@@ -127,8 +127,12 @@ import { AppDispatch, RootState } from "../../../app/store";
 import { markdownToSlides } from "../../utils/markdownToSlides";
 import { setSlides } from "../../../app/store/slices/editorSlice";
 import { PlateSlide } from "../../types";
-import { setLoading } from "../../../app/store/slices/promptSlice";
-import { generateSlides } from "../../../entities";
+import {
+  setLoading,
+  setGenerating,
+} from "../../../app/store/slices/promptSlice";
+import { getContext } from "../../../entities";
+import { nanoid } from "@reduxjs/toolkit";
 
 interface ChatMessage {
   id: string;
@@ -145,6 +149,8 @@ export const useGeneration = () => {
   const [error, setError] = useState<string | null>(null);
   const [model, setModel] = useState<string>("google/gemma-3-12b-it");
   const dispatch = useDispatch<AppDispatch>();
+
+  const wsRef = useRef<WebSocket | null>(null);
 
   const { file, text, loading } = useSelector(
     (state: RootState) => state.prompt
@@ -164,10 +170,10 @@ export const useGeneration = () => {
     setMessages([aiMsg]);
   }, []);
 
-  const sendMessage = async () => {
-    if ((!inputText.trim() || !selectedFile) && (!file || !text.trim())) {
+  const sendMessageWS = async () => {
+    if (!inputText.trim() || !selectedFile) {
       setError("Введите текст и прикрепите файл!");
-      return;
+      return false;
     }
 
     const userMsg: ChatMessage = {
@@ -176,100 +182,115 @@ export const useGeneration = () => {
       content: inputText,
       file: selectedFile,
     };
-
     setMessages((prev) => [...prev, userMsg]);
     setInputText("");
-    setFileStatus({
-      name: selectedFile?.name || file?.name || "unknown",
-      converted: false,
-    });
-    dispatch(setLoading(true));
+    setFileStatus({ name: selectedFile?.name || "unknown", converted: false });
 
     try {
-      const formData = new FormData();
-      formData.append("text", inputText);
-      if (selectedFile) {
-        formData.append("file", selectedFile);
-      } else if (file) {
-        formData.append("file", file);
-      }
-      formData.append("model", model);
-
-      const stream = await generateSlides({
-        text: inputText,
-        file: selectedFile ?? file ?? undefined,
-        model,
-      });
-
-      const reader = stream?.getReader();
-      if (!reader) throw new Error("Поток недоступен в ответе");
-
-      const decoder = new TextDecoder();
-      let fullText = "";
-      let buffer = "";
+      dispatch(setGenerating(true));
+      dispatch(setLoading(true));
 
       const aiMsg: ChatMessage = {
         id: crypto.randomUUID(),
         type: "ai",
         content: "",
       };
-
       setMessages((prev) => [...prev, aiMsg]);
 
+      let fullText = "";
       let allSlides: PlateSlide[] = [];
-      let firstSlideAdded = false;
+      let firstChunkReceived = false;
+      let updateScheduled = false;
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value, { stream: true });
-        buffer += chunk;
+      await getContext(selectedFile!, model, (chunk) => {
         fullText += chunk;
+
+        if (!firstChunkReceived) {
+          firstChunkReceived = true;
+          dispatch(setLoading(false));
+        }
 
         setMessages((prev) =>
           prev.map((m) => (m.id === aiMsg.id ? { ...m, content: fullText } : m))
         );
 
-        const parts = buffer.split(/^#\s+/gm);
-        buffer = parts.pop() || "";
+        const parts = fullText.split(/^#\s+/gm).filter((p) => p.trim() !== "");
 
-        const readySlides = parts
-          .filter((p) => p.trim())
-          .map((p) => "# " + p.trim());
+        const layouts: PlateSlide["layout"][] = [
+          "left-image",
+          "right-image",
+          "bottom-image",
+          "top-image",
+        ];
 
-        for (const rawSlide of readySlides) {
-          const slidesChunk = markdownToSlides(rawSlide);
-          if (slidesChunk.length) {
-            allSlides.push(...slidesChunk);
-            dispatch(setSlides([...allSlides]));
-            if (!firstSlideAdded) {
-              dispatch(setLoading(false));
-              firstSlideAdded = true;
-            }
+        let layoutIndex = 0;
+
+        parts.forEach((part, index) => {
+          const slideText = "# " + part;
+          const titleMatch = slideText.match(/^#\s*(.+)/);
+          const title = titleMatch ? titleMatch[1] : "Slide";
+
+          const parsedSlides = markdownToSlides(slideText);
+          const parsed = parsedSlides[0] || {
+            content: [],
+            layout: "text-only",
+          };
+
+          const hasImage = parsed.content.some((b) => b.type === "image");
+          const layout = hasImage
+            ? layouts[layoutIndex % layouts.length]
+            : "text-only";
+
+          if (!allSlides[index]) {
+            allSlides[index] = {
+              id: nanoid(),
+              title,
+              markdownText: slideText,
+              content: parsed.content,
+              layout,
+            };
+          } else {
+            allSlides[index] = {
+              ...allSlides[index],
+              markdownText: slideText,
+              content: parsed.content,
+              layout,
+            };
           }
+
+          if (hasImage) layoutIndex++;
+        });
+
+        if (!updateScheduled) {
+          updateScheduled = true;
+          setTimeout(() => {
+            dispatch(setSlides([...allSlides]));
+            updateScheduled = false;
+          }, 300);
         }
-      }
+      });
 
-      if (buffer.trim()) {
-        const slidesChunk = markdownToSlides(buffer);
-        allSlides = [...allSlides, ...slidesChunk];
-        dispatch(setSlides(allSlides));
-      }
-
+      setFileStatus({ name: selectedFile.name, converted: true });
       setSelectedFile(null);
-      setFileStatus({ name: userMsg.file!.name, converted: true });
       if (fileInputRef.current) fileInputRef.current.value = "";
 
       return true;
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
       dispatch(setLoading(false));
-      setError("Ошибка отправки запроса");
+      setError("Ошибка генерации");
       setFileStatus(null);
       return false;
+    } finally {
+      dispatch(setGenerating(false));
     }
   };
+
+  useEffect(() => {
+    return () => {
+      wsRef.current?.close();
+    };
+  }, []);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -280,11 +301,11 @@ export const useGeneration = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    return await sendMessage();
+    return sendMessageWS();
   };
 
   const regenerateSlides = async () => {
-    return await sendMessage();
+    return sendMessageWS();
   };
 
   return {

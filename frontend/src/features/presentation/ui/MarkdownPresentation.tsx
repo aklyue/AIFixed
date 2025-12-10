@@ -9,6 +9,7 @@ import EmptyState from "./components/EmptyState";
 import SlideList from "./components/SlideList";
 import SlideToolbar from "./components/SlideToolbar";
 import { useSavePresentation } from "../../../shared/hooks";
+import { LoadingOverlay } from "../../../shared/components";
 
 export const MarkdownPresentation: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -19,6 +20,8 @@ export const MarkdownPresentation: React.FC = () => {
   const theme = useSelector((s: RootState) =>
     s.editor.availableThemes.find((t) => t.id === s.editor.globalThemeId)
   );
+
+  const generating = useSelector((state: RootState) => state.prompt.generating);
 
   const muiTheme = useTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
@@ -56,7 +59,9 @@ export const MarkdownPresentation: React.FC = () => {
       }}
     >
       <AnimatePresence mode="wait">
-        {!currentSlide ? (
+        {generating ? (
+          <LoadingOverlay />
+        ) : !currentSlide ? (
           <EmptyState theme={theme} />
         ) : (
           <Box

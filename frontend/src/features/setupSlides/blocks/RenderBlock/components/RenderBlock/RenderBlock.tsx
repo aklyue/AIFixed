@@ -11,6 +11,8 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useRenderBlock } from "../../hooks";
+import { RootState } from "../../../../../../app/store";
+import { useSelector } from "react-redux";
 
 interface RenderBlockProps {
   block: SlideBlock;
@@ -25,6 +27,7 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({ block, onEdit }) => {
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const { generating } = useSelector((state: RootState) => state.prompt);
 
   if (editing) {
     return (
@@ -54,14 +57,21 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({ block, onEdit }) => {
     );
   }
 
-  const handleClick = () => setEditing(true);
+  const handleClick = () => {
+    if (generating) return;
+    setEditing(true);
+  };
 
   switch (block.type) {
     case "heading":
       return (
         <Typography
           variant="h6"
-          sx={{ mb: 1, cursor: "pointer", fontWeight: "bold" }}
+          sx={{
+            mb: 1,
+            cursor: generating ? undefined : "pointer",
+            fontWeight: "bold",
+          }}
           onClick={handleClick}
         >
           {block.text}
@@ -71,7 +81,7 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({ block, onEdit }) => {
       return (
         <Typography
           variant="body1"
-          sx={{ mb: 1, cursor: "pointer" }}
+          sx={{ mb: 1, cursor: generating ? undefined : "pointer" }}
           onClick={handleClick}
         >
           {block.text}
@@ -79,7 +89,10 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({ block, onEdit }) => {
       );
     case "list":
       return (
-        <List sx={{ mb: 1, cursor: "pointer" }} onClick={handleClick}>
+        <List
+          sx={{ mb: 1, cursor: generating ? undefined : "pointer" }}
+          onClick={handleClick}
+        >
           {block.items?.map((item, i) => (
             <ListItem key={i} sx={{ pl: 2, py: 0 }}>
               {item}
@@ -95,7 +108,7 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({ block, onEdit }) => {
             pl: 2,
             borderLeft: "4px solid gray",
             fontStyle: "italic",
-            cursor: "pointer",
+            cursor: generating ? undefined : "pointer",
           }}
           onClick={handleClick}
         >
@@ -112,7 +125,7 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({ block, onEdit }) => {
             fontFamily: "monospace",
             wordBreak: isMobile ? "break-all" : undefined,
             whiteSpace: isMobile ? "pre-line" : "pre",
-            cursor: "pointer",
+            cursor: generating ? undefined : "pointer",
             width: isMobile ? "95%" : undefined,
           }}
           onClick={handleClick}
