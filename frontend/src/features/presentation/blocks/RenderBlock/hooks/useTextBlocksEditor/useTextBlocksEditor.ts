@@ -5,7 +5,7 @@ import {
   pushHistory,
   updateBlock,
 } from "../../../../../../app/store/slices/editorSlice";
-import { SlideBlock } from "../../../../../../shared/types";
+import { InlinePart, SlideBlock } from "../../../../../../shared/types";
 
 interface useTextBlocksEditorProps {
   block: SlideBlock;
@@ -42,17 +42,43 @@ export const useTextBlocksEditor = ({
         .map((l) => l.trim())
         .filter(Boolean);
 
+      const oldRichItems = block.richItems || [];
+      const newRichItems = newItems.map((item, idx) => {
+        const oldItem = oldRichItems[idx] || [];
+        return oldItem.length
+          ? oldItem.map((r) => ({ ...r, value: item })) // сохраняем тип и стили
+          : [{ type: "text" as const, value: item }];
+      });
+
       dispatch(
         updateBlock({
           id: block.id,
-          newBlock: { ...block, items: newItems },
+          newBlock: { ...block, items: newItems, richItems: newRichItems },
         })
       );
     } else {
+      // Для параграфов и заголовков
+      const oldRich = block.richText || [];
+      const newRichText: InlinePart[] = editValue
+        .split("\n")
+        .map((line, idx) => {
+          const oldLine = oldRich[idx];
+          return {
+            text: line,
+            bold: oldLine?.bold,
+            italic: oldLine?.italic,
+            code: oldLine?.code,
+          };
+        });
+
       dispatch(
-        updateBlock({ id: block.id, newBlock: { ...block, text: editValue } })
+        updateBlock({
+          id: block.id,
+          newBlock: { ...block, text: editValue, richText: newRichText },
+        })
       );
     }
+
     dispatch(pushHistory());
     setEditingBlock(null);
   };

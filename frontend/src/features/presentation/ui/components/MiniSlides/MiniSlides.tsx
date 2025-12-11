@@ -41,7 +41,7 @@ const MiniSlides: React.FC<{ slides: PlateSlide[] }> = ({ slides }) => {
           overflowY: "auto",
           justifyContent: isMobile ? "center" : "space-between",
           gap: 1,
-          borderRadius: 1,
+          borderRadius: isMobile ? undefined : 1,
           flexWrap: isMobile ? "wrap" : undefined,
         }}
       >
@@ -64,7 +64,7 @@ const MiniSlides: React.FC<{ slides: PlateSlide[] }> = ({ slides }) => {
               boxSizing: "border-box",
               boxShadow: 1,
               minHeight: isMobile ? 30 : 80,
-              borderRadius: 0.7,
+              borderRadius: isMobile ? "50%" : 0.7,
               overflow: "hidden",
               borderStyle: "solid",
               borderWidth: 1,
