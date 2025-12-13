@@ -39,12 +39,12 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     logging.info("Starting up - preloading models...")
-    # try:
-    #     preload_models()
-    #     logging.info("✓ Models preloaded successfully")
-    # except Exception as e:
-    #     logging.error(f"Failed to preload models: {e}")
-    #     raise
+    try:
+        preload_models()
+        logging.info("✓ Models preloaded successfully")
+    except Exception as e:
+        logging.error(f"Failed to preload models: {e}")
+        raise
 
 
 app.include_router(presentation_routes.router)

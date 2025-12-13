@@ -103,7 +103,7 @@ const MiniSlides: React.FC<{ slides: PlateSlide[] }> = ({ slides }) => {
                       id={block.id}
                       slideId={slide.id}
                       editingBlock={null}
-                      editValue=""
+                      editValue={[]}
                       setEditValue={() => {}}
                       setEditingBlock={() => {}}
                       isMini={true}

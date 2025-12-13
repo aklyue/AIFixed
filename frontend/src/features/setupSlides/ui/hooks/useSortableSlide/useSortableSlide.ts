@@ -1,12 +1,18 @@
 import { useSortable } from "@dnd-kit/sortable";
-import { PlateSlide } from "../../../../../shared/types";
+import { PlateSlide, RichTextPart } from "../../../../../shared/types";
 import { darken, useTheme } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../app/store";
+import { useState } from "react";
 
 interface useSortableSlideProps {
   slide: PlateSlide;
-  onEditSlide: (slideId: string, newContent: any[]) => void;
+  onEditSlide: (
+    slideId: string,
+    blockId: string,
+    textOrItems: string | string[],
+    richParts?: RichTextPart[][]
+  ) => void;
 }
 
 export const useSortableSlide = ({
@@ -32,8 +38,23 @@ export const useSortableSlide = ({
     alignItems: "flex-start",
   };
 
-  const handleEdit = (blockId: string, textOrItems: string | string[]) => {
+  const [editingBlockId, setEditingBlockId] = useState<string | null>(null);
+
+  const handleStartEditing = (blockId: string) => {
+    setEditingBlockId(blockId);
+  };
+
+  const handleStopEditing = () => {
+    setEditingBlockId(null);
+  };
+
+  const handleEdit = (
+    blockId: string,
+    textOrItems: string | string[],
+    richParts?: RichTextPart[][]
+  ) => {
     if (generating) return;
+
     const newContent = slide.content.map((b) =>
       b.id === blockId
         ? {
@@ -41,10 +62,12 @@ export const useSortableSlide = ({
             ...(Array.isArray(textOrItems)
               ? { items: textOrItems }
               : { text: textOrItems }),
+            ...(richParts ? { richParts } : {}),
           }
         : b
     );
-    onEditSlide(slide.id, newContent);
+
+    onEditSlide(slide.id, blockId, textOrItems, richParts);
   };
 
   return {
@@ -53,5 +76,8 @@ export const useSortableSlide = ({
     style,
     handleEdit,
     setNodeRef,
+    editingBlockId,
+    handleStartEditing,
+    handleStopEditing,
   };
 };

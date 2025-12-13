@@ -1,10 +1,10 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import EditableWrapper from "../EditableWrapper";
 import TextEditor from "../TextEditor";
 import { HeadingBlockProps } from "../HeadingBlock/HeadingBlock";
 import { useTextBlocksEditor } from "../../hooks";
-import { SlideBlock } from "../../../../../../shared/types";
+import { SlideBlock, RichTextPart } from "../../../../../../shared/types";
 
 const ListBlock: React.FC<HeadingBlockProps> = ({
   block,
@@ -32,9 +32,24 @@ const ListBlock: React.FC<HeadingBlockProps> = ({
     slideId,
   });
 
+  const renderPart = (part: RichTextPart) => (
+    <span
+      style={{
+        fontWeight: part.bold ? 700 : 400,
+        fontStyle: part.italic ? "italic" : "normal",
+        fontFamily: part.code
+          ? "monospace"
+          : block.style?.fontFamily || theme?.fonts.paragraph || "Arial",
+        fontSize: block.style?.fontSize || 16,
+        color: block.style?.color || theme?.colors.paragraph || "#000",
+      }}
+    >
+      {part.text}
+    </span>
+  );
+
   return isEditing ? (
     <TextEditor
-      minRows={block.items?.length || 3}
       value={editValue}
       onChange={setEditValue}
       onBlur={handleBlur}
@@ -49,46 +64,23 @@ const ListBlock: React.FC<HeadingBlockProps> = ({
     >
       <Box
         component={block.type === "ordered-list" ? "ol" : "ul"}
-        sx={{ pl: 4, m: 0, minHeight: 40, minWidth: 75 }}
+        sx={{
+          pl: 4,
+          m: 0,
+          minHeight: 40,
+          minWidth: 75,
+          fontFamily:
+            block.style?.fontFamily || theme?.fonts.paragraph || "Arial",
+          fontSize: block.style?.fontSize || 16,
+          color: block.style?.color || theme?.colors.paragraph || "#000",
+        }}
       >
-        {(block.richItems || block.items)?.map((item, i) => (
-          <Box
-            key={i}
-            component="li"
-            sx={{
-              textAlign: block.justifyContent === "flex-end" ? "end" : "start",
-              "&::marker": { color: theme?.colors.heading || "#000" },
-            }}
-          >
-            <Typography
-              variant="body1"
-              sx={{
-                fontFamily:
-                  block.style?.fontFamily || theme?.fonts.paragraph || "Arial",
-                fontSize: block.style?.fontSize || 16,
-                color: block.style?.color || theme?.colors.paragraph || "#000",
-              }}
-            >
-              {
-                Array.isArray(item)
-                  ? item.map((part, j) => (
-                      <span
-                        key={j}
-                        style={{
-                          fontWeight: part.type === "bold" ? 700 : 400,
-                          fontStyle:
-                            part.type === "italic" ? "italic" : "normal",
-                          textDecoration:
-                            part.type === "link" ? "underline" : "none",
-                        }}
-                      >
-                        {part.value}
-                      </span>
-                    ))
-                  : item
-              }
-            </Typography>
-          </Box>
+        {block.richParts?.map((itemParts, i) => (
+          <li key={i}>
+            {itemParts.map((part, j) => (
+              <React.Fragment key={j}>{renderPart(part)}</React.Fragment>
+            ))}
+          </li>
         ))}
       </Box>
     </EditableWrapper>

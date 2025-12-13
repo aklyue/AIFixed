@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../../app/store";
-import { PlateSlide } from "../../../../../shared/types";
+import { PlateSlide, RichTextPart } from "../../../../../shared/types";
 import { useEffect, useState } from "react";
 import {
   DragEndEvent,
@@ -43,11 +43,67 @@ export const useSlidesList = () => {
     }
   };
 
-  const handleEditSlide = (slideId: string, newContent: any[]) => {
+  const handleEditSlide = (
+    slideId: string,
+    blockId: string,
+    textOrItems: string | string[],
+    richParts?: RichTextPart[][]
+  ) => {
     if (generating) return;
+
     setLocalSlides((prev) =>
-      prev.map((s) => (s.id === slideId ? { ...s, content: newContent } : s))
+      prev.map((s) => {
+        if (s.id !== slideId) return s;
+
+        const newContent = s.content.map((block) => {
+          if (block.id !== blockId) return block;
+
+          if (block.type === "list") {
+            return {
+              ...block,
+              items: Array.isArray(textOrItems) ? textOrItems : [textOrItems],
+              richParts,
+            };
+          } else {
+            return {
+              ...block,
+              text:
+                typeof textOrItems === "string"
+                  ? textOrItems
+                  : textOrItems.join(" "),
+              richParts,
+            };
+          }
+        });
+
+        return { ...s, content: newContent };
+      })
     );
+
+    const slide = slides.find((s) => s.id === slideId);
+    if (!slide) return;
+
+    const newContent = slide.content.map((block) => {
+      if (block.id !== blockId) return block;
+
+      if (block.type === "list") {
+        return {
+          ...block,
+          items: Array.isArray(textOrItems) ? textOrItems : [textOrItems],
+          richParts,
+        };
+      } else {
+        return {
+          ...block,
+          text:
+            typeof textOrItems === "string"
+              ? textOrItems
+              : textOrItems.join(" "),
+          richParts,
+        };
+      }
+    });
+
     dispatch(updateSlideContent({ slideId, newContent }));
   };
 

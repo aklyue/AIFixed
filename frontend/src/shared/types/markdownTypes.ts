@@ -19,16 +19,8 @@ export interface SlideBlock {
   id: string;
   type: string;
   text?: string;
-  richText?: InlinePart[];
-
-  richItems?: Array<
-    Array<{
-      type: "text" | "bold" | "italic" | "link";
-      value: string;
-    }>
-  >;
-
   items?: string[];
+  richParts?: RichTextPart[][];
   url?: string;
   language?: string;
   table?: {
@@ -68,11 +60,12 @@ export interface SlideBlock {
   cellId?: string;
 }
 
-export interface InlinePart {
+export interface RichTextPart {
   text: string;
   bold?: boolean;
   italic?: boolean;
   code?: boolean;
+  link?: string;
 }
 
 export interface PlateSlide {

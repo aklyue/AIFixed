@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { SlideBlock } from "../../../../shared/types";
+import { RichTextPart, SlideBlock } from "../../../../shared/types";
 import HeadingBlock from "./components/HeadingBlock";
 import ParagraphBlock from "./components/ParagraphBlock";
 import ListBlock from "./components/ListBlock";
@@ -14,8 +14,8 @@ interface RenderBlockProps {
   id: string;
   slideId: string;
   editingBlock: any;
-  editValue: string;
-  setEditValue: (val: string) => void;
+  editValue: RichTextPart[][];
+  setEditValue: (val: RichTextPart[][]) => void;
   setEditingBlock: (val: any) => void;
   isMini?: boolean;
 }

@@ -2,7 +2,7 @@ import React from "react";
 import { Paper, Box, IconButton, Typography } from "@mui/material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import { RenderBlock } from "../../../blocks/RenderBlock/components";
-import { PlateSlide } from "../../../../../shared/types";
+import { PlateSlide, RichTextPart } from "../../../../../shared/types";
 import { motion } from "framer-motion";
 import { useSortableSlide } from "../../hooks";
 import { useSelector } from "react-redux";
@@ -11,7 +11,12 @@ import { RootState } from "../../../../../app/store";
 interface Props {
   slide: PlateSlide;
   index: number;
-  onEditSlide: (slideId: string, newContent: any[]) => void;
+  onEditSlide: (
+    slideId: string,
+    blockId: string,
+    textOrItems: string | string[],
+    richParts?: RichTextPart[][]
+  ) => void;
   initial?: { opacity: number; y: number };
   animate?: { opacity: number; y: number };
   transitionA?: { duration: number; delay: number };
@@ -25,8 +30,16 @@ export const SortableSlide: React.FC<Props> = ({
   animate,
   transitionA,
 }) => {
-  const { attributes, listeners, style, handleEdit, setNodeRef } =
-    useSortableSlide({ slide, onEditSlide });
+  const {
+    attributes,
+    listeners,
+    style,
+    handleEdit,
+    setNodeRef,
+    editingBlockId,
+    handleStartEditing,
+    handleStopEditing,
+  } = useSortableSlide({ slide, onEditSlide });
 
   const { generating } = useSelector((state: RootState) => state.prompt);
 
@@ -56,7 +69,14 @@ export const SortableSlide: React.FC<Props> = ({
         </Box>
         <Box sx={{ flex: 1 }}>
           {slide.content.map((block) => (
-            <RenderBlock key={block.id} block={block} onEdit={handleEdit} />
+            <RenderBlock
+              key={block.id}
+              block={block}
+              onEdit={handleEdit}
+              isEditing={editingBlockId === block.id}
+              startEditing={() => handleStartEditing(block.id)}
+              stopEditing={handleStopEditing}
+            />
           ))}
         </Box>
       </Paper>

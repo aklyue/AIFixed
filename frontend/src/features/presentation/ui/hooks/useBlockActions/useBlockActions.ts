@@ -31,20 +31,34 @@ export const useBlockActions = ({ slideId }: useBlockProps) => {
   }
 
   const addBlock = (type: SlideBlock["type"]) => {
+    let text: string | undefined;
+    let items: string[] | undefined;
+
+    switch (type) {
+      case "heading":
+        text = "Заголовок";
+        break;
+      case "paragraph":
+        text = "Текст";
+        break;
+      case "code":
+        text = "// Ваш код";
+        break;
+      case "quote":
+        text = "Цитата";
+        break;
+      case "list":
+        items = ["Элемент 1", "Элемент 2"];
+        break;
+      default:
+        text = undefined;
+    }
+
     const newBlock: SlideBlock = {
       id: uuidv4(),
       type,
-      text:
-        type === "heading"
-          ? "Заголовок"
-          : type === "paragraph"
-          ? "Текст"
-          : type === "code"
-          ? "// Ваш код"
-          : type === "quote"
-          ? "Цитата"
-          : undefined,
-      items: type === "list" ? ["Элемент 1", "Элемент 2"] : undefined,
+      text,
+      items,
       table:
         type === "table"
           ? {
@@ -68,7 +82,14 @@ export const useBlockActions = ({ slideId }: useBlockProps) => {
         type === "heading"
           ? { fontWeight: 700, fontSize: 28, color: theme?.colors.heading }
           : { fontWeight: 400, fontSize: 16, color: theme?.colors.paragraph },
+      richParts:
+        type === "list"
+          ? items?.map((item) => [
+              { text: item, bold: false, italic: false, code: false },
+            ])
+          : [[{ text: text || "", bold: false, italic: false, code: false }]],
     };
+
     dispatch(
       updateSlideContent({
         slideId: slide.id,

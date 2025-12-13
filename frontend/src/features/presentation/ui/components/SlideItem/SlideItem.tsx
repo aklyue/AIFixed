@@ -7,7 +7,12 @@ import {
   useTheme,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { Theme, SlideBlock, PlateSlide } from "../../../../../shared/types";
+import {
+  Theme,
+  SlideBlock,
+  PlateSlide,
+  RichTextPart,
+} from "../../../../../shared/types";
 import { AppDispatch } from "../../../../../app/store";
 import {
   updateBlock,
@@ -35,7 +40,7 @@ export const SlideItem: React.FC<SlideItemProps> = ({
     type: string;
     id: string;
   } | null>(null);
-  const [editValue, setEditValue] = useState<string>("");
+  const [editValue, setEditValue] = useState<RichTextPart[][]>([]);
 
   const setSlideContent = (blocks: SlideBlock[]) => {
     dispatch(
