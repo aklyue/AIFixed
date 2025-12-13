@@ -4,7 +4,7 @@ import EditableWrapper from "../EditableWrapper";
 import ChartBlock from "../ChartBlock";
 import ChartEditor from "../ChartEditor";
 import { themes } from "../../../../../../shared/constants";
-import { SlideBlock } from "../../../../../../shared/types";
+import { RichTextPart, SlideBlock } from "../../../../../../shared/types";
 import { useChartWrapper } from "../../hooks";
 
 export interface ChartBlockWrapperProps {
@@ -12,8 +12,8 @@ export interface ChartBlockWrapperProps {
   id: string;
   slideId: string;
   editingBlock: SlideBlock;
-  editValue: string;
-  setEditValue: (val: string) => void;
+  editValue: RichTextPart[][];
+  setEditValue: (val: RichTextPart[][]) => void;
   setEditingBlock: (val: any) => void;
   isMini?: boolean;
 }

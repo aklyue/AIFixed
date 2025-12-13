@@ -2,7 +2,7 @@ import React from "react";
 import { Typography } from "@mui/material";
 import EditableWrapper from "../EditableWrapper";
 import TextEditor from "../TextEditor";
-import { SlideBlock, InlinePart } from "../../../../../../shared/types";
+import { RichTextPart, SlideBlock } from "../../../../../../shared/types";
 import { useTextBlocksEditor } from "../../hooks";
 
 interface ParagraphBlockProps {
@@ -10,8 +10,8 @@ interface ParagraphBlockProps {
   id: string;
   slideId: string;
   editingBlock: SlideBlock;
-  editValue: string;
-  setEditValue: (val: string) => void;
+  editValue: RichTextPart[][];
+  setEditValue: (val: RichTextPart[][]) => void;
   setEditingBlock: (val: any) => void;
 }
 
@@ -70,20 +70,20 @@ const ParagraphBlock: React.FC<ParagraphBlockProps> = ({
           alignItems: "center",
         }}
       >
-        {block.richText
-          ? block.richText.map((part: InlinePart, i: number) => (
-              <span
-                key={i}
-                style={{
-                  fontWeight: part.bold ? 700 : 400,
-                  fontStyle: part.italic ? "italic" : "normal",
-                  fontFamily: part.code ? "monospace" : undefined,
-                }}
-              >
-                {part.text}
-              </span>
-            ))
-          : block.text}
+        {block.richParts?.[0]?.map((part, i) => (
+          <span
+            key={i}
+            style={{
+              fontWeight: part.bold ? 700 : 400,
+              fontStyle: part.italic ? "italic" : "normal",
+              fontFamily: part.code
+                ? "monospace"
+                : block.style?.fontFamily || theme?.fonts.paragraph,
+            }}
+          >
+            {part.text}
+          </span>
+        ))}
       </Typography>
     </EditableWrapper>
   );

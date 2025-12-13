@@ -98,8 +98,8 @@ export const exportToPptx = (slides: PlateSlide[], theme: Theme) => {
           });
           break;
         case "paragraph":
-          if (block.richText?.length) {
-            const richText = block.richText.map((part) => ({
+          if (block.richParts?.length) {
+            const richText = block.richParts[0].map((part) => ({
               text: part.text,
               options: {
                 bold: part.bold,
@@ -132,6 +132,7 @@ export const exportToPptx = (slides: PlateSlide[], theme: Theme) => {
             });
           }
           break;
+
         case "quote":
           const isRight = block.justifyContent === "flex-end";
 
@@ -190,16 +191,16 @@ export const exportToPptx = (slides: PlateSlide[], theme: Theme) => {
         case "ordered-list": {
           const isOrdered = block.type === "ordered-list";
 
-          if (block.richItems?.length) {
-            const lines = block.richItems.map((itemParts, index) => {
+          if (block.richParts?.length) {
+            const lines = block.richParts.map((itemParts, index) => {
               const prefix = isOrdered ? `${index + 1}. ` : "• ";
 
               const richText = itemParts.map((part) => ({
-                text: part.value,
+                text: part.text,
                 options: {
-                  bold: part.type === "bold",
-                  italic: part.type === "italic",
-                  underline: part.type === "link",
+                  bold: part.bold,
+                  italic: part.italic,
+                  underline: part.link ? true : false,
                   fontSize,
                   color,
                 },
@@ -237,14 +238,14 @@ export const exportToPptx = (slides: PlateSlide[], theme: Theme) => {
               y,
               w,
               h,
-              fontSize,
               fontFace,
+              fontSize,
               bold,
-              align: block.justifyContent === "flex-end" ? "right" : "left",
               color,
+              align: block.justifyContent === "flex-end" ? "right" : "left",
+              valign: "top",
             });
           }
-
           break;
         }
         case "table":

@@ -33,7 +33,6 @@ const QuoteBlock: React.FC<HeadingBlockProps> = ({
 
   return isEditing ? (
     <TextEditor
-      minRows={2}
       value={editValue}
       onChange={setEditValue}
       onBlur={handleBlur}

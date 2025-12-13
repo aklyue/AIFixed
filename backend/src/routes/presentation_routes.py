@@ -271,7 +271,7 @@ async def edit(body: EditSlideInSchema) -> Response:
 #             yield chunk
 
 #             # задержка между чанками — реалистичный темп
-#             await asyncio.sleep(random.uniform(0.18, 0.35))
+#             await asyncio.sleep(random.uniform(0.01, 0.05))
 
 #         # пауза между слайдами, как будто модель «думает»
-#         await asyncio.sleep(random.uniform(0.8, 1.3))
+#         await asyncio.sleep(random.uniform(0.01, 0.5))

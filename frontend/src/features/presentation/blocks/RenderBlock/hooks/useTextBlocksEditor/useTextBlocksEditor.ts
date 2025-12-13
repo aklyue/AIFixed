@@ -5,16 +5,16 @@ import {
   pushHistory,
   updateBlock,
 } from "../../../../../../app/store/slices/editorSlice";
-import { InlinePart, SlideBlock } from "../../../../../../shared/types";
+import { RichTextPart, SlideBlock } from "../../../../../../shared/types";
 
 interface useTextBlocksEditorProps {
   block: SlideBlock;
   id: string;
   slideId: string;
-  editingBlock: SlideBlock;
-  editValue: string;
-  setEditValue: (val: string) => void;
-  setEditingBlock: (val: any) => void;
+  editingBlock: SlideBlock | null;
+  editValue: RichTextPart[][];
+  setEditValue: (val: RichTextPart[][]) => void;
+  setEditingBlock: (val: SlideBlock | null) => void;
 }
 
 export const useTextBlocksEditor = ({
@@ -36,45 +36,36 @@ export const useTextBlocksEditor = ({
   );
 
   const handleBlur = () => {
-    if (block.type === "list" || block.type === "ordered-list") {
-      const newItems = editValue
-        .split("\n")
-        .map((l) => l.trim())
-        .filter(Boolean);
+    debugger;
 
-      const oldRichItems = block.richItems || [];
-      const newRichItems = newItems.map((item, idx) => {
-        const oldItem = oldRichItems[idx] || [];
-        return oldItem.length
-          ? oldItem.map((r) => ({ ...r, value: item })) // сохраняем тип и стили
-          : [{ type: "text" as const, value: item }];
-      });
+    if (!editValue || !Array.isArray(editValue)) return;
+
+    const richParts: RichTextPart[][] = Array.isArray(editValue[0])
+      ? (editValue as RichTextPart[][])
+      : ([editValue] as unknown as RichTextPart[][]);
+
+    const flatRichParts: RichTextPart[] =
+      richParts.flat() as unknown as RichTextPart[];
+
+    let text = "";
+
+    if (block.type === "list" || block.type === "ordered-list") {
+      const items = richParts.map((line) => line.map((p) => p.text).join(""));
+      text = items.join("\n");
 
       dispatch(
         updateBlock({
           id: block.id,
-          newBlock: { ...block, items: newItems, richItems: newRichItems },
+          newBlock: { ...block, items, richParts },
         })
       );
     } else {
-      // Для параграфов и заголовков
-      const oldRich = block.richText || [];
-      const newRichText: InlinePart[] = editValue
-        .split("\n")
-        .map((line, idx) => {
-          const oldLine = oldRich[idx];
-          return {
-            text: line,
-            bold: oldLine?.bold,
-            italic: oldLine?.italic,
-            code: oldLine?.code,
-          };
-        });
+      text = flatRichParts.map((p) => p.text).join("");
 
       dispatch(
         updateBlock({
           id: block.id,
-          newBlock: { ...block, text: editValue, richText: newRichText },
+          newBlock: { ...block, text, richParts: [flatRichParts] },
         })
       );
     }
@@ -84,11 +75,33 @@ export const useTextBlocksEditor = ({
   };
 
   const handleEdit = () => {
-    setEditingBlock({ type: block.type, id, slideId });
-    if (block.type === "list" || block.type === "ordered-list") {
-      setEditValue(block.items?.join("\n") || "");
+    setEditingBlock({ ...block, id, type: block.type });
+
+    if (block.richParts?.length) {
+      setEditValue(block.richParts);
+    } else if (block.type === "list" || block.type === "ordered-list") {
+      const items = block.items || [];
+      setEditValue(
+        items.map((item) => [
+          {
+            text: item,
+            bold: false,
+            italic: false,
+            code: false,
+          },
+        ])
+      );
     } else {
-      setEditValue(block.text || "");
+      setEditValue([
+        [
+          {
+            text: block.text || "",
+            bold: false,
+            italic: false,
+            code: false,
+          },
+        ],
+      ]);
     }
   };
 

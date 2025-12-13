@@ -33,7 +33,6 @@ const CodeBlock: React.FC<HeadingBlockProps> = ({
 
   return isEditing ? (
     <TextEditor
-      minRows={1}
       value={editValue}
       onChange={setEditValue}
       onBlur={handleBlur}
