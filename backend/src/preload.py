@@ -13,13 +13,13 @@ def preload_models():
     embed_model = os.environ.get("DEFAULT_EMBEDDING_MODEL", settings.DEFAULT_EMBEDDING_MODEL)
     cross_model = os.environ.get("CROSS_ENCODER_MODEL", settings.CROSS_ENCODER_MODEL)
 
-    logging.info("Preloading models using ModelManager...")
-    try:
-        model_manager.preload_models(embed_model, cross_model)
-        logging.info("✓ All models preloaded successfully")
-    except Exception as e:
-        logging.error(f"Model preload failed: {e}")
-        raise
+    # logging.info("Preloading models using ModelManager...")
+    # try:
+    #     model_manager.preload_models(embed_model, cross_model)
+    #     logging.info("✓ All models preloaded successfully")
+    # except Exception as e:
+    #     logging.error(f"Model preload failed: {e}")
+    #     raise
 
 
 if __name__ == "__main__":

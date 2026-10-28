@@ -36,7 +36,6 @@ export const useTextBlocksEditor = ({
   );
 
   const handleBlur = () => {
-    debugger;
 
     if (!editValue || !Array.isArray(editValue)) return;
 

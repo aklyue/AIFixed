@@ -60,30 +60,41 @@ const ParagraphBlock: React.FC<ParagraphBlockProps> = ({
         sx={{
           lineHeight: 1.6,
           minHeight: 40,
-          minWidth: 105,
           fontFamily:
             block.style?.fontFamily || theme?.fonts.paragraph || "Arial",
           fontSize: block.style?.fontSize || 16,
           color: block.style?.color || theme?.colors.paragraph || "#000",
           textAlign: block.justifyContent === "flex-end" ? "end" : "start",
-          display: "flex",
-          alignItems: "center",
         }}
       >
-        {block.richParts?.[0]?.map((part, i) => (
-          <span
-            key={i}
-            style={{
-              fontWeight: part.bold ? 700 : 400,
-              fontStyle: part.italic ? "italic" : "normal",
-              fontFamily: part.code
-                ? "monospace"
-                : block.style?.fontFamily || theme?.fonts.paragraph,
-            }}
-          >
-            {part.text}
-          </span>
-        ))}
+        {block.richParts
+          ?.map((line) =>
+            line
+              .map((part) => part.text)
+              .join("")
+              .trim()
+              ? line
+              : null,
+          )
+          .filter(Boolean)
+          .map((line, lineIndex) => (
+            <span key={lineIndex} style={{ display: "block" }}>
+              {line?.map((part, i) => (
+                <span
+                  key={i}
+                  style={{
+                    fontWeight: part.bold ? 700 : 400,
+                    fontStyle: part.italic ? "italic" : "normal",
+                    fontFamily: part.code
+                      ? "monospace"
+                      : block.style?.fontFamily || theme?.fonts.paragraph,
+                  }}
+                >
+                  {part.text}
+                </span>
+              ))}
+            </span>
+          ))}
       </Typography>
     </EditableWrapper>
   );

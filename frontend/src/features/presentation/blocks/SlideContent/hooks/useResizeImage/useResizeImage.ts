@@ -55,7 +55,6 @@ export const useResizeImage = ({
         : block.heightPercent ?? 20;
       const sensitivity = horizontal ? 0.0907 : 0.161;
 
-      console.log("horizontal:", horizontal, "inverted:", inverted, "startPos:", startPos);
 
       const onMove = (moveEvent: MouseEvent | TouchEvent) => {
         const currentPos =

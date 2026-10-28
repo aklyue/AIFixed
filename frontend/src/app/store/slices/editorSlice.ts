@@ -118,13 +118,6 @@ const editorSlice = createSlice({
       state.slides.forEach((slide) => {
         slide.content = slide.content.map((b) => (b.id === id ? newBlock : b));
       });
-
-      console.log(
-        "UPDATED BLOCK:",
-        current(state)
-          .slides.flatMap((s) => s.content)
-          .find((b) => b.id === id)
-      );
     },
     setCurrentIndex(state, action: PayloadAction<number>) {
       state.currentIndex = action.payload;
