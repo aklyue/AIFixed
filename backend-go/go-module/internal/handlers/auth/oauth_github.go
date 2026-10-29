@@ -1,4 +1,4 @@
-package handlers
+package auth
 
 import (
 	"encoding/json"
@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/AIFixed/backend-go/internal/config"
 	services "github.com/AIFixed/backend-go/internal/services/auth"
 )
 
@@ -16,15 +17,17 @@ type GithubOAuthHandler struct {
 	ClientSecret string
 	RedirectURI  string
 	FrontURL     string
+	cfg          *config.Config
 }
 
-func NewGithubOAuthHandler(authService *services.AuthService, clientID, clientSecret, redirectURI, frontURL string) *GithubOAuthHandler {
+func NewGithubOAuthHandler(authService *services.AuthService, cfg *config.Config) *GithubOAuthHandler {
 	return &GithubOAuthHandler{
 		authService:  authService,
-		ClientID:     clientID,
-		ClientSecret: clientSecret,
-		RedirectURI:  redirectURI,
-		FrontURL:     frontURL,
+		ClientID:     cfg.GithubClientID,
+		ClientSecret: cfg.GithubClientSecret,
+		RedirectURI:  cfg.GithubRedirectURI,
+		FrontURL:     cfg.FrontURL,
+		cfg:          cfg,
 	}
 }
 
@@ -126,7 +129,7 @@ func (h *GithubOAuthHandler) Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := services.CreateAccessToken(user.ID, 60)
+	token, err := services.CreateAccessToken(user.ID, 60, h.cfg.SecretKey)
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return

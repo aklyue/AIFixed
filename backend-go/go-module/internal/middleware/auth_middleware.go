@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/AIFixed/backend-go/internal/config"
 	services "github.com/AIFixed/backend-go/internal/services/auth"
 )
 
@@ -11,7 +12,7 @@ type contextKey string
 
 const userContextKey contextKey = "currentUser"
 
-func AuthMiddleware(authService *services.AuthService) func(http.Handler) http.Handler {
+func AuthMiddleware(authService *services.AuthService, cfg *config.Config) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			cookie, err := r.Cookie("access_token")
@@ -20,7 +21,7 @@ func AuthMiddleware(authService *services.AuthService) func(http.Handler) http.H
 				return
 			}
 
-			userID, err := services.VerifyAccessToken(cookie.Value)
+			userID, err := services.VerifyAccessToken(cookie.Value, cfg.SecretKey)
 			if err != nil {
 				http.Error(w, "Invalid token", http.StatusUnauthorized)
 				return

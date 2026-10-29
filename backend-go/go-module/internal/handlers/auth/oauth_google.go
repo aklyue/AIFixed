@@ -1,4 +1,4 @@
-package handlers
+package auth
 
 import (
 	"encoding/json"
@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/AIFixed/backend-go/internal/config"
 	services "github.com/AIFixed/backend-go/internal/services/auth"
 )
 
@@ -15,15 +16,17 @@ type GoogleOAuthHandler struct {
 	ClientSecret string
 	RedirectURI  string
 	FrontURL     string
+	cfg          *config.Config
 }
 
-func NewGoogleOAuthHandler(authService *services.AuthService, clientID, clientSecret, redirectURI, frontURL string) *GoogleOAuthHandler {
+func NewGoogleOAuthHandler(authService *services.AuthService, cfg *config.Config) *GoogleOAuthHandler {
 	return &GoogleOAuthHandler{
 		authService:  authService,
-		ClientID:     clientID,
-		ClientSecret: clientSecret,
-		RedirectURI:  redirectURI,
-		FrontURL:     frontURL,
+		ClientID:     cfg.GoogleClientID,
+		ClientSecret: cfg.GoogleClientSecret,
+		RedirectURI:  cfg.GoogleRedirectURI,
+		FrontURL:     cfg.FrontURL,
+		cfg:          cfg,
 	}
 }
 
@@ -95,7 +98,7 @@ func (h *GoogleOAuthHandler) Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := services.CreateAccessToken(user.ID, 60)
+	token, err := services.CreateAccessToken(user.ID, 60, h.cfg.SecretKey)
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return

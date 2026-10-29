@@ -15,7 +15,7 @@ require (
 	// github.com/jackc/pgpassfile v1.0.0 // indirect
 	// github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
 	// github.com/jackc/pgx/v5 v5.11.0 // indirect
-	// github.com/joho/godotenv v1.5.1 // indirect
+	github.com/joho/godotenv v1.5.1
 	// github.com/leodido/go-urn v1.5.0 // indirect
 	// github.com/sirupsen/logrus v1.10.2 // indirect
 	// github.com/stretchr/testify v1.12.1 // indirect

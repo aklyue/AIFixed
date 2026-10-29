@@ -1,19 +1,24 @@
-package handlers
+package auth
 
 import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/AIFixed/backend-go/internal/config"
 	"github.com/AIFixed/backend-go/internal/middleware"
 	services "github.com/AIFixed/backend-go/internal/services/auth"
 )
 
 type AuthHandler struct {
 	authService *services.AuthService
+	cfg         *config.Config
 }
 
-func NewAuthHandler(authService *services.AuthService) *AuthHandler {
-	return &AuthHandler{authService: authService}
+func NewAuthHandler(authService *services.AuthService, cfg *config.Config) *AuthHandler {
+	return &AuthHandler{
+		authService: authService,
+		cfg:         cfg,
+	}
 }
 
 type RegisterRequest struct {
@@ -72,7 +77,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := services.CreateAccessToken(user.ID, 60)
+	token, err := services.CreateAccessToken(user.ID, 60, h.cfg.SecretKey)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
@@ -95,7 +100,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HandleMe(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) HandleMe(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
