@@ -4,14 +4,14 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/AIFixed/backend-go/internal/services/tempfile"
+	tempSvc "github.com/AIFixed/backend-go/internal/services/tempfile"
 )
 
 type TempfileHandler struct {
-	tempfileService *tempfile.TempfileService
+	tempfileService *tempSvc.TempfileService
 }
 
-func NewTempfileHandler(tempfileService *tempfile.TempfileService) *TempfileHandler {
+func NewTempfileHandler(tempfileService *tempSvc.TempfileService) *TempfileHandler {
 	return &TempfileHandler{
 		tempfileService: tempfileService,
 	}

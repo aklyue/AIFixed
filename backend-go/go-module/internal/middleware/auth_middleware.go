@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/AIFixed/backend-go/internal/config"
+	"github.com/AIFixed/backend-go/internal/models/user"
 	services "github.com/AIFixed/backend-go/internal/services/auth"
 )
 
@@ -39,7 +40,7 @@ func AuthMiddleware(authService *services.AuthService, cfg *config.Config) func(
 	}
 }
 
-func GetUserFromContext(r *http.Request) *services.User {
-	user, _ := r.Context().Value(userContextKey).(*services.User)
+func GetUserFromContext(r *http.Request) *user.User {
+	user, _ := r.Context().Value(userContextKey).(*user.User)
 	return user
 }

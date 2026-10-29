@@ -1,83 +1,60 @@
 package auth
 
 import (
+	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/AIFixed/backend-go/internal/config"
-	services "github.com/AIFixed/backend-go/internal/services/auth"
+	authSvc "github.com/AIFixed/backend-go/internal/services/auth"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/github"
 )
 
 type GithubOAuthHandler struct {
-	authService  *services.AuthService
-	ClientID     string
-	ClientSecret string
-	RedirectURI  string
-	FrontURL     string
-	cfg          *config.Config
+	authService *authSvc.AuthService
+	oauthConfig *oauth2.Config
+	frontURL    string
+	cfg         *config.Config
 }
 
-func NewGithubOAuthHandler(authService *services.AuthService, cfg *config.Config) *GithubOAuthHandler {
+func NewGithubOAuthHandler(authService *authSvc.AuthService, cfg *config.Config) *GithubOAuthHandler {
 	return &GithubOAuthHandler{
-		authService:  authService,
-		ClientID:     cfg.GithubClientID,
-		ClientSecret: cfg.GithubClientSecret,
-		RedirectURI:  cfg.GithubRedirectURI,
-		FrontURL:     cfg.FrontURL,
-		cfg:          cfg,
+		authService: authService,
+		oauthConfig: &oauth2.Config{
+			ClientID:     cfg.GithubClientID,
+			ClientSecret: cfg.GithubClientSecret,
+			RedirectURL:  cfg.GithubRedirectURI,
+			Scopes:       []string{"user:email"},
+			Endpoint:     github.Endpoint,
+		},
+		frontURL: cfg.FrontURL,
+		cfg:      cfg,
 	}
 }
 
 func (h *GithubOAuthHandler) Login(w http.ResponseWriter, r *http.Request) {
-	githubAuthURL := fmt.Sprintf(
-		"https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s&scope=user:email",
-		h.ClientID, url.QueryEscape(h.RedirectURI),
-	)
+	url := h.oauthConfig.AuthCodeURL("state-string", oauth2.AccessTypeOnline)
 
-	http.Redirect(w, r, githubAuthURL, http.StatusTemporaryRedirect)
+	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
 func (h *GithubOAuthHandler) Callback(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Background()
 	code := r.URL.Query().Get("code")
 	if code == "" {
 		http.Error(w, "Missing code parameter", http.StatusBadRequest)
 	}
 
-	data := url.Values{}
-	data.Set("client_id", h.ClientID)
-	data.Set("client_secret", h.ClientSecret)
-	data.Set("code", code)
-	data.Set("redirect_uri", h.RedirectURI)
-
-	httpReq, _ := http.NewRequest("POST", "https://github.com/login/oauth/access_token", strings.NewReader(data.Encode()))
-	httpReq.Header.Set("Accept", "application/json")
-	httpReq.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-
-	client := &http.Client{}
-	resp, err := client.Do(httpReq)
-	if err != nil || resp.StatusCode != http.StatusOK {
-		http.Error(w, "Failed to get GitHub token", http.StatusBadRequest)
+	token, err := h.oauthConfig.Exchange(ctx, code)
+	if err != nil {
+		http.Error(w, "Failed to exchange GitHub token", http.StatusBadRequest)
 		return
 	}
 
-	defer resp.Body.Close()
+	client := h.oauthConfig.Client(ctx, token)
 
-	var tokenRes map[string]interface{}
-	json.NewDecoder(resp.Body).Decode(&tokenRes)
-	githubToken, _ := tokenRes["access_token"].(string)
-	if githubToken == "" {
-		http.Error(w, "Failed to get GitHub token from response", http.StatusBadRequest)
-		return
-	}
-
-	userReq, _ := http.NewRequest("GET", "https://api.github.com/user", nil)
-	userReq.Header.Set("Authorization", "Bearer "+githubToken)
-	userReq.Header.Set("User-Agent", "Go-Auth-App")
-
-	userResp, err := client.Do(userReq)
+	userResp, err := client.Get("https://api.github.com/user")
 	if err != nil {
 		http.Error(w, "Failed to get GitHub user info", http.StatusBadRequest)
 		return
@@ -93,11 +70,7 @@ func (h *GithubOAuthHandler) Callback(w http.ResponseWriter, r *http.Request) {
 	avatar, _ := userInfo["avatar"].(string)
 
 	if email == "" {
-		emailsReq, _ := http.NewRequest("GET", "https://api.github.com/user/emails", nil)
-		emailsReq.Header.Set("Authorization", "Bearer "+githubToken)
-		emailsReq.Header.Set("User-Agent", "Go-Auth-App")
-
-		emailsResp, err := client.Do(emailsReq)
+		emailsResp, err := client.Get("https://api.github.com/user/emails")
 		if err != nil {
 			http.Error(w, "Cannot access GitHub emails", http.StatusBadRequest)
 		}
@@ -129,12 +102,12 @@ func (h *GithubOAuthHandler) Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := services.CreateAccessToken(user.ID, 60, h.cfg.SecretKey)
+	jwtToken, err := authSvc.CreateAccessToken(user.ID, 60, h.cfg.SecretKey)
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
-	setAuthCookie(w, token)
-	http.Redirect(w, r, h.FrontURL, http.StatusTemporaryRedirect)
+	setAuthCookie(w, jwtToken)
+	http.Redirect(w, r, h.frontURL, http.StatusTemporaryRedirect)
 }

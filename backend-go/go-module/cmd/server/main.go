@@ -9,6 +9,7 @@ import (
 	"github.com/AIFixed/backend-go/internal/db"
 	authHandler "github.com/AIFixed/backend-go/internal/handlers/auth"
 	tempfileHandler "github.com/AIFixed/backend-go/internal/handlers/tempfile"
+	userHandler "github.com/AIFixed/backend-go/internal/handlers/user"
 	"github.com/AIFixed/backend-go/internal/middleware"
 	authService "github.com/AIFixed/backend-go/internal/services/auth"
 	tempfileService "github.com/AIFixed/backend-go/internal/services/tempfile"
@@ -24,6 +25,7 @@ func main() {
 	defer database.Close()
 
 	authSvc := authService.NewAuthService(database)
+	emailVerifier := authService.NewEmailVerifier()
 
 	tempSvc, err := tempfileService.NewTempfileService(cfg.TempfileDir, cfg.TempfileCleanupSec)
 	if err != nil {
@@ -39,11 +41,15 @@ func main() {
 
 	authMW := middleware.AuthMiddleware(authSvc, cfg)
 
+	userH := userHandler.NewUserHandler(authSvc, emailVerifier, cfg)
+
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("POST /api/auth/register", authH.Register)
 	mux.HandleFunc("POST /api/auth/login", authH.Login)
+
 	mux.Handle("GET /api/auth/me", authMW(http.HandlerFunc(authH.HandleMe)))
+	mux.Handle("PUT /api/user/edit", authMW(http.HandlerFunc(userH.EditUser)))
 
 	mux.HandleFunc("GET /auth/github/login", githubOAuthH.Login)
 	mux.HandleFunc("GET /auth/github/callback", githubOAuthH.Callback)

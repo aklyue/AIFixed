@@ -1,78 +1,61 @@
 package auth
 
 import (
+	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"net/url"
 
 	"github.com/AIFixed/backend-go/internal/config"
-	services "github.com/AIFixed/backend-go/internal/services/auth"
+	authSvc "github.com/AIFixed/backend-go/internal/services/auth"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 )
 
 type GoogleOAuthHandler struct {
-	authService  *services.AuthService
-	ClientID     string
-	ClientSecret string
-	RedirectURI  string
-	FrontURL     string
-	cfg          *config.Config
+	authService *authSvc.AuthService
+	oauthConfig *oauth2.Config
+	frontURL    string
+	cfg         *config.Config
 }
 
-func NewGoogleOAuthHandler(authService *services.AuthService, cfg *config.Config) *GoogleOAuthHandler {
+func NewGoogleOAuthHandler(authService *authSvc.AuthService, cfg *config.Config) *GoogleOAuthHandler {
 	return &GoogleOAuthHandler{
-		authService:  authService,
-		ClientID:     cfg.GoogleClientID,
-		ClientSecret: cfg.GoogleClientSecret,
-		RedirectURI:  cfg.GoogleRedirectURI,
-		FrontURL:     cfg.FrontURL,
-		cfg:          cfg,
+		authService: authService,
+		oauthConfig: &oauth2.Config{
+			ClientID:     cfg.GoogleClientID,
+			ClientSecret: cfg.GoogleClientSecret,
+			RedirectURL:  cfg.GoogleRedirectURI,
+			Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"},
+			Endpoint:     google.Endpoint,
+		},
+		frontURL: cfg.FrontURL,
+		cfg:      cfg,
 	}
 }
 
 func (h *GoogleOAuthHandler) Login(w http.ResponseWriter, r *http.Request) {
-	googleURL := fmt.Sprintf(
-		"https://accounts.google.com/o/oauth2/v2/auth?client_id=%s&redirect_uri=%s&response_type=code&scope=email%%20profile",
-		h.ClientID, url.QueryEscape(h.RedirectURI),
-	)
+	url := h.oauthConfig.AuthCodeURL("state-string", oauth2.AccessTypeOnline)
 
-	http.Redirect(w, r, googleURL, http.StatusTemporaryRedirect)
+	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
 func (h *GoogleOAuthHandler) Callback(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Background()
 	code := r.URL.Query().Get("code")
 	if code == "" {
 		http.Error(w, "Missing code parameter", http.StatusBadRequest)
 		return
 	}
 
-	data := url.Values{}
-	data.Set("client_id", h.ClientID)
-	data.Set("client_secret", h.ClientSecret)
-	data.Set("code", code)
-	data.Set("redirect_uri", h.RedirectURI)
-	data.Set("grant_type", "authorization_code")
-
-	resp, err := http.PostForm("https://oauth2.googleapis.com/token", data)
-	if err != nil || resp.StatusCode != http.StatusOK {
-		http.Error(w, "Failed to get Google access token", http.StatusBadRequest)
+	token, err := h.oauthConfig.Exchange(ctx, code)
+	if err != nil {
+		http.Error(w, "Failed to exchange Google token", http.StatusBadRequest)
 		return
 	}
 
-	defer resp.Body.Close()
+	client := h.oauthConfig.Client(ctx, token)
 
-	var tokenRes map[string]interface{}
-	json.NewDecoder(resp.Body).Decode(&tokenRes)
-	accessToken, _ := tokenRes["access_token"].(string)
-	if accessToken == "" {
-		http.Error(w, "Failed to get access token", http.StatusBadRequest)
-		return
-	}
-
-	httpReq, _ := http.NewRequest("GET", "https://www.googleapis.com/oauth2/v2/userinfo", nil)
-	httpReq.Header.Set("Authorization", "Bearer "+accessToken)
-	client := &http.Client{}
-	userResp, err := client.Do(httpReq)
+	userResp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
 	if err != nil {
 		http.Error(w, "Failed to get Google user info", http.StatusBadRequest)
 		return
@@ -98,12 +81,12 @@ func (h *GoogleOAuthHandler) Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := services.CreateAccessToken(user.ID, 60, h.cfg.SecretKey)
+	jwtToken, err := authSvc.CreateAccessToken(user.ID, 60, h.cfg.SecretKey)
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
-	setAuthCookie(w, token)
-	http.Redirect(w, r, h.FrontURL, http.StatusTemporaryRedirect)
+	setAuthCookie(w, jwtToken)
+	http.Redirect(w, r, h.frontURL, http.StatusTemporaryRedirect)
 }

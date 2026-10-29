@@ -36,7 +36,7 @@ type Config struct {
 	Algorithm string
 
 	SMTPHost      string
-	SMTPPort      int
+	SMTPPort      string
 	SMTPUser      string
 	SMTPPassword  string
 	SMTPFromEmail string
@@ -86,7 +86,7 @@ func Load() *Config {
 		Algorithm: getEnv("ALGORITHM", "HS256"),
 
 		SMTPHost:      getEnv("SMTP_HOST", "smtp.gmail.com"),
-		SMTPPort:      getEnvAsInt("SMTP_PORT", 587),
+		SMTPPort:      getEnv("SMTP_PORT", "587"),
 		SMTPUser:      getEnv("SMTP_USER", ""),
 		SMTPPassword:  getEnv("SMTP_PASSWORD", ""),
 		SMTPFromEmail: getEnv("SMTP_FROM_EMAIL", ""),

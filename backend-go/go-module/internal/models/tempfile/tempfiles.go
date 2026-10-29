@@ -1,4 +1,4 @@
-package models
+package tempfile
 
 import "time"
 

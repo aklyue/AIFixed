@@ -10,14 +10,14 @@ import (
 	"sync"
 	"time"
 
-	models "github.com/AIFixed/backend-go/internal/models/tempfile"
+	"github.com/AIFixed/backend-go/internal/models/tempfile"
 )
 
 type TempfileService struct {
 	mu              sync.RWMutex
 	tempfileDir     string
 	cleanupInterval int
-	filesRegistry   map[string]*models.FileInfo
+	filesRegistry   map[string]*tempfile.FileInfo
 }
 
 func NewTempfileService(tempfileDir string, cleanupInterval int) (*TempfileService, error) {
@@ -29,7 +29,7 @@ func NewTempfileService(tempfileDir string, cleanupInterval int) (*TempfileServi
 	return &TempfileService{
 		tempfileDir:     tempfileDir,
 		cleanupInterval: cleanupInterval,
-		filesRegistry:   make(map[string]*models.FileInfo),
+		filesRegistry:   make(map[string]*tempfile.FileInfo),
 	}, nil
 }
 
@@ -80,7 +80,7 @@ func generateUUID() string {
 	return fmt.Sprintf("%x-%x-%x-%x-%x", b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
 }
 
-func (s *TempfileService) SaveFile(content []byte, originalName string, fileExt string, ttl time.Duration) (*models.FileInfo, error) {
+func (s *TempfileService) SaveFile(content []byte, originalName string, fileExt string, ttl time.Duration) (*tempfile.FileInfo, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -93,7 +93,7 @@ func (s *TempfileService) SaveFile(content []byte, originalName string, fileExt 
 	}
 
 	now := time.Now()
-	info := &models.FileInfo{
+	info := &tempfile.FileInfo{
 		FileID:       fileID,
 		OriginalName: originalName,
 		CreatedAt:    now,

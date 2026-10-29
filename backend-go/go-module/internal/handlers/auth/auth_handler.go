@@ -6,15 +6,15 @@ import (
 
 	"github.com/AIFixed/backend-go/internal/config"
 	"github.com/AIFixed/backend-go/internal/middleware"
-	services "github.com/AIFixed/backend-go/internal/services/auth"
+	authSvc "github.com/AIFixed/backend-go/internal/services/auth"
 )
 
 type AuthHandler struct {
-	authService *services.AuthService
+	authService *authSvc.AuthService
 	cfg         *config.Config
 }
 
-func NewAuthHandler(authService *services.AuthService, cfg *config.Config) *AuthHandler {
+func NewAuthHandler(authService *authSvc.AuthService, cfg *config.Config) *AuthHandler {
 	return &AuthHandler{
 		authService: authService,
 		cfg:         cfg,
@@ -77,7 +77,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := services.CreateAccessToken(user.ID, 60, h.cfg.SecretKey)
+	token, err := authSvc.CreateAccessToken(user.ID, 60, h.cfg.SecretKey)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
