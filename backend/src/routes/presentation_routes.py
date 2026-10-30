@@ -124,7 +124,7 @@ async def generate(
     context = await convert_file(file)
 
     return StreamingResponse(
-        mock_generate_presentation(body.text, context, body.model),
+        generate_presentation(body.text, context, body.model),
         media_type="text/markdown",
     )
 
