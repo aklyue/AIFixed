@@ -4,6 +4,8 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/AIFixed/backend-go/internal/config"
 	"github.com/AIFixed/backend-go/internal/db"
@@ -42,8 +44,12 @@ func main() {
 	}
 	defer database.Close()
 
+	if err := db.RunMigrations(database, os.DirFS("migrations")); err != nil {
+		log.Fatalf("Migration failed: %v", err)
+	}
+
 	authSvc := authService.NewAuthService(database)
-	emailVerifier := authService.NewEmailVerifier()
+	emailVerifier := authService.NewEmailVerifier(database)
 
 	presSvc := presService.NewPresentationService(database)
 
@@ -52,9 +58,10 @@ func main() {
 		log.Fatalf("Failed to init tempfile service: %v", err)
 	}
 	ctx := context.Background()
+	go emailVerifier.StartCleanupWorker(ctx, 5*time.Minute)
 	go tempSvc.StartCleanupWorker(ctx)
 
-	authH := authHandler.NewAuthHandler(authSvc, cfg)
+	authH := authHandler.NewAuthHandler(authSvc, cfg, emailVerifier)
 	githubOAuthH := authHandler.NewGithubOAuthHandler(authSvc, cfg)
 	googleOAuthH := authHandler.NewGoogleOAuthHandler(authSvc, cfg)
 	tempH := tempfileHandler.NewTempfileHandler(tempSvc)
@@ -80,15 +87,17 @@ func main() {
 
 	mux.HandleFunc("POST /api/auth/register", authH.Register)
 	mux.HandleFunc("POST /api/auth/login", authH.Login)
-	mux.Handle("GET /api/auth/me", authMW(http.HandlerFunc(authH.HandleMe)))
+	mux.HandleFunc("POST /api/auth/verify-email", authH.VerifyEmail)
 
-	mux.Handle("PUT /api/user/edit", authMW(http.HandlerFunc(userH.EditUser)))
+	mux.Handle("GET /api/auth/me", authMW(http.HandlerFunc(authH.HandleMe)))
 
 	mux.HandleFunc("GET /api/auth/github/login", githubOAuthH.Login)
 	mux.HandleFunc("GET /api/auth/github/callback", githubOAuthH.Callback)
 
 	mux.HandleFunc("GET /api/auth/google/login", googleOAuthH.Login)
 	mux.HandleFunc("GET /api/auth/google/callback", googleOAuthH.Callback)
+
+	mux.Handle("PUT /api/user/edit", authMW(http.HandlerFunc(userH.EditUser)))
 
 	mux.HandleFunc("GET /api/files/{filename}", tempH.GetTempfileHandler)
 
@@ -101,8 +110,9 @@ func main() {
 	mux.HandleFunc("POST /api/presentation/generate", presH.GeneratePresentation)
 	mux.HandleFunc("POST /api/presentation/edit", presH.EditSlide)
 
-	log.Println("Server is running on :8080")
-	if err := http.ListenAndServe(":8080", mux); err != nil {
+	port := ":8080"
+	log.Printf("Server is running on %s", port)
+	if err := http.ListenAndServe(port, enableCORS(mux)); err != nil {
 		log.Fatalf("Server failed: %v", err)
 	}
 }

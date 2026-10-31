@@ -32,15 +32,19 @@ services:
     ports:
       - "3000:3000"
 
-  backend-go:
+  backend-go-module:
     build:
-      context: ./backend-go
+      context: ./backend-go/go-module
       dockerfile: Dockerfile
     volumes:
       - shared_tmp:/code/tmp
     environment:
-      - DATABASE_URL=postgres://user:password@postgres:5432/aifixed?sslmode=disable
-      - PYTHON_AI_URL=http://python-module:8001
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=aifixed
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - AI_MODULE_URL=http://python-module:8000
       - TEMPFILE_DIR=/code/tmp
       - TEMPFILE_CLEANUP_SEC=300
     networks:
@@ -48,12 +52,14 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - postgres
-      - python-module
+      postgres:
+        condition: service_healthy
+      python-module:
+        condition: service_started
 
-  python-module:
+  backend-python-module:
     build:
-      context: ./python-module
+      context: ./backend-go/python-module
       dockerfile: Dockerfile
     volumes:
       - ./python-module:/code
@@ -64,7 +70,7 @@ services:
     networks:
       - app-network
     expose:
-      - "8001"
+      - "8000"
 
   postgres:
     image: postgres:15-alpine
@@ -78,6 +84,11 @@ services:
       - app-network
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d aifixed"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_prod_data:
