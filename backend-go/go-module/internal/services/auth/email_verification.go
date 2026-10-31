@@ -1,11 +1,13 @@
 package auth
 
 import (
+	"context"
 	"crypto/rand"
+	"database/sql"
 	"fmt"
+	"log"
 	"math/big"
 	"net/smtp"
-	"sync"
 	"time"
 )
 
@@ -15,47 +17,71 @@ type VerificationEntry struct {
 }
 
 type EmailVerifier struct {
-	mu    sync.RWMutex
-	codes map[string]VerificationEntry
+	db *sql.DB
 }
 
-func NewEmailVerifier() *EmailVerifier {
+func NewEmailVerifier(db *sql.DB) *EmailVerifier {
 	return &EmailVerifier{
-		codes: make(map[string]VerificationEntry),
+		db: db,
 	}
 }
 
-func (ev *EmailVerifier) SetVerificationCode(email string) string {
-	n, _ := rand.Int(rand.Reader, big.NewInt(900000))
+func (ev *EmailVerifier) SetVerificationCode(ctx context.Context, email string) (string, error) {
+	n, err := rand.Int(rand.Reader, big.NewInt(900000))
+	if err != nil {
+		return "", err
+	}
 	code := fmt.Sprintf("%06d", n.Int64()+100000)
+	expiresAt := time.Now().Add(10 * time.Minute)
 
-	ev.mu.Lock()
-	defer ev.mu.Unlock()
-
-	ev.codes[email] = VerificationEntry{
-		Code:    code,
-		Expires: time.Now().Add(10 * time.Minute),
+	query := `
+		INSERT INTO email_verifications (email, code, expires_at, created_at)
+		VALUES ($1, $2, $3, NOW())
+		ON CONFLICT (email) 
+		DO UPDATE SET code = EXCLUDED.code, expires_at = EXCLUDED.expires_at, created_at = NOW()
+	`
+	_, err = ev.db.ExecContext(ctx, query, email, code, expiresAt)
+	if err != nil {
+		return "", err
 	}
 
-	return code
+	return code, nil
 }
 
-func (ev *EmailVerifier) VerifyCode(email, code string) bool {
-	ev.mu.Lock()
-	defer ev.mu.Unlock()
-
-	entry, exists := ev.codes[email]
-	if !exists {
-		return false
+func (ev *EmailVerifier) VerifyCode(ctx context.Context, email, code string) (bool, error) {
+	query := `
+		DELETE FROM email_verifications
+		WHERE email = $1 AND code = $2 AND expires_at > NOW()
+		RETURNING email
+	`
+	var returnedEmail string
+	err := ev.db.QueryRowContext(ctx, query, email, code).Scan(&returnedEmail)
+	if err == sql.ErrNoRows {
+		return false, nil
+	}
+	if err != nil {
+		return false, err
 	}
 
-	if time.Now().After(entry.Expires) || entry.Code != code {
-		delete(ev.codes, email)
-		return false
-	}
+	return true, nil
+}
 
-	delete(ev.codes, email)
-	return true
+func (ev *EmailVerifier) StartCleanupWorker(ctx context.Context, interval time.Duration) {
+	ticker := time.NewTicker(interval)
+	go func() {
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				_, err := ev.db.ExecContext(ctx, "DELETE FROM email_verifications WHERE expires_at < NOW()")
+				if err != nil {
+					log.Printf("Error cleaning up expired email verification codes: %v", err)
+				}
+			}
+		}
+	}()
 }
 
 func SendVerificationEmail(toEmail, code, smtpHost, smtpPort, smtpUser, smtpPassword, fromEmail string) error {

@@ -7,7 +7,7 @@ numpy
 pydantic-settings
 python-dotenv
 python-multipart
-requests
+httpx
 qdrant-client
 pymupdf
 pdfplumber
@@ -16,6 +16,3 @@ python-pptx
 docx2md
 openpyxl
 pandas
-python-jose[cryptography]
-passlib[bcrypt]
-bcrypt==4.3.0

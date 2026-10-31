@@ -2,6 +2,7 @@ package user
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/AIFixed/backend-go/internal/config"
@@ -53,14 +54,28 @@ func (h *UserHandler) EditUser(w http.ResponseWriter, r *http.Request) {
 			status = http.StatusNotFound
 		}
 		http.Error(w, err.Error(), status)
+		return
 	}
 
 	if req.Email != nil && *req.Email != currentUser.Email {
-		code := h.verifier.SetVerificationCode(*req.Email)
+		ctx := r.Context()
+		code, err := h.verifier.SetVerificationCode(ctx, *req.Email)
+		if err != nil {
+			log.Printf("Failed to set verification code for email change: %v", err)
+			http.Error(w, "Failed to set verification code for email change", http.StatusInternalServerError)
+		} else {
+			go func() {
+				_ = auth.SendVerificationEmail(
+					*req.Email,
+					code,
+					h.cfg.SMTPHost,
+					h.cfg.SMTPPort,
+					h.cfg.SMTPUser,
+					h.cfg.SMTPPassword,
+					h.cfg.SMTPFromEmail)
+			}()
+		}
 
-		go func() {
-			_ = auth.SendVerificationEmail(*req.Email, code, h.cfg.SMTPHost, h.cfg.SMTPPort, h.cfg.SMTPUser, h.cfg.SMTPPassword, h.cfg.SMTPFromEmail)
-		}()
 	}
 
 	w.Header().Set("Content-Type", "application/json")
