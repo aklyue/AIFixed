@@ -18,6 +18,21 @@ import (
 	tempfileService "github.com/AIFixed/backend-go/internal/services/tempfile"
 )
 
+func enableCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	cfg := config.Load()
 
@@ -43,14 +58,25 @@ func main() {
 	githubOAuthH := authHandler.NewGithubOAuthHandler(authSvc, cfg)
 	googleOAuthH := authHandler.NewGoogleOAuthHandler(authSvc, cfg)
 	tempH := tempfileHandler.NewTempfileHandler(tempSvc)
-	msgH := msgHandler.NewMessageHandler(presSvc, cfg.TempfileDir)
-	presH := presHandler.NewPresentationHandler(database)
+	msgH := msgHandler.NewMessageHandler(presSvc, cfg.AIModuleURL)
+	presH := presHandler.NewPresentationHandler(database, cfg.AIModuleURL)
 
 	authMW := middleware.AuthMiddleware(authSvc, cfg)
 
 	userH := userHandler.NewUserHandler(authSvc, emailVerifier, cfg)
 
 	mux := http.NewServeMux()
+
+	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(`{"status": "ok", "service": "go-gateway"}`))
+	})
+
+	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("AIFixed Go Gateway is running"))
+	})
 
 	mux.HandleFunc("POST /api/auth/register", authH.Register)
 	mux.HandleFunc("POST /api/auth/login", authH.Login)

@@ -11,9 +11,9 @@ func (h *PresentationHandler) GeneratePresentation(w http.ResponseWriter, r *htt
 		return
 	}
 
-	pythonURL := "http://localhost:8001/generate"
+	AIModuleURL := h.AIModuleURL
 
-	proxyReq, err := http.NewRequestWithContext(r.Context(), http.MethodPost, pythonURL, r.Body)
+	proxyReq, err := http.NewRequestWithContext(r.Context(), http.MethodPost, AIModuleURL, r.Body)
 	if err != nil {
 		http.Error(w, "Failed to create proxy request", http.StatusInternalServerError)
 		return
@@ -45,9 +45,9 @@ func (h *PresentationHandler) EditSlide(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	pythonURL := "http://localhost:8001/edit"
+	AIModuleURL := h.AIModuleURL
 
-	proxyReq, err := http.NewRequestWithContext(r.Context(), http.MethodPost, pythonURL, r.Body)
+	proxyReq, err := http.NewRequestWithContext(r.Context(), http.MethodPost, AIModuleURL, r.Body)
 	if err != nil {
 		http.Error(w, "Failed to create proxy request", http.StatusInternalServerError)
 		return

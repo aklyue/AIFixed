@@ -11,12 +11,14 @@ import (
 )
 
 type PresentationHandler struct {
-	db *sql.DB
+	db          *sql.DB
+	AIModuleURL string
 }
 
-func NewPresentationHandler(db *sql.DB) *PresentationHandler {
+func NewPresentationHandler(db *sql.DB, AIModuleURL string) *PresentationHandler {
 	return &PresentationHandler{
-		db: db,
+		db:          db,
+		AIModuleURL: AIModuleURL,
 	}
 }
 

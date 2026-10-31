@@ -4,24 +4,20 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
-	"os"
-	"path/filepath"
-
-	"github.com/google/uuid"
 
 	"github.com/AIFixed/backend-go/internal/middleware"
 	presService "github.com/AIFixed/backend-go/internal/services/presentation"
 )
 
 type MessageHandler struct {
-	presSvc *presService.PresentationService
-	tmpDir  string
+	presSvc     *presService.PresentationService
+	AIModuleURL string
 }
 
-func NewMessageHandler(presSvc *presService.PresentationService, tmpDir string) *MessageHandler {
+func NewMessageHandler(presSvc *presService.PresentationService, AIModuleURL string) *MessageHandler {
 	return &MessageHandler{
-		presSvc: presSvc,
-		tmpDir:  tmpDir,
+		presSvc:     presSvc,
+		AIModuleURL: AIModuleURL,
 	}
 }
 
@@ -31,58 +27,55 @@ func (h *MessageHandler) SendMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := r.ParseMultipartForm(32 << 20); err != nil {
-		http.Error(w, "Failed to parse multipart form", http.StatusBadRequest)
-		return
-	}
+	AIModuleURL := h.AIModuleURL + "/message"
 
-	text := r.FormValue("text")
-	if text == "" {
-		http.Error(w, "Field 'text' is required", http.StatusBadRequest)
-		return
-	}
-
-	file, header, err := r.FormFile("file")
+	proxyReq, err := http.NewRequestWithContext(r.Context(), http.MethodPost, AIModuleURL, r.Body)
 	if err != nil {
-		http.Error(w, "Field 'file' is required", http.StatusBadRequest)
+		http.Error(w, "Failed to create proxy request", http.StatusInternalServerError)
 		return
 	}
+	proxyReq.Header.Set("Content-Type", r.Header.Get("Content-Type"))
 
-	defer file.Close()
-
-	tmpFileName := uuid.NewString() + filepath.Ext(header.Filename)
-	tmpFilePath := filepath.Join(h.tmpDir, tmpFileName)
-
-	dst, err := os.Create(tmpFilePath)
+	client := &http.Client{}
+	resp, err := client.Do(proxyReq)
 	if err != nil {
-		http.Error(w, "Failed to create temp file", http.StatusInternalServerError)
+		http.Error(w, "Python AI service unavailable", http.StatusBadGateway)
 		return
 	}
 
-	defer os.Remove(tmpFilePath)
+	defer resp.Body.Close()
 
-	if _, err := io.Copy(dst, file); err != nil {
-		dst.Close()
-		http.Error(w, "Failed to save file", http.StatusInternalServerError)
+	if resp.StatusCode != http.StatusOK {
+		http.Error(w, "AI service error", resp.StatusCode)
 		return
 	}
 
-	dst.Close()
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		http.Error(w, "Failed to read AI response", http.StatusInternalServerError)
+		return
+	}
 
-	modelRes := []map[string]interface{}{
-		{"slide": 1, "title": text, "bullets": []string{"Point 1", "Point 2"}},
+	var aiResponse struct {
+		Content interface{} `json:"content"`
+	}
+
+	if err := json.Unmarshal(bodyBytes, &aiResponse); err != nil {
+		http.Error(w, "Invalid AI response format", http.StatusInternalServerError)
+		return
 	}
 
 	currentUser := middleware.GetUserFromContext(r)
-
 	var presID *string
+
 	if currentUser != nil {
+		text := r.FormValue("text")
 		title := text
 		if len(title) > 50 {
 			title = title[:50]
 		}
 
-		pres, err := h.presSvc.CreatePresentation(&currentUser.ID, title, modelRes)
+		pres, err := h.presSvc.CreatePresentation(&currentUser.ID, title, aiResponse.Content)
 		if err == nil {
 			presID = &pres.ID
 		}
@@ -92,6 +85,6 @@ func (h *MessageHandler) SendMessage(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"presentation_id": presID,
-		"content":         modelRes,
+		"content":         aiResponse.Content,
 	})
 }

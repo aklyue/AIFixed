@@ -14,7 +14,7 @@ require (
 	// github.com/golang-migrate/migrate/v4 v4.20.1 // indirect
 	// github.com/jackc/pgpassfile v1.0.0 // indirect
 	// github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
-	// github.com/jackc/pgx/v5 v5.11.0 // indirect
+	github.com/jackc/pgx/v5 v5.12.0
 	github.com/joho/godotenv v1.5.1
 	// github.com/leodido/go-urn v1.5.0 // indirect
 	// github.com/sirupsen/logrus v1.10.2 // indirect
@@ -23,4 +23,11 @@ require (
 	golang.org/x/oauth2 v0.37.0
 )
 
-require cloud.google.com/go/compute/metadata v0.3.0 // indirect
+require (
+	cloud.google.com/go/compute/metadata v0.3.0 // indirect
+	github.com/jackc/pgpassfile v1.0.0 // indirect
+	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
+	github.com/jackc/puddle/v2 v2.2.3 // indirect
+	golang.org/x/sync v0.23.0 // indirect
+	golang.org/x/text v0.42.0 // indirect
+)

@@ -220,3 +220,27 @@ def edit_one_slide(user_prompt, slide: dict, action: str, model: str) -> str:
     content = pipe.regenerate_slide(user_prompt, slide, action).get("content", "")
 
     return f"# {content}\n"
+
+def run_prompt(user_request: str, project_context: str) -> list[dict]:
+    """Адаптер для обратной совместимости с эндпоинтом /message"""
+    # Используем твой новый класс IntegratedPipeline
+    pipe = IntegratedPipeline(
+        api_key=api_key,
+        embedding_model=settings.DEFAULT_EMBEDDING_MODEL,
+        llm_model=settings.DEFAULT_MODEL,
+    )
+    
+    # Загружаем контекст в векторную базу Qdrant
+    if project_context.strip():
+        pipe.load_documents([project_context.strip()])
+
+    # Собираем все сгенерированные слайды в список словарей
+    slides_content = []
+    for slide in pipe.run(user_request, project_context=project_context):
+        slides_content.append({
+            "slide": slide.get("slide_id", len(slides_content) + 1),
+            "title": slide.get("title", "Untitled"),
+            "content": slide.get("content", ""),
+        })
+        
+    return slides_content

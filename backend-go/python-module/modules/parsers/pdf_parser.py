@@ -6,7 +6,7 @@ from collections import defaultdict
 import pdfplumber
 from pdfplumber.page import Page
 
-from src.modules.parsers.abstract_parser import AbstractParser
+from ...modules.parsers.abstract_parser import AbstractParser
 
 
 class PDFToMDParser(AbstractParser):

@@ -5,10 +5,9 @@ from docx.oxml.table import CT_Tbl
 from docx.table import Table
 from docx.text.paragraph import Paragraph
 
-from src.config import settings
-from src.services.tempfile_service import tempfile_service
-from src.modules.parsers.abstract_parser import AbstractParser
-from src.utils import file_utils
+from ...config import settings
+from ...modules.parsers.abstract_parser import AbstractParser
+from ...utils import file_utils
 
 
 class DocxToMDParser(AbstractParser):

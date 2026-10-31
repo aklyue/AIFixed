@@ -4,9 +4,7 @@ from pptx.slide import Slide
 from pptx.shapes.base import BaseShape
 from pptx.table import Table
 
-from src.config import settings
-from src.services.tempfile_service import tempfile_service
-from src.modules.parsers.abstract_parser import AbstractParser
+from ...modules.parsers.abstract_parser import AbstractParser
 
 
 class PPTXToMDParser(AbstractParser):

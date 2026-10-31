@@ -52,6 +52,8 @@ type Config struct {
 	EmbeddingModel  string
 	EmbeddingDevice string
 	EmbeddingPort   int
+
+	AIModuleURL string
 }
 
 func Load() *Config {
@@ -102,6 +104,8 @@ func Load() *Config {
 		EmbeddingModel:  getEnv("EMBEDDING_MODEL", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"),
 		EmbeddingDevice: getEnv("EMBEDDING_DEVICE", "cpu"),
 		EmbeddingPort:   getEnvAsInt("EMBEDDING_PORT", 8001),
+
+		AIModuleURL: getEnv("AI_MODULE_URL", "http://localhost:8001"),
 	}
 }
 

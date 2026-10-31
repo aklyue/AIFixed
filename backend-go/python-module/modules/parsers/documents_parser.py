@@ -6,11 +6,11 @@ import pandas as pd
 
 import pymupdf4llm
 
-from src.utils import file_utils
-from src.modules.parsers.abstract_parser import AbstractParser
-from src.modules.parsers.pptx_parser import PPTXToMDParser
-from src.modules.parsers.docx_parser import DocxToMDParser
-from src.modules.parsers.pdf_parser import PDFToMDParser
+from ...utils import file_utils
+from ...modules.parsers.abstract_parser import AbstractParser
+from ...modules.parsers.pptx_parser import PPTXToMDParser
+from ...modules.parsers.docx_parser import DocxToMDParser
+from ...modules.parsers.pdf_parser import PDFToMDParser
 
 
 class _MDParser(AbstractParser):

@@ -34,7 +34,7 @@ func NewTempfileService(tempfileDir string, cleanupInterval int) (*TempfileServi
 }
 
 func (s *TempfileService) StartCleanupWorker(ctx context.Context) {
-	ticker := time.NewTicker(time.Duration(s.cleanupInterval))
+	ticker := time.NewTicker(time.Duration(s.cleanupInterval) * time.Second)
 	defer ticker.Stop()
 
 	for {

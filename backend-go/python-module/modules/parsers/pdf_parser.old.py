@@ -4,7 +4,7 @@ import pdfplumber
 from pdfplumber.page import Page as plPage
 from typing import Callable
 
-from src.modules.parsers.abstract_parser import AbstractParser
+from ...modules.parsers.abstract_parser import AbstractParser
 
 
 class PDFToMDParser(AbstractParser):
