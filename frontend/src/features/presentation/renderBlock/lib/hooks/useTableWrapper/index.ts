@@ -1,0 +1,1 @@
+export { useTableWrapper } from "./useTableWrapper";

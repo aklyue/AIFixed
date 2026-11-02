@@ -1,0 +1,1 @@
+export { useIconsReveal } from "./useIconsReveal";

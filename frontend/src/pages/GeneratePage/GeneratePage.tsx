@@ -1,12 +1,11 @@
 import { Box, lighten } from "@mui/material";
-import { BlockGeneration } from "../../features/setupSlides";
-import { useSelector } from "react-redux";
-import { RootState } from "../../app/store";
+import {
+  BlockGeneration,
+  useGeneratePageTheme,
+} from "../../features/presentation/generatePresentation";
 
-function GeneratePage() {
-  const theme = useSelector((s: RootState) =>
-    s.editor.availableThemes.find((t) => t.id === s.editor.globalThemeId)
-  );
+const GeneratePage = () => {
+  const theme = useGeneratePageTheme();
   return (
     <Box
       sx={{
@@ -26,6 +25,6 @@ function GeneratePage() {
       </Box>
     </Box>
   );
-}
+};
 
 export default GeneratePage;

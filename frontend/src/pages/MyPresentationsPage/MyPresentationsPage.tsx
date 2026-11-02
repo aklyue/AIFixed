@@ -1,8 +1,8 @@
 import React from "react";
-import MyPresentations from "../../entities/presentation/ui/MyPresentations";
+import { MyPresentations } from "../../features/presentation/managePresentations";
 import { Box, useMediaQuery, useTheme } from "@mui/material";
 
-function MyPresentationsPage() {
+const MyPresentationsPage = () => {
   const isMobile = useMediaQuery(useTheme().breakpoints.down("md"));
   return (
     <Box
@@ -13,6 +13,6 @@ function MyPresentationsPage() {
       <MyPresentations />
     </Box>
   );
-}
+};
 
 export default MyPresentationsPage;

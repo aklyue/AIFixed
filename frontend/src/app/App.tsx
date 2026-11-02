@@ -1,9 +1,21 @@
 import React from "react";
-import "./App.css";
-import { AppRouter } from "../features";
+import "./styles/index.css";
+import "./styles/App.css";
+import { ErrorBoundary } from "./providers/ErrorBoundary";
+import { ReduxProvider } from "./providers/ReduxProvider";
+import { RouterProvider } from "./providers/RouterProvider";
+import { ThemeProvider } from "./providers/ThemeProvider";
 
 function App() {
-  return <AppRouter />;
+  return (
+    <ErrorBoundary>
+      <ReduxProvider>
+        <ThemeProvider>
+          <RouterProvider />
+        </ThemeProvider>
+      </ReduxProvider>
+    </ErrorBoundary>
+  );
 }
 
 export default App;

@@ -1,8 +1,8 @@
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import React from "react";
-import SettingsForm from "../../entities/user/ui/components/SettingsForm";
+import { SettingsForm } from "../../features/user/updateSettings";
 
-function SettingsPage() {
+const SettingsPage = () => {
   const isMobile = useMediaQuery(useTheme().breakpoints.down("md"));
   return (
     <Box
@@ -24,6 +24,6 @@ function SettingsPage() {
       </Box>
     </Box>
   );
-}
+};
 
 export default SettingsPage;

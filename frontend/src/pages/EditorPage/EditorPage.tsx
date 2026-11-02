@@ -1,8 +1,8 @@
 import { Container } from "@mui/material";
-import { MarkdownPresentation } from "../../features";
+import { MarkdownPresentation } from "../../widgets/presentation/PresentationEditor";
 import { AnimatePresence, motion } from "framer-motion";
 
-function EditorPage() {
+const EditorPage = () => {
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -29,6 +29,6 @@ function EditorPage() {
       </motion.div>
     </AnimatePresence>
   );
-}
+};
 
 export default EditorPage;

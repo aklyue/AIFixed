@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import VerificationBlock from "../../features/auth/blocks/components/VerificationBlock";
+import React from "react";
+import { VerificationBlock } from "../../features/auth";
 import { Box, useMediaQuery, useTheme } from "@mui/material";
 
-function VerificationPage() {
+const VerificationPage = () => {
   const isMobile = useMediaQuery(useTheme().breakpoints.down("md"));
   return (
     <Box
@@ -16,6 +16,6 @@ function VerificationPage() {
       <VerificationBlock />
     </Box>
   );
-}
+};
 
 export default VerificationPage;

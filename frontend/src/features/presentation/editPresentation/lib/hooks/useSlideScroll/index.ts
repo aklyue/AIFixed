@@ -1,0 +1,1 @@
+export { useSlideScroll } from "./useSlideScroll";
