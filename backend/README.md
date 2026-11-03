@@ -8,7 +8,7 @@ python -m venv venv
 .\venv\Scripts\activate # для Windows
 source venv/Scripts/activate # для Linux/MacOS
 
-pip install -r requiriements.txt
+pip install -r requirements.txt
 ```
 
 ## Запуск
