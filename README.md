@@ -186,20 +186,18 @@ docker-compose up --build
 
 ## 🗺 Роутинг
 
-| Путь          | Компонент / Описание                  |
-|---------------|--------------------------------------|
-| `/`           | `PromptPage` — главная страница, знакомство с сервисом и отправка промпта |
-| `/generate`   | `GeneratePage` — генерация контента на основе промпта |
-| `/editor`     | `EditorPage` — редактор для доработки и сохранения сгенерированной презентации |
-| `/auth`       | `AuthPage` - страница авторизации |
-| `/settings`   | `SettingsPage` - настройки пользователя |
-| `/projects` | `MyPresentationsPage` - список созданных презентаций (только для авторизованных пользователей) |
-| `/verify-email` | `VerificationPage` - подтверждение кода при регистрации |
-| `/auth/success` | `OAuthSuccess` - fallback-компонент успешной OAuth-авторизации |
+| Путь | Компонент / Описание |
+|---|---|
+| `/` | `PromptPage` — главная страница и отправка промпта (требуется авторизация) |
+| `/generate` | `GeneratePage` — генерация презентации (требуется авторизация) |
+| `/editor` | `EditorPage` — редактор презентации (требуется авторизация) |
+| `/projects` | `MyPresentationsPage` — список презентаций (требуется авторизация) |
+| `/settings` | `SettingsPage` — настройки пользователя (требуется авторизация) |
+| `/auth` | `AuthPage` — авторизация |
+| `/verify-email` | `VerificationPage` — подтверждение почты |
+| `/auth/success` | `OAuthSuccess` — завершение OAuth-аутентификации |
 
-Все страницы обернуты в компонент `PageWrapper` для единого оформления и управления макетом.
-
----
+Маршруты и их композиция находятся в `frontend/src/app/config/routes.tsx`; защищённые страницы проходят через `ProtectedRoute`.
 
 ## 📦 Установка зависимостей
 
@@ -480,176 +478,179 @@ http://localhost:8000/docs
 ### Архитектура (Feature-Sliced Design)
 
 ```
-    src                                // Исходный код всего приложения
-    ├── app
-    │   └── store                      // Redux store приложения
-    │       └── slices                 // Redux-slices по доменным сущностям
-    │           └── reducers/actions — управление состоянием
-    │
-    ├── entities                    // Доменные сущности
-    │   // Содержит всё, что относится к конкретным моделям данных: API, UI-компоненты и хуки
-    │   ├── auth                    // Авторизация и аутентификация
-    │   │   ├── api                 // Запросы к бэкенду по авторизации
-    │   │   └── model
-    │   ├── github                  // Интеграция с GitHub
-    │   │   └── api                 // API-запросы к GitHub
-    │   ├── presentation            // Сущность "Презентация"
-    │   │   ├── api                 // API для работы с презентациями
-    │   │   └── ui                  // UI-компоненты для работы с презентациями
-    │   │       └── MyPresentations // Компоненты для отображения списка презентаций пользователя
-    │   └── user                    // Сущность "Пользователь"
-    │       ├── api                 // API-запросы для получения/обновления данных пользователя
-    │       ├── model
-    │       └── ui
-    │           ├── components
-    │           │   └── SettingsForm // Компонент формы настроек пользователя
-    │           └── hooks
-    │               └── useSettings  // Кастомный хук логики настроек
-    │
-    ├── features                       // Фичи (завершённые пользовательские сценарии)
-    │   ├── auth
-    │   │   ├── blocks
-    │   │   │   ├── components
-    │   │   │   │   ├── LoginBlock
-    │   │   │   │   ├── RegistrationBlock
-    │   │   │   │   └── VerificationBlock
-    │   │   │   └── hooks
-    │   │   │       └── useVerify    // Хук для подтверждения email
-    │   │   └── ui
-    │   │       └── hooks
-    │   │           ├── useAuth      // Хук для логики авторизации
-    │   │           └── useTabsChange // Хук для переключения вкладок
-    │   ├── landing                    // Главная страница сайта
-    │   │   ├── blocks                 // Отдельные секции landing page
-    │   │   │   ├── FeaturesBlock
-    │   │   │   ├── HowItWorksBlock
-    │   │   │   ├── QuickStartBlock
-    │   │   │   └── WhyUsBlock
-    │   │   ├── lib
-    │   │   │   └── constants          // Константы для landing page
-    │   │   └── ui                     // UI-компоненты главной страницы
-    │   │
-    │   ├── navigation               // Навигация приложения
-    │   │   └── ui
-    │   │       └── components
-    │   │           └── ProtectedRoute // Компонент маршрута с проверкой авторизации
-    │   │
-    │   ├── presentation               // Большая фича редактора презентаций
-    │   │   ├── blocks                 // Блоки слайдов
-    │   │   │   ├── AiChat             // AI-чат для редактирования презентации
-    │   │   │   │   └── ui             // UI комопненты для AI-чаиа
-    │   │   │   ├── RenderBlock
-    │   │   │   │   ├── components     // Компоненты рендера каждого блока слайда
-    │   │   │   │   │   ├── ChartBlock
-    │   │   │   │   │   ├── ChartBlockWrapper
-    │   │   │   │   │   ├── ChartEditor
-    │   │   │   │   │   ├── CodeBlock
-    │   │   │   │   │   ├── EditableWrapper
-    │   │   │   │   │   ├── HeadingBlock
-    │   │   │   │   │   ├── ListBlock
-    │   │   │   │   │   ├── ParagraphBlock
-    │   │   │   │   │   ├── QuoteBlock
-    │   │   │   │   │   ├── TableBlockWrapper
-    │   │   │   │   │   ├── TableEditor
-    │   │   │   │   │   └── TextEditor
-    │   │   │   │   ├── hooks          // Логика редактирования блоков
-    │   │   │   │   │   ├── useChartEditor
-    │   │   │   │   │   ├── useChartWrapper
-    │   │   │   │   │   ├── useEditableWrapper
-    │   │   │   │   │   ├── useTableEditor
-    │   │   │   │   │   ├── useTableWrapper
-    │   │   │   │   │   └── useTextBlocksEditor
-    │   │   │   │   └── lib
-    │   │   │   │       └── utils      // Утилиты блока
-    │   │   │   ├── SlideContent        // Лэйауты для компоновки элементов слайда
-    │   │   │   │   ├── components
-    │   │   │   │   │   ├── Grid2x2Layout
-    │   │   │   │   │   ├── GridTextTopTwoBottomLayout
-    │   │   │   │   │   ├── ImageColumnLayout
-    │   │   │   │   │   ├── ImageRowLayout
-    │   │   │   │   │   └── ResizableImage
-    │   │   │   │   │       └── EditableImage
-    │   │   │   │   └── hooks
-    │   │   │   │       ├── useEditableImage
-    │   │   │   │       └── useResizeImage
-    │   │   │   └── SortableBlock       // DnD блоки внутри слайда
-    │   │   ├── hooks
-    │   │   │   ├── useSlideScroll      // Скролл в редакторе
-    │   │   │   └── useSortableBlock    // Перетаскивание блоков
-    │   │   ├── lib
-    │   │   │   ├── constants           // Константы редактора
-    │   │   │   ├── utils               // Утилиты редактора
-    │   │   │   └── types               // Типы блока/слайда
-    │   │   └── ui                      // UI редактора презентаций
-    │   │       ├── components
-    │   │       │   ├── AddSlideDialog
-    │   │       │   ├── EditSlideDialog
-    │   │       │   ├── EmptyState
-    │   │       │   ├── MiniSlides
-    │   │       │   ├── SlideEditPrompt
-    │   │       │   ├── SlideItem
-    │   │       │   ├── SlideList
-    │   │       │   ├── SlideNavigationToolbar
-    │   │       │   ├── SlideToolbar
-    │   │       │   └── ThemeSelector
-    │   │       ├── hooks
-    │   │       │   ├── useBlockActions
-    │   │       │   ├── useIconsReveal
-    │   │       │   ├── useMiniSlidesActions
-    │   │       │   ├── useSlideActions
-    │   │       │   └── useSlideApiAction
-    │   │       └── lib
-    │   │           ├── constants
-    │   │           └── utils
-    │   │
-    │   └── setupSlides                 // Экран первичного формирования слайдов (после генерации)
-    │       ├── blocks
-    │       │   └── RenderBlock
-    │       │       ├── components
-    │       │       │   └── RenderBlock
-    │       │       └── hooks
-    │       │           └── useRenderBlock
-    │       └── ui
-    │           ├── components
-    │           │   ├── SlidesList
-    │           │   ├── SortableSlide
-    │           │   └── ThemeCardSelector
-    │           └── hooks
-    │               ├── useSlidesList
-    │               └── useSortableSlide
-    │
-    ├── pages                        // Страницы приложения (роуты)
-    │   ├── AuthPage
-    │   ├── EditorPage
-    │   ├── GeneratePage
-    │   ├── MyPresentationsPage
-    │   ├── PromptPage
-    │   ├── SettingsPage
-    │   └── VerificationPage
-    │
-    ├── shared                          // Переиспользуемый код (shared kernel)
-    │   ├── assets                      // Изображения, иконки, статические файлы
-    │   ├── components                  // Общие UI-компоненты (например, Loader, OAuthSuccess)
-    │   ├── constants                   // Глобальные константы приложения
-    │   ├── hooks                       // Переиспользуемые хуки
-    │   ├── types                       // Глобальные TS-типы
-    │   └── utils                       // Вспомогательные функции
-    │
-    └── widgets                      // Готовые UI-составные блоки (Header, Footer)
-        ├── Footer
-        │   ├── blocks
-        │   │   ├── components
-        │   │   └── hooks
-        │   └── ui
-        └── Header
-            ├── blocks
-            │   ├── components
-            │   └── hooks
-            ├── hooks
-            └── ui
+frontend/src/
+├── app/                                      # Инициализация и конфигурация приложения
+│   ├── config/
+│   │   ├── routes.tsx                        # Конфигурация маршрутов
+│   │   └── theme.ts                          # Конфигурация темы
+│   ├── providers/
+│   │   ├── ErrorBoundary/
+│   │   ├── LayoutProvider/
+│   │   ├── ReduxProvider/
+│   │   ├── RouterProvider/
+│   │   │   └── ProtectedRoute/
+│   │   └── ThemeProvider/
+│   ├── store/
+│   │   ├── middleware/
+│   │   └── index.ts                          # Сборка Redux store
+│   ├── styles/
+│   ├── types/
+│   └── App.tsx
+│
+├── entities/                                 # Доменные данные, API и модели состояния
+│   ├── auth/
+│   │   ├── api/
+│   │   └── model/
+│   │       └── slices/
+│   │           └── authSlice.ts
+│   ├── github/
+│   │   └── api/
+│   ├── markdown/
+│   │   └── model/
+│   │       └── slices/
+│   │           └── markdownSlice.ts
+│   ├── presentation/
+│   │   ├── api/
+│   │   └── model/
+│   │       └── slices/
+│   │           ├── editorSlice.ts
+│   │           └── uiSlice.ts
+│   ├── prompt/
+│   │   └── model/
+│   │       └── slices/
+│   │           └── promptSlice.ts
+│   └── user/
+│       └── api/
+│
+├── features/                                 # Пользовательские сценарии и действия
+│   ├── auth/
+│   │   ├── authAuthorization/
+│   │   │   ├── lib/
+│   │   │   │   └── hooks/
+│   │   │   └── ui/
+│   │   │       ├── Authorization/
+│   │   │       ├── LoginBlock/
+│   │   │       └── RegistrationBlock/
+│   │   ├── authCheck/
+│   │   │   └── lib/hooks/
+│   │   └── authVerifyEmail/
+│   │       ├── lib/hooks/
+│   │       └── ui/VerificationBlock/
+│   │
+│   ├── presentation/
+│   │   ├── editPresentation/
+│   │   │   ├── lib/
+│   │   │   │   ├── constants/
+│   │   │   │   ├── hooks/
+│   │   │   │   └── utils/
+│   │   │   └── ui/
+│   │   │       ├── AddSlideDialog/
+│   │   │       ├── EditSlideDialog/
+│   │   │       ├── EmptyState/
+│   │   │       ├── SlideNavigationToolbar/
+│   │   │       ├── SlideToolbar/
+│   │   │       └── ThemeSelector/
+│   │   ├── generatePresentation/
+│   │   │   ├── lib/hooks/
+│   │   │   └── ui/
+│   │   │       ├── AiChat/
+│   │   │       ├── BlockGeneration/
+│   │   │       ├── PromptSend/
+│   │   │       ├── RenderBlock/
+│   │   │       ├── SlidesList/
+│   │   │       ├── SortableSlide/
+│   │   │       └── ThemeCardSelector/
+│   │   ├── managePresentations/
+│   │   │   ├── lib/hooks/
+│   │   │   └── ui/MyPresentations/
+│   │   ├── renderBlock/
+│   │   │   ├── lib/
+│   │   │   │   ├── hooks/
+│   │   │   │   └── utils/
+│   │   │   └── ui/RenderBlock/
+│   │   │       ├── ChartBlock/
+│   │   │       ├── ChartBlockWrapper/
+│   │   │       ├── ChartEditor/
+│   │   │       ├── CodeBlock/
+│   │   │       ├── EditableWrapper/
+│   │   │       ├── HeadingBlock/
+│   │   │       ├── ListBlock/
+│   │   │       ├── ParagraphBlock/
+│   │   │       ├── QuoteBlock/
+│   │   │       ├── TableBlockWrapper/
+│   │   │       ├── TableEditor/
+│   │   │       ├── TextEditor/
+│   │   │       └── Toolbar/
+│   │   ├── savePresentation/
+│   │   │   └── lib/hooks/
+│   │   └── slideContent/
+│   │       ├── lib/
+│   │       │   ├── hooks/
+│   │       │   └── types/
+│   │       └── ui/
+│   │           ├── Grid2x2Layout/
+│   │           ├── GridTextTopTwoBottomLayout/
+│   │           ├── ImageColumnLayout/
+│   │           ├── ImageRowLayout/
+│   │           ├── ResizableImage/
+│   │           └── SortableBlock/
+│   │
+│   └── user/
+│       └── updateSettings/
+│           ├── lib/hooks/
+│           └── ui/SettingsForm/
+│
+├── pages/                                    # Страницы, подключаемые маршрутизатором
+│   ├── AuthPage/
+│   ├── EditorPage/
+│   ├── GeneratePage/
+│   ├── MyPresentationsPage/
+│   ├── PromptPage/
+│   ├── SettingsPage/
+│   ├── VerificationPage/
+│   └── index.ts
+│
+├── shared/                                   # Общие UI, типы и утилиты
+│   ├── assets/
+│   │   ├── images/
+│   │   └── logo/
+│   ├── config/
+│   ├── hooks/
+│   ├── lib/utils/
+│   ├── types/
+│   └── ui/
+│       ├── LoadingOverlay/
+│       └── OAuthSuccess/
+│
+└── widgets/                                  # Композиционные блоки интерфейса
+    ├── landing/
+    │   ├── FeaturesBlock/
+    │   ├── HowItWorksBlock/
+    │   ├── QuickStartBlock/
+    │   ├── StartBlock/
+    │   └── WhyUsBlock/
+    ├── layout/
+    │   ├── Footer/
+    │   │   ├── lib/hooks/
+    │   │   └── ui/
+    │   └── Header/
+    │       ├── lib/hooks/
+    │       └── ui/
+    └── presentation/
+        └── PresentationEditor/
+            └── ui/
+                ├── MarkdownPresentation/
+                ├── MiniSlides/
+                ├── RenderBlock/
+                ├── SlideContent/
+                ├── SlideEditPrompt/
+                ├── SlideItem/
+                └── SlideList/
 ```
 
-### Технологии
+Redux slices хранятся в `entities/<entity>/model/slices`; `app/store` собирает reducers, а `app/providers` подключает store и остальные обёртки приложения. Фичи и виджеты разделены на самостоятельные slices с `ui` и `lib`. Публичный `index.ts` находится на уровне slice и экспортирует API непосредственно из файлов реализации; рядом с отдельными компонентами barrel-файлы не используются. Страницы композируют фичи и виджеты и не обращаются к Redux напрямую.
+
+### 🎨 Технологии
 
 - **React 19.2.0** - Основной фреймворк
 - **TypeScript** - Типизация
@@ -722,34 +723,114 @@ src/
 ## 📁 Структура проекта
 
 ```
-AH-git/
-├── 📁 backend/                # Python FastAPI backend
-│   ├── 📁 src/                # Исходный код
-│   │   ├── 📁 modules/        # ML модули
-│   │   ├── 📁 routes/         # API маршруты
-│   │   ├── 📁 services/       # Бизнес-логика
-│   │   └── 📁 schemas/        # Pydantic схемы
-│   ├── 📁 local_models/       # Локальные ML модели
-│   ├── 📁 tempfiles/          # Временные файлы
-│   ├── 📄 Dockerfile          # Docker образ
-│   └── 📄 requirements.txt    # Python зависимости
-├── 📁 frontend/               # React TypeScript frontend
-│   ├── 📁 src/                # Исходный код
-        ├── 📁 app/            # Входная точка приложения
-│   │   ├── 📁 entities/       # Сущности
-│   │   ├── 📁 features/       # Основные фичи
-│   │   ├── 📁 pages/          # Страницы
-│   │   ├── 📁 shared/         # Общие компоненты
-│   │   └── 📁 widgets/        # Переиспользуемые виджеты
-│   ├── 📄 Dockerfile          # Docker образ
-│   └── 📄 package.json        # Node.js зависимости
-├── 📁 nginx/                  # Nginx конфигурация
-├── 📁 certbot/                # SSL сертификаты
-├── 📄 docker-compose.yml      # Docker Compose
-└── 📄 README.md               # Документация
+AIFixed/
+├── backend/                                    # Набор модулей нового
+│   ├── go-module/                              # HTTP API и доменная логика на Go
+│   │   ├── cmd/
+│   │   │   └── server/
+│   │   │       └── main.go
+│   │   ├── configs/
+│   │   │   └── .env.example
+│   │   ├── internal/
+│   │   │   ├── config/
+│   │   │   │   └── config.go
+│   │   │   ├── db/
+│   │   │   │   ├── migrations.go
+│   │   │   │   └── postgres.go
+│   │   │   ├── handlers/
+│   │   │   │   ├── auth/
+│   │   │   │   │   ├── auth_handler.go
+│   │   │   │   │   ├── oauth_github.go
+│   │   │   │   │   └── oauth_google.go
+│   │   │   │   ├── message/
+│   │   │   │   │   └── message_handler.go
+│   │   │   │   ├── presentation/
+│   │   │   │   │   ├── ai_handler.go
+│   │   │   │   │   └── presentation_handler.go
+│   │   │   │   ├── tempfile/
+│   │   │   │   │   └── tempfile_handler.go
+│   │   │   │   └── user/
+│   │   │   │       └── user_handler.go
+│   │   │   ├── middleware/
+│   │   │   │   └── auth_middleware.go
+│   │   │   ├── models/
+│   │   │   │   ├── presentation/
+│   │   │   │   │   └── presentation.go
+│   │   │   │   ├── tempfile/
+│   │   │   │   │   └── tempfiles.go
+│   │   │   │   └── user/
+│   │   │   │       └── user.go
+│   │   │   ├── router/
+│   │   │   │   ├── app.go
+│   │   │   │   ├── auth.go
+│   │   │   │   └── router.go
+│   │   │   └── services/
+│   │   │       ├── auth/
+│   │   │       │   ├── auth_service.go
+│   │   │       │   ├── email_verification.go
+│   │   │       │   └── jwt.go
+│   │   │       ├── presentation/
+│   │   │       │   └── presentation_service.go
+│   │   │       └── tempfile/
+│   │   │           └── tempfile_service.go
+│   │   ├── migrations/
+│   │   │   └── 001_create_email_verifications.sql
+│   │   ├── Dockerfile
+│   │   ├── go.mod
+│   │   └── go.sum
+│   │
+│   ├── python-module/                          # AI, генерация и обработка документов
+│   │   ├── adapters/
+│   │   │   ├── file_storage.py
+│   │   │   ├── model_manager.py
+│   │   │   ├── openrouter_client.py
+│   │   │   └── qdrant_repository.py
+│   │   ├── api/
+│   │   │   ├── dependencies.py
+│   │   │   ├── middleware.py
+│   │   │   └── routers/
+│   │   │       ├── health.py
+│   │   │       ├── message.py
+│   │   │       └── presentation.py
+│   │   ├── core/
+│   │   │   ├── exceptions.py
+│   │   │   ├── logging.py
+│   │   │   └── prompts.py
+│   │   ├── models/
+│   │   │   ├── schemas.py
+│   │   │   └── slide.py
+│   │   ├── parsers/
+│   │   │   ├── base.py
+│   │   │   ├── docx.py
+│   │   │   ├── pdf.py
+│   │   │   ├── pptx.py
+│   │   │   └── registry.py
+│   │   ├── services/
+│   │   │   ├── ai_service.py
+│   │   │   ├── generation_service.py
+│   │   │   ├── parsing_service.py
+│   │   │   └── rag_service.py
+│   │   ├── utils/
+│   │   │   ├── file.py
+│   │   │   ├── json.py
+│   │   │   └── text.py
+│   │   ├── config.py
+│   │   ├── main.py
+│   │   ├── Dockerfile
+│   │   └── requirements.txt
+│   └── .env.example
+│
+├── frontend/                                   # React + TypeScript frontend
+│   ├── src/                                    # Feature-Sliced Design (см. раздел Frontend)
+│   ├── public/
+│   ├── config/
+│   ├── Dockerfile
+│   └── package.json
+│
+├── nginx/                                      # Nginx конфигурация
+├── docker-compose.yml
+└── README.md
 ```
-
----
 
 ## 🤝 Вклад в проект
 

@@ -1,0 +1,1 @@
+export { useTableEditor } from "./useTableEditor";

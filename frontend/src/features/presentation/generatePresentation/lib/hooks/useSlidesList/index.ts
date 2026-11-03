@@ -1,0 +1,1 @@
+export { useSlidesList } from "./useSlidesList";

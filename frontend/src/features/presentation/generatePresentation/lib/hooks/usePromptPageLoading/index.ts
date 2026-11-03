@@ -1,0 +1,1 @@
+export { usePromptPageLoading } from "./usePromptPageLoading";

@@ -13,10 +13,11 @@ services:
       - ./certbot/conf:/etc/letsencrypt:ro
       - ./certbot/www:/var/www/certbot:ro
     depends_on:
-      - backend
+      - backend-go
       - frontend
     networks:
       - app-network
+
   frontend:
     build:
       context: ./frontend
@@ -30,22 +31,68 @@ services:
       - app-network
     ports:
       - "3000:3000"
-  backend:
+
+  backend-go-module:
     build:
-      context: ./backend
+      context: ./backend-go/go-module
       dockerfile: Dockerfile
     volumes:
-      - ./backend:/code
+      - shared_tmp:/code/tmp
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=aifixed
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - AI_MODULE_URL=http://python-module:8000
+      - TEMPFILE_DIR=/code/tmp
+      - TEMPFILE_CLEANUP_SEC=300
     networks:
       - app-network
     ports:
-      - "8000:8000"
-    command: uvicorn src.main:app --host 0.0.0.0 --port 8000
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      python-module:
+        condition: service_started
+
+  backend-python-module:
+    build:
+      context: ./backend-go/python-module
+      dockerfile: Dockerfile
+    volumes:
+      - ./python-module:/code
+      - shared_tmp:/code/tmp
     environment:
       - ENVIRONMENT=production
+      - TEMPFILE_DIR=/code/tmp
+    networks:
+      - app-network
+    expose:
+      - "8000"
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: aifixed
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d aifixed"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_prod_data:
+  shared_tmp:
 
 networks:
   app-network:

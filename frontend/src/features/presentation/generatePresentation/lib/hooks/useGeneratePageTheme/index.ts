@@ -1,0 +1,1 @@
+export { useGeneratePageTheme } from "./useGeneratePageTheme";

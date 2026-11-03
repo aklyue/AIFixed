@@ -3,3 +3,8 @@ export * from "./api/editSlide";
 export * from "./api/savePresentation";
 export * from "./api/deletePresentation";
 export * from "./api/fetchPresentations";
+export * from "./model/selectors";
+export { default as editorReducer } from "./model/slices/editorSlice";
+export * from "./model/slices/editorSlice";
+export { default as uiReducer } from "./model/slices/uiSlice";
+export * from "./model/slices/uiSlice";

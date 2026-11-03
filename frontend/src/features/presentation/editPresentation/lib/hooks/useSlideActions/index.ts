@@ -1,0 +1,1 @@
+export { useSlideActions } from "./useSlideActions";

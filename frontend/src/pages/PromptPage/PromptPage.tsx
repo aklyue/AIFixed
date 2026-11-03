@@ -1,16 +1,15 @@
 import { Box } from "@mui/material";
 import { PromptSend } from "../../features";
-import FeaturesBlock from "../../features/landing/blocks/FeaturesBlock";
-import WhyUsBlock from "../../features/landing/blocks/WhyUsBlock";
-import HowItWorksBlock from "../../features/landing/blocks/HowItWorksBlock";
-import QuickStartBlock from "../../features/landing/blocks/QuickStartBlock";
-import { LoadingOverlay } from "../../shared/components";
-import { useSelector } from "react-redux";
-import { RootState } from "../../app/store";
-import StartBlock from "../../features/landing/blocks/StartBlock";
+import { FeaturesBlock } from "../../widgets/landing/FeaturesBlock";
+import { WhyUsBlock } from "../../widgets/landing/WhyUsBlock";
+import { HowItWorksBlock } from "../../widgets/landing/HowItWorksBlock";
+import { QuickStartBlock } from "../../widgets/landing/QuickStartBlock";
+import { StartBlock } from "../../widgets/landing/StartBlock";
+import { LoadingOverlay } from "../../shared/ui";
+import { usePromptPageLoading } from "../../features/presentation/generatePresentation";
 
-function PromptPage() {
-  const { loading } = useSelector((state: RootState) => state.prompt);
+const PromptPage = () => {
+  const loading = usePromptPageLoading();
 
   if (loading) return <LoadingOverlay />;
   return (
@@ -45,6 +44,6 @@ function PromptPage() {
       </Box>
     </Box>
   );
-}
+};
 
 export default PromptPage;

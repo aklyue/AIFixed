@@ -1,0 +1,1 @@
+export { useSlideApiAction } from "./useSlideApiAction";

@@ -1,7 +1,7 @@
-import EditorPage from "./EditorPage/EditorPage";
-import PromptPage from "./PromptPage/PromptPage";
-import GeneratePage from "./GeneratePage/GeneratePage";
-import AuthPage from "./AuthPage/AuthPage";
-import SettingsPage from "./SettingsPage/SettingsPage"
-
-export { EditorPage, PromptPage, GeneratePage, AuthPage, SettingsPage };
+export { default as EditorPage } from "./EditorPage/EditorPage";
+export { default as PromptPage } from "./PromptPage/PromptPage";
+export { default as GeneratePage } from "./GeneratePage/GeneratePage";
+export { default as AuthPage } from "./AuthPage/AuthPage";
+export { default as SettingsPage } from "./SettingsPage/SettingsPage";
+export { default as MyPresentationsPage } from "./MyPresentationsPage/MyPresentationsPage";
+export { default as VerificationPage } from "./VerificationPage/VerificationPage";
