@@ -1,67 +1,39 @@
 package message
 
 import (
-	"encoding/json"
 	"io"
 	"net/http"
 
+	ai "github.com/AIFixed/backend-go/internal/client/ai"
 	"github.com/AIFixed/backend-go/internal/middleware"
+	"github.com/AIFixed/backend-go/internal/response"
 	presService "github.com/AIFixed/backend-go/internal/services/presentation"
 )
 
 type MessageHandler struct {
-	presSvc     *presService.PresentationService
-	AIModuleURL string
+	presSvc  *presService.PresentationService
+	aiClient *ai.Client
 }
 
-func NewMessageHandler(presSvc *presService.PresentationService, AIModuleURL string) *MessageHandler {
+func NewMessageHandler(presSvc *presService.PresentationService, aiClient *ai.Client) *MessageHandler {
 	return &MessageHandler{
-		presSvc:     presSvc,
-		AIModuleURL: AIModuleURL,
+		presSvc:  presSvc,
+		aiClient: aiClient,
 	}
 }
 
 func (h *MessageHandler) SendMessage(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		response.Error(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
 
-	AIModuleURL := h.AIModuleURL + "/message"
-
-	proxyReq, err := http.NewRequestWithContext(r.Context(), http.MethodPost, AIModuleURL, r.Body)
+	content, statusCode, err := h.aiClient.SendMessage(r.Context(), func() ([]byte, string, error) {
+		bodyBytes, err := io.ReadAll(r.Body)
+		return bodyBytes, r.Header.Get("Content-Type"), err
+	})
 	if err != nil {
-		http.Error(w, "Failed to create proxy request", http.StatusInternalServerError)
-		return
-	}
-	proxyReq.Header.Set("Content-Type", r.Header.Get("Content-Type"))
-
-	client := &http.Client{}
-	resp, err := client.Do(proxyReq)
-	if err != nil {
-		http.Error(w, "Python AI service unavailable", http.StatusBadGateway)
-		return
-	}
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		http.Error(w, "AI service error", resp.StatusCode)
-		return
-	}
-
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		http.Error(w, "Failed to read AI response", http.StatusInternalServerError)
-		return
-	}
-
-	var aiResponse struct {
-		Content interface{} `json:"content"`
-	}
-
-	if err := json.Unmarshal(bodyBytes, &aiResponse); err != nil {
-		http.Error(w, "Invalid AI response format", http.StatusInternalServerError)
+		response.Error(w, statusCode, err.Error())
 		return
 	}
 
@@ -75,16 +47,14 @@ func (h *MessageHandler) SendMessage(w http.ResponseWriter, r *http.Request) {
 			title = title[:50]
 		}
 
-		pres, err := h.presSvc.CreatePresentation(&currentUser.ID, title, aiResponse.Content)
+		pres, err := h.presSvc.CreatePresentation(&currentUser.ID, title, content)
 		if err == nil {
 			presID = &pres.ID
 		}
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"presentation_id": presID,
-		"content":         aiResponse.Content,
+	response.JSON(w, http.StatusOK, MessageResponse{
+		PresentationID: presID,
+		Content:        content,
 	})
 }

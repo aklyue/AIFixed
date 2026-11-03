@@ -1,145 +1,73 @@
 package presentation
 
 import (
-	"database/sql"
 	"encoding/json"
 	"net/http"
-	"strings"
+	"strconv"
 
+	"github.com/AIFixed/backend-go/internal/client/ai"
 	"github.com/AIFixed/backend-go/internal/middleware"
+	"github.com/AIFixed/backend-go/internal/response"
+	presSvc "github.com/AIFixed/backend-go/internal/services/presentation"
 	"github.com/google/uuid"
 )
 
 type PresentationHandler struct {
-	db          *sql.DB
-	AIModuleURL string
+	presSvc  *presSvc.PresentationService
+	aiClient *ai.Client
 }
 
-func NewPresentationHandler(db *sql.DB, AIModuleURL string) *PresentationHandler {
+func NewPresentationHandler(presSvc *presSvc.PresentationService, aiClient *ai.Client) *PresentationHandler {
 	return &PresentationHandler{
-		db:          db,
-		AIModuleURL: AIModuleURL,
+		presSvc:  presSvc,
+		aiClient: aiClient,
 	}
 }
 
 func (h *PresentationHandler) MyPresentations(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
 	user := middleware.GetUserFromContext(r)
-	if user == nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
 
-	rows, err := h.db.Query(`
-		SELECT id, user_id, title, content, theme 
-		FROM presentations 
-		WHERE user_id = $1
-	`, user.ID)
+	userStrID := strconv.Itoa(int(user.ID))
+
+	presentations, err := h.presSvc.GetUserPresentations(userStrID)
 	if err != nil {
-		http.Error(w, "Database error", http.StatusInternalServerError)
+		response.Error(w, http.StatusInternalServerError, "Database error")
 		return
 	}
 
-	defer rows.Close()
-
-	var presentations []map[string]interface{}
-	for rows.Next() {
-		var id string
-		var userID string
-		var title string
-		var content, theme []byte
-
-		if err := rows.Scan(&id, &userID, &title, &content, &theme); err != nil {
-			continue
-		}
-
-		var parsedContent, parsedTheme interface{}
-		_ = json.Unmarshal(content, &parsedContent)
-		_ = json.Unmarshal(theme, &parsedTheme)
-
-		presentations = append(presentations, map[string]interface{}{
-			"id":      id,
-			"user_id": userID,
-			"title":   title,
-			"content": parsedContent,
-			"theme":   parsedTheme,
-		})
-	}
-
-	if err := rows.Err(); err != nil {
-		http.Error(w, "Database error during iteration", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(presentations)
+	response.JSON(w, http.StatusOK, presentations)
 }
 
 func (h *PresentationHandler) DeletePresentation(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodDelete {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
 	user := middleware.GetUserFromContext(r)
-	if user == nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+
+	presentationID := r.PathValue("id")
+	if presentationID == "" {
+		response.Error(w, http.StatusBadRequest, "Missing presentation ID")
 		return
 	}
 
-	parts := strings.Split(r.URL.Path, "/")
-	if len(parts) == 0 {
-		http.Error(w, "Invalid URL", http.StatusBadRequest)
-		return
-	}
-	presentationID := parts[len(parts)-1]
+	userStrID := strconv.Itoa(int(user.ID))
 
-	result, err := h.db.Exec(`
-		DELETE FROM presentations 
-		WHERE id = $1 AND user_id = $2
-	`, presentationID, user.ID)
-
+	err := h.presSvc.RemovePresentation(presentationID, userStrID)
 	if err != nil {
-		http.Error(w, "Database error", http.StatusInternalServerError)
+		if err.Error() == "presentation not found" {
+			response.Error(w, http.StatusNotFound, "Presentation not found")
+			return
+		}
+		response.Error(w, http.StatusInternalServerError, "Database error")
 		return
 	}
 
-	rowsAffected, _ := result.RowsAffected()
-	if rowsAffected == 0 {
-		http.Error(w, "Presentation not found", http.StatusNotFound)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"detail": "Presentation deleted"})
-}
-
-type SavePresentationRequest struct {
-	ID      *string         `json:"id"`
-	Title   string          `json:"title"`
-	Content json.RawMessage `json:"content"`
-	Theme   json.RawMessage `json:"theme"`
+	response.JSON(w, http.StatusOK, response.StatusResponse{Message: "Presentation deleted"})
 }
 
 func (h *PresentationHandler) SavePresentation(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
 	user := middleware.GetUserFromContext(r)
-	if user == nil {
-		http.Error(w, "Not authenticated", http.StatusUnauthorized)
-		return
-	}
 
 	var req SavePresentationRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		response.Error(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
@@ -150,34 +78,16 @@ func (h *PresentationHandler) SavePresentation(w http.ResponseWriter, r *http.Re
 		presID = *req.ID
 	}
 
-	var exists bool
-	query := `SELECT EXISTS(SELECT 1 FROM presentations WHERE id = $1 AND user_id = $2)`
-	_ = h.db.QueryRow(query, presID, user.ID).Scan(&exists)
+	userStrID := strconv.Itoa(int(user.ID))
 
-	if !exists {
-		_, err := h.db.Exec(`
-			INSERT INTO presentations (id, user_id, title, content, theme)
-			VALUES ($1, $2, $3, $4, $5)
-		`, presID, user.ID, req.Title, req.Content, req.Theme)
-		if err != nil {
-			http.Error(w, "Database error", http.StatusInternalServerError)
-			return
-		}
-	} else {
-		_, err := h.db.Exec(`
-			UPDATE presentations 
-			SET title = $1, content = $2, theme = $3 
-			WHERE id = $4 AND user_id = $5
-		`, req.Title, req.Content, req.Theme, presID, user.ID)
-		if err != nil {
-			http.Error(w, "Database error", http.StatusInternalServerError)
-			return
-		}
+	err := h.presSvc.SaveOrCreatePresentation(presID, userStrID, req.Title, req.Content, req.Theme)
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, "Database error")
+		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"id":      presID,
-		"message": "Presentation saved",
+	response.JSON(w, http.StatusOK, response.IDResponse{
+		ID:      presID,
+		Message: "Presentation saved",
 	})
 }

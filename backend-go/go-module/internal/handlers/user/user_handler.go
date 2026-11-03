@@ -7,6 +7,7 @@ import (
 
 	"github.com/AIFixed/backend-go/internal/config"
 	"github.com/AIFixed/backend-go/internal/middleware"
+	"github.com/AIFixed/backend-go/internal/response"
 	"github.com/AIFixed/backend-go/internal/services/auth"
 )
 
@@ -24,26 +25,21 @@ func NewUserHandler(authSvc *auth.AuthService, verifier *auth.EmailVerifier, cfg
 	}
 }
 
-type UpdateUserRequest struct {
-	Name  *string `json:"name"`
-	Email *string `json:"email"`
-}
-
 func (h *UserHandler) EditUser(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPut {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		response.Error(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
 
 	currentUser := middleware.GetUserFromContext(r)
 	if currentUser == nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
 
 	var req UpdateUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		response.Error(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
@@ -53,7 +49,7 @@ func (h *UserHandler) EditUser(w http.ResponseWriter, r *http.Request) {
 		if err.Error() == "user not found" {
 			status = http.StatusNotFound
 		}
-		http.Error(w, err.Error(), status)
+		response.Error(w, status, err.Error())
 		return
 	}
 
@@ -62,7 +58,7 @@ func (h *UserHandler) EditUser(w http.ResponseWriter, r *http.Request) {
 		code, err := h.verifier.SetVerificationCode(ctx, *req.Email)
 		if err != nil {
 			log.Printf("Failed to set verification code for email change: %v", err)
-			http.Error(w, "Failed to set verification code for email change", http.StatusInternalServerError)
+			response.Error(w, http.StatusInternalServerError, "Failed to set verification code for email change")
 		} else {
 			go func() {
 				_ = auth.SendVerificationEmail(
@@ -78,7 +74,5 @@ func (h *UserHandler) EditUser(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(updatedUser)
+	response.JSON(w, http.StatusOK, updatedUser)
 }

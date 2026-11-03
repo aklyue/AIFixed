@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -108,15 +109,35 @@ func (s *TempfileService) SaveFile(content []byte, originalName string, fileExt 
 }
 
 func (s *TempfileService) GetFile(filename string) (string, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	if strings.Contains(filename, "/") ||
+		strings.Contains(filename, "\\") ||
+		strings.Contains(filename, "..") ||
+		strings.Contains(filename, ":") {
+		return "", fmt.Errorf("invalid filename format: malicious characters detected")
+	}
 
-	cleanName := filepath.Base(filename)
-	filePath := filepath.Join(s.tempfileDir, cleanName)
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	fileInfo, exists := s.filesRegistry[filename]
+	if !exists {
+		return "", fmt.Errorf("file not found in registry")
+	}
+	if fileInfo.IsExpired(time.Now()) {
+		return "", fmt.Errorf("file has expired")
+	}
+
+	filePath := filepath.Join(s.tempfileDir, filename)
 
 	info, err := os.Stat(filePath)
-	if os.IsNotExist(err) || info.IsDir() {
-		return "", fmt.Errorf("file not found")
+	if err != nil {
+		if os.IsNotExist(err) {
+			return "", fmt.Errorf("file not found on disk")
+		}
+		return "", fmt.Errorf("failed to check file stat: %w", err)
+	}
+	if !info.Mode().IsRegular() {
+		return "", fmt.Errorf("requested object is not a regular file")
 	}
 
 	return filePath, nil

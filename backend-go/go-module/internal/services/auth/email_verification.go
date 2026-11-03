@@ -3,12 +3,13 @@ package auth
 import (
 	"context"
 	"crypto/rand"
-	"database/sql"
 	"fmt"
 	"log"
 	"math/big"
 	"net/smtp"
 	"time"
+
+	"github.com/AIFixed/backend-go/internal/repository/verification"
 )
 
 type VerificationEntry struct {
@@ -17,12 +18,12 @@ type VerificationEntry struct {
 }
 
 type EmailVerifier struct {
-	db *sql.DB
+	verifyRepo *verification.VerificationRepository
 }
 
-func NewEmailVerifier(db *sql.DB) *EmailVerifier {
+func NewEmailVerifier(verifyRepo *verification.VerificationRepository) *EmailVerifier {
 	return &EmailVerifier{
-		db: db,
+		verifyRepo: verifyRepo,
 	}
 }
 
@@ -34,13 +35,7 @@ func (ev *EmailVerifier) SetVerificationCode(ctx context.Context, email string) 
 	code := fmt.Sprintf("%06d", n.Int64()+100000)
 	expiresAt := time.Now().Add(10 * time.Minute)
 
-	query := `
-		INSERT INTO email_verifications (email, code, expires_at, created_at)
-		VALUES ($1, $2, $3, NOW())
-		ON CONFLICT (email) 
-		DO UPDATE SET code = EXCLUDED.code, expires_at = EXCLUDED.expires_at, created_at = NOW()
-	`
-	_, err = ev.db.ExecContext(ctx, query, email, code, expiresAt)
+	err = ev.verifyRepo.UpsertCode(ctx, email, code, expiresAt)
 	if err != nil {
 		return "", err
 	}
@@ -49,17 +44,12 @@ func (ev *EmailVerifier) SetVerificationCode(ctx context.Context, email string) 
 }
 
 func (ev *EmailVerifier) VerifyCode(ctx context.Context, email, code string) (bool, error) {
-	query := `
-		DELETE FROM email_verifications
-		WHERE email = $1 AND code = $2 AND expires_at > NOW()
-		RETURNING email
-	`
-	var returnedEmail string
-	err := ev.db.QueryRowContext(ctx, query, email, code).Scan(&returnedEmail)
-	if err == sql.ErrNoRows {
-		return false, nil
-	}
+	_, err := ev.verifyRepo.DeleteValidCode(ctx, email, code)
+
 	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return false, nil
+		}
 		return false, err
 	}
 
@@ -75,7 +65,7 @@ func (ev *EmailVerifier) StartCleanupWorker(ctx context.Context, interval time.D
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				_, err := ev.db.ExecContext(ctx, "DELETE FROM email_verifications WHERE expires_at < NOW()")
+				err := ev.verifyRepo.DeleteExpiredCodes(ctx)
 				if err != nil {
 					log.Printf("Error cleaning up expired email verification codes: %v", err)
 				}

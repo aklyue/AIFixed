@@ -29,7 +29,7 @@ func registerAppRoutes(
 	mux.HandleFunc("POST /api/message", msgH.SendMessage)
 
 	mux.Handle("GET /api/presentation/my-presentations", authMW(http.HandlerFunc(presH.MyPresentations)))
-	mux.Handle("DELETE /api/presentation/presentations/{presentation_id}", authMW(http.HandlerFunc(presH.DeletePresentation)))
+	mux.Handle("DELETE /api/presentation/presentations/{id}", authMW(http.HandlerFunc(presH.DeletePresentation)))
 	mux.Handle("POST /api/presentation/save-presentation", authMW(http.HandlerFunc(presH.SavePresentation)))
 	mux.HandleFunc("POST /api/presentation/generate", presH.GeneratePresentation)
 	mux.HandleFunc("POST /api/presentation/edit", presH.EditSlide)

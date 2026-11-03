@@ -2,8 +2,8 @@ package tempfile
 
 import (
 	"net/http"
-	"strings"
 
+	"github.com/AIFixed/backend-go/internal/response"
 	tempSvc "github.com/AIFixed/backend-go/internal/services/tempfile"
 )
 
@@ -18,16 +18,15 @@ func NewTempfileHandler(tempfileService *tempSvc.TempfileService) *TempfileHandl
 }
 
 func (h *TempfileHandler) GetTempfileHandler(w http.ResponseWriter, r *http.Request) {
-	parts := strings.Split(r.URL.Path, "/")
-	if len(parts) == 0 {
-		http.Error(w, "Bad request", http.StatusBadRequest)
+	filename := r.PathValue("filename")
+	if filename == "" {
+		response.Error(w, http.StatusBadRequest, "Missing filename")
 		return
 	}
-	filename := parts[len(parts)-1]
 
 	filePath, err := h.tempfileService.GetFile(filename)
 	if err != nil {
-		http.Error(w, "Файл не найден", http.StatusNotFound)
+		response.Error(w, http.StatusNotFound, "Файл не найден")
 		return
 	}
 

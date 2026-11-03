@@ -33,14 +33,13 @@ func NewRouter(
 	msgH *msgHandler.MessageHandler,
 	tempH *tempfileHandler.TempfileHandler,
 	userH *userHandler.UserHandler,
-	githubH *authHandler.GithubOAuthHandler,
-	googleH *authHandler.GoogleOAuthHandler,
+	oauthH *authHandler.OAuthHandler,
 	authH *authHandler.AuthHandler,
 ) http.Handler {
 	mux := http.NewServeMux()
 	authMW := middleware.AuthMiddleware(authSvc, cfg)
 
-	registerAuthRoutes(mux, authH, githubH, googleH, userH, authMW)
+	registerAuthRoutes(mux, authH, oauthH, userH, authMW)
 	registerAppRoutes(mux, presH, msgH, tempH, authMW)
 
 	return enableCORS(mux)

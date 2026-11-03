@@ -9,3 +9,11 @@ type Presentation struct {
 	Content json.RawMessage `json:"content"`
 	Theme   json.RawMessage `json:"theme,omitempty"`
 }
+
+type PresentationResponse struct {
+	ID      string      `json:"id"`
+	UserID  string      `json:"user_id"`
+	Title   string      `json:"title"`
+	Content interface{} `json:"content"`
+	Theme   interface{} `json:"theme"`
+}

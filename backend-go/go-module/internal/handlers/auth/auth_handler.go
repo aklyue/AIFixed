@@ -6,6 +6,7 @@ import (
 
 	"github.com/AIFixed/backend-go/internal/config"
 	"github.com/AIFixed/backend-go/internal/middleware"
+	"github.com/AIFixed/backend-go/internal/response"
 	authSvc "github.com/AIFixed/backend-go/internal/services/auth"
 )
 
@@ -23,76 +24,54 @@ func NewAuthHandler(authService *authSvc.AuthService, cfg *config.Config, verifi
 	}
 }
 
-type RegisterRequest struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-type LoginRequest struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		response.Error(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
 
 	var req RegisterRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		response.Error(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
 	user, err := h.authService.Register(req.Name, req.Email, req.Password)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		response.Error(w, http.StatusInternalServerError, "Internal Server Error")
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	if err := json.NewEncoder(w).Encode(user); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	response.JSON(w, http.StatusCreated, user)
 }
 
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		response.Error(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
 
 	var req LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		response.Error(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
 	user, err := h.authService.Login(req.Name, req.Email, req.Password)
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		response.Error(w, http.StatusInternalServerError, "Internal Server Error")
 		return
 	}
 
 	token, err := authSvc.CreateAccessToken(user.ID, 60, h.cfg.SecretKey)
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		response.Error(w, http.StatusInternalServerError, "Internal Server Error")
 		return
 	}
 
 	setAuthCookie(w, token)
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(map[string]string{"message": "logged in successfully"}); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	response.JSON(w, http.StatusOK, response.StatusResponse{Message: "logged in successfully"})
 }
 
 func (h *AuthHandler) HandleMe(w http.ResponseWriter, r *http.Request) {
@@ -115,7 +94,7 @@ func setAuthCookie(w http.ResponseWriter, token string) {
 
 func (h *AuthHandler) VerifyEmail(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		response.Error(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
 
@@ -124,21 +103,19 @@ func (h *AuthHandler) VerifyEmail(w http.ResponseWriter, r *http.Request) {
 		Code  string `json:"code"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		response.Error(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
 	valid, err := h.verifier.VerifyCode(r.Context(), req.Email, req.Code)
 	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		response.Error(w, http.StatusInternalServerError, "Internal server error")
 		return
 	}
 	if !valid {
-		http.Error(w, "Неверный или просроченный код", http.StatusBadRequest)
+		response.Error(w, http.StatusBadRequest, "Incorrect or expired code")
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Email успешно подтвержден"})
+	response.JSON(w, http.StatusOK, response.StatusResponse{Message: "Email confirmed successfully"})
 }

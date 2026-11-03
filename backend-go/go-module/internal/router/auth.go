@@ -10,8 +10,7 @@ import (
 func registerAuthRoutes(
 	mux *http.ServeMux,
 	authH *authHandler.AuthHandler,
-	githubH *authHandler.GithubOAuthHandler,
-	googleH *authHandler.GoogleOAuthHandler,
+	oauthH *authHandler.OAuthHandler,
 	userH *userHandler.UserHandler,
 	authMW func(http.Handler) http.Handler,
 ) {
@@ -21,9 +20,9 @@ func registerAuthRoutes(
 	mux.Handle("GET /api/auth/me", authMW(http.HandlerFunc(authH.HandleMe)))
 	mux.Handle("PUT /api/user/edit", authMW(http.HandlerFunc(userH.EditUser)))
 
-	mux.HandleFunc("GET /api/auth/github/login", githubH.Login)
-	mux.HandleFunc("GET /api/auth/github/callback", githubH.Callback)
+	mux.HandleFunc("GET /api/auth/github/login", oauthH.Login("github"))
+	mux.HandleFunc("GET /api/auth/github/callback", oauthH.Callback("github"))
 
-	mux.HandleFunc("GET /api/auth/google/login", googleH.Login)
-	mux.HandleFunc("GET /api/auth/google/callback", googleH.Callback)
+	mux.HandleFunc("GET /api/auth/google/login", oauthH.Login("google"))
+	mux.HandleFunc("GET /api/auth/google/callback", oauthH.Callback("google"))
 }
