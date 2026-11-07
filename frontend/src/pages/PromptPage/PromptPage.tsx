@@ -3,7 +3,9 @@ import { PromptSend } from "../../features";
 import { FeaturesBlock } from "../../widgets/landing/FeaturesBlock";
 import { WhyUsBlock } from "../../widgets/landing/WhyUsBlock";
 import { HowItWorksBlock } from "../../widgets/landing/HowItWorksBlock";
-import { QuickStartBlock } from "../../widgets/landing/QuickStartBlock";
+import { PresentationWorkflow } from "../../widgets/landing/PresentationWorkflow";
+import { CapabilityMarquee } from "../../widgets/landing/CapabilityMarquee";
+import { PricingPlans } from "../../widgets/landing/PricingPlans";
 import { StartBlock } from "../../widgets/landing/StartBlock";
 import { LoadingOverlay } from "../../shared/ui";
 import { usePromptPageLoading } from "../../features/presentation/generatePresentation";
@@ -38,8 +40,10 @@ const PromptPage = () => {
         <PromptSend />
         <FeaturesBlock />
         <WhyUsBlock />
+        <PresentationWorkflow />
         <HowItWorksBlock />
-        <QuickStartBlock />
+        <CapabilityMarquee />
+        <PricingPlans />
         <StartBlock />
       </Box>
     </Box>

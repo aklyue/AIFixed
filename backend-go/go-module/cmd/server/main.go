@@ -68,7 +68,7 @@ func main() {
 	presH := presHandler.NewPresentationHandler(presSvc, aiClient)
 	userH := userHandler.NewUserHandler(authSvc, emailVerifier, cfg)
 
-	handler := router.NewRouter(cfg, authSvc, emailVerifier, presH, msgH, tempH, userH, OAuthH, authH)
+	handler := router.NewRouter(cfg, authSvc, emailVerifier, presH, msgH, tempH, userH, OAuthH, authH, database)
 
 	port := ":8080"
 

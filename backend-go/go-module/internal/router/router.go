@@ -35,6 +35,7 @@ func NewRouter(
 	userH *userHandler.UserHandler,
 	oauthH *authHandler.OAuthHandler,
 	authH *authHandler.AuthHandler,
+	db *sql.DB,
 ) http.Handler {
 	mux := http.NewServeMux()
 	authMW := middleware.AuthMiddleware(authSvc, cfg)

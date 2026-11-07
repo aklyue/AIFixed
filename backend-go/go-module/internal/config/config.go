@@ -53,7 +53,8 @@ type Config struct {
 	EmbeddingDevice string
 	EmbeddingPort   int
 
-	AIModuleURL string
+	AIModuleURL     string
+	PythonParserURL string
 }
 
 func Load() *Config {
@@ -105,7 +106,8 @@ func Load() *Config {
 		EmbeddingDevice: getEnv("EMBEDDING_DEVICE", "cpu"),
 		EmbeddingPort:   getEnvAsInt("EMBEDDING_PORT", 8001),
 
-		AIModuleURL: getEnv("AI_MODULE_URL", "http://localhost:8001"),
+		AIModuleURL:     getEnv("AI_MODULE_URL", "http://localhost:8001"),
+		PythonParserURL: getEnv("PYTHON_PARSER_URL", "http://localhost:8002"),
 	}
 }
 

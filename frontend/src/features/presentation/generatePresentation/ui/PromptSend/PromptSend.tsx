@@ -16,7 +16,10 @@ import {
 } from "@mui/material";
 import { useGeneration } from "../../lib/hooks/useGeneration/useGeneration";
 import { useNavigate } from "react-router-dom";
-import { LoadingOverlay } from "../../../../../shared/ui";
+import {
+  LandingSectionMarker,
+  LoadingOverlay,
+} from "../../../../../shared/ui";
 
 const PromptSend: React.FC = () => {
   const {
@@ -55,6 +58,11 @@ const PromptSend: React.FC = () => {
         flexDirection: "column",
       }}
     >
+      <LandingSectionMarker
+        label="AI-сервис для презентаций"
+        variant="heroMatrix"
+        centered
+      />
       <Box
         textAlign="center"
         sx={{
@@ -62,17 +70,26 @@ const PromptSend: React.FC = () => {
           mb: 4,
         }}
       >
-        <Typography
-          variant={isMobile ? "h4" : "h2"}
-          fontWeight="bold"
+        <Box
           sx={{
-            m: 0,
-            color: "text.primary",
-            maxWidth: 1000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: { xs: 1, sm: 2 },
           }}
         >
-          Создавайте презентации без усилий за короткое время
-        </Typography>
+          <Typography
+            variant={isMobile ? "h4" : "h2"}
+            fontWeight="bold"
+            sx={{
+              m: 0,
+              color: "text.primary",
+              maxWidth: 1000,
+            }}
+          >
+            Создавайте презентации без усилий за короткое время
+          </Typography>
+        </Box>
         <Typography
           variant={isMobile ? "subtitle1" : "h5"}
           sx={{

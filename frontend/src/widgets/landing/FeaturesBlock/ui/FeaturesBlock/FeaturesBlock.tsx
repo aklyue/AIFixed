@@ -1,12 +1,11 @@
 import React from "react";
-import { Box, Container, Typography, useTheme } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import { motion } from "framer-motion";
+import { LandingSectionMarker } from "../../../../../shared/ui";
 
 import { features } from "../../";
 
 const FeaturesBlock: React.FC = () => {
-  const theme = useTheme();
-
   return (
     <Container sx={{ py: 10, maxWidth: "1400px !important" }}>
       <Box
@@ -18,6 +17,11 @@ const FeaturesBlock: React.FC = () => {
           mb: 4,
         }}
       >
+        <LandingSectionMarker
+          label="Возможности платформы"
+          variant="featureMatrix"
+          centered
+        />
         <Typography
           variant="h6"
           textAlign="center"
@@ -81,7 +85,7 @@ const FeaturesBlock: React.FC = () => {
                   },
                 }}
               >
-                <Icon sx={{ fontSize: 36, color: "primary.main" }} />
+                <Icon sx={{ fontSize: 36, color: "primary.main", flexShrink: 0 }} />
                 <Box>
                   <Typography
                     variant="subtitle1"

@@ -1,10 +1,8 @@
-import React from "react";
-import { Box, Container, Typography, useTheme } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import { motion } from "framer-motion";
+import { LandingSectionMarker } from "../../../../../shared/ui";
 
-const HowItWorksBlock: React.FC = ({}) => {
-  const theme = useTheme();
-
+const HowItWorksBlock = () => {
   return (
     <Container sx={{ py: 10, maxWidth: "1200px !important" }}>
       <Box
@@ -16,6 +14,11 @@ const HowItWorksBlock: React.FC = ({}) => {
           mb: 6,
         }}
       >
+        <LandingSectionMarker
+          label="Демонстрация"
+          variant="demoMatrix"
+          centered
+        />
         <Typography
           variant="h6"
           color="text.secondary"

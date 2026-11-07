@@ -1,12 +1,11 @@
 import React from "react";
-import { Box, Container, Typography, useTheme } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import { motion } from "framer-motion";
+import { LandingSectionMarker } from "../../../../../shared/ui";
 
 import { reasons } from "../../lib/constants/reasons";
 
 const WhyUsBlock: React.FC = () => {
-  const theme = useTheme();
-
   return (
     <Container sx={{ py: 10, maxWidth: "1400px !important" }}>
       <Box
@@ -18,13 +17,18 @@ const WhyUsBlock: React.FC = () => {
           mb: 4,
         }}
       >
+        <LandingSectionMarker
+          label="Почему выбирают нас"
+          variant="valueMatrix"
+          centered
+        />
         <Typography
           variant="h6"
           color="text.secondary"
           textAlign="center"
           sx={{ mb: 1 }}
         >
-          Почему выбирают нас
+          Надёжность на каждом этапе
         </Typography>
         <Typography
           variant="h4"
